@@ -4,9 +4,16 @@
   "description": "Nothing important",
   "private": true,
   "scripts": {
-    "build": "webpack && cpx \"public/*\" dist",
+    "build": "webpack && cpx \"public/**/*\" dist",
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --collectCoverage"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": ["@babel/plugin-transform-modules-commonjs"]
+      }
+    }
   },
   "author": "Konrad Cielecki",
   "license": "ISC",
@@ -14,9 +21,11 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.6.0",
     "clean-webpack-plugin": "^3.0.0",
     "cpx": "^1.5.0",
     "css-loader": "^3.2.0",
+    "jest": "^24.9.0",
     "path": "^0.12.7",
     "style-loader": "^1.0.0",
     "webpack": "^4.39.3",
