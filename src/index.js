@@ -9,3 +9,7 @@ appContainer.innerHTML = `
     <p class="example">This is an example text injected using JS.</p>
 `;
 document.body.appendChild(appContainer);
+
+if (module.hot) {
+  module.hot.accept();
+}

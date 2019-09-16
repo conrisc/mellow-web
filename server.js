@@ -1,6 +1,7 @@
 const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleWare = require('webpack-hot-middleware');
 const config = require('./webpack.config');
 const path = require('path');
 
@@ -17,7 +18,9 @@ for (let arg of argsArr) {
 const app = express();
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
-}))
+}));
+app.use(webpackHotMiddleWare(compiler));
+
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'dist')));
 
