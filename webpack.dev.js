@@ -1,9 +1,11 @@
-const path = require('path');
+
+const merge = require('webpack-merge');
+const common = require('./webpack.common');
 const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = {
+module.exports = merge(common, {
     mode: 'development',
     entry: {
         app: ['./src/index.js', 'webpack-hot-middleware/client'],
@@ -16,21 +18,5 @@ module.exports = {
             { from: 'public' }
         ]),
         new webpack.HotModuleReplacementPlugin(),
-    ],
-    output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist'),
-        publicPath: '/'
-    },
-    module: {
-        rules: [
-            {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            }
-        ]
-    }
-};
+    ]
+});

@@ -1,12 +1,17 @@
 {
   "name": "justsome",
+  "sideEffects": [
+    "*.css"
+  ],
   "version": "1.0.0",
   "description": "Nothing important",
   "private": true,
   "scripts": {
     "copy-assets": "cpx \"public/**/*\" dist",
-    "build": "webpack",
-    "dev": "node server.js",
+    "build:prod": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
+    "serve": "node server.js",
+    "serve:prod": "node server.js mode=\"production\"",
     "test": "jest --collectCoverage"
   },
   "babel": {
@@ -35,6 +40,7 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8",
     "webpack-dev-middleware": "^3.7.1",
-    "webpack-hot-middleware": "^2.25.0"
+    "webpack-hot-middleware": "^2.25.0",
+    "webpack-merge": "^4.2.2"
   }
 }
