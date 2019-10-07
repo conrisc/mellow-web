@@ -1,9 +1,11 @@
 import React from 'react';
 
-function App() {
-    return <div>To jest moja apka</div>;
-}
+import { Content } from './Content.jsx'
 
-export {
-    App
+export function App() {
+    return (
+        <div>
+            <Content></Content>
+        </div>
+    );
 }
