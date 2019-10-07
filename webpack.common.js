@@ -15,6 +15,14 @@ module.exports = {
                     'style-loader',
                     'css-loader'
                 ]
+            },
+            {
+                test: /\.jsx$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/,
+                query: {
+                    presets: ['@babel/react']
+                }
             }
         ]
     }
