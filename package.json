@@ -8,10 +8,11 @@
   "private": true,
   "scripts": {
     "copy-assets": "cpx \"public/**/*\" dist",
-    "build:prod": "webpack --config webpack.prod.js",
+    "start": "node server_2.js",
+    "build": "webpack --config webpack.prod.js",
     "build:dev": "webpack --config webpack.dev.js",
-    "serve": "node server.js",
-    "serve:prod": "node server.js mode=\"production\"",
+    "serve": "node server.js mode=\"production\"",
+    "serve:dev": "node server.js",
     "test": "jest --collectCoverage"
   },
   "babel": {
