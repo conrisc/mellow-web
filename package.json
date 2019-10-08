@@ -28,6 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "materialize-css": "^1.0.0-rc.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2"
   },
