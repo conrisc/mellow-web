@@ -8,7 +8,7 @@ import '@fortawesome/fontawesome-free/js/all.js'
 import './index.css';
 
 import './exampleScript';
-import { App } from './components/App.jsx';
+import { App } from './components/App';
 
 console.log('index.js has been loaded');
 
