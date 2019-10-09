@@ -33,4 +33,9 @@ if (!isInProductionMode) {
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'dist')));
 
+app.get('/*', function (req, res) {
+    console.log(req.originalUrl);
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => console.log(`Server is listening on ${port}`));

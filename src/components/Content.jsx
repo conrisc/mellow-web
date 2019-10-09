@@ -1,9 +1,17 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 
 import { Notepad } from './Notepad.jsx'
 
 export function Content() {
     return (
-        <Notepad></Notepad>
+        <Switch>
+            <Route exact path="/notepad/:noteId?">
+                <Notepad />
+            </Route>
+            <Route path="/">
+                <p>This is home</p>
+            </Route>
+        </Switch>
     );
 }
