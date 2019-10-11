@@ -10,10 +10,10 @@ export function Notepad(props) {
     return (
         <div className="row notepad">
             <div className={"col s12 l6" + (noteId !== undefined ? ' hide-on-med-and-down' : '' )}>
-                <NoteList />
+                <NoteList noteId={noteId} />
             </div>
             <div className={"col s12 l6"  + (noteId === undefined ? ' hide-on-med-and-down' : '' )}>
-                <NoteEditor />
+                <NoteEditor noteId={noteId} />
             </div>
         </div>
     );
