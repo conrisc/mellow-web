@@ -1,15 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+import { DevelopersApi, NoteItem } from 'what_api';
 
-export function NoteList(props) {
+
+function NoteListN(props) {
     const noteId = props.noteId;
+
+    function createEmptyNote() {
+        const api = new DevelopersApi();
+
+        var opts = { 
+            'noteItem': new NoteItem('', Date(), '') // {NoteItem} Note item to add
+        };
+
+        api.addNote(opts, (error, data, response) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log('API called successfully.', data, response);
+                props.history.push("/notepad/haha");
+            }
+        });
+    }
 
     return (
         <div>
             <div>
-                <Link to="/notepad/new" className="waves-effect waves-light btn">
+                <button onClick={createEmptyNote} className="waves-effect waves-light btn">
                     <i className="fas fa-plus-circle"></i>
-                </Link>
+                </button>
             </div>
             <div>
                 <Link to="/notepad/1">Note 1</Link>
@@ -19,4 +38,10 @@ export function NoteList(props) {
             </div>
         </div>
     );
+}
+
+let NoteList = withRouter(NoteListN);
+
+export {
+    NoteList
 }
