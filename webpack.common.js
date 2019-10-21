@@ -23,12 +23,32 @@ module.exports = {
                 test: /\.(woff(2)?|ttf|eot|svg)$/,
                 use: 'file-loader'
             },
+            // {
+            //     test: /\.js$/,
+            //     loader: 'babel-loader',
+            //     exclude: /node_modules/,
+            //     query: {
+            //         presets: ['@babel/preset-env']
+            //     }
+            // },
+            // {
+            //     test: /\.jsx$/,
+            //     loader: 'babel-loader',
+            //     exclude: /node_modules/,
+            //     query: {
+            //         presets: ['@babel/react']
+            //     }
+            // }
             {
-                test: /\.jsx$/,
+                test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/,
                 query: {
-                    presets: ['@babel/react']
+                    presets: [
+                        '@babel/react',
+                        '@babel/preset-env',
+                        { 'plugins': ['@babel/plugin-proposal-class-properties']}
+                    ]
                 }
             }
         ]
