@@ -26,7 +26,7 @@ export function Notepad(props) {
             } else {
                 console.log('Found some notes', data, response);
                 if (data.length > 0)
-                    setNote({ id: data[0].id + noteId, text: data[0].text + 'lo ' + Date(), creationDate: Date() })
+                    setNote(data[0])
             }
         });
     }

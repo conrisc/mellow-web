@@ -5,23 +5,23 @@ import { DevelopersApi, NoteItem } from 'what_api';
 
 const api = new DevelopersApi();
 
-function saveNote(noteId, text) {
+function saveNote(text) {
 	var opts = { 
-		noteItem: new NoteItem(noteId, Date(), text) // {NoteItem} Note item to add
+		noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
 	};
 
     api.updateNote(opts, (error, data, response) => {
 		if (error)
 			console.log('Error while saving note: ', error);
 		else 
-			console.log(data, response);
+			console.log('Note updated', data, response);
 	});
 }
 
 const handleNoteUpdate = throttle(2000, saveNote);
 
 export function NoteEditor(props) {
-	const noteId = props.note.id;
+	const noteId = props.note._id;
 	const [text, setText] = useState(props.note.text);
 	const textFocus = React.createRef();
 
@@ -43,7 +43,7 @@ export function NoteEditor(props) {
 						ref={textFocus}
 						id="textarea1"
 						className="materialize-textarea"
-						onChange={ (e) => { const t = e.target.value; setText(t); handleNoteUpdate(noteId, t); } }
+						onChange={ (e) => { const t = e.target.value; setText(t); handleNoteUpdate(t); } }
 						value={text}>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>

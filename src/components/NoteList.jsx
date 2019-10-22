@@ -10,7 +10,7 @@ function NoteListN(props) {
         const api = new DevelopersApi();
 
         var opts = { 
-            'noteItem': new NoteItem('', Date(), '') // {NoteItem} Note item to add
+            'noteItem': new NoteItem(Date(), '') // {NoteItem} Note item to add
         };
 
         api.addNote(opts, (error, data, response) => {
@@ -18,7 +18,7 @@ function NoteListN(props) {
                 console.error(error);
             } else {
                 console.log('API called successfully.', data, response);
-                props.history.push("/notepad/haha");
+                props.history.push(`/notepad/${data}`);
             }
         });
     }
