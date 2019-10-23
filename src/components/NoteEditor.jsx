@@ -5,10 +5,12 @@ import { DevelopersApi, NoteItem } from 'what_api';
 
 const api = new DevelopersApi();
 
-function saveNote(text) {
+function saveNote(noteId, text) {
 	var opts = { 
 		noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
 	};
+
+	opts.noteItem._id = noteId;
 
     api.updateNote(opts, (error, data, response) => {
 		if (error)
@@ -43,7 +45,7 @@ export function NoteEditor(props) {
 						ref={textFocus}
 						id="textarea1"
 						className="materialize-textarea"
-						onChange={ (e) => { const t = e.target.value; setText(t); handleNoteUpdate(t); } }
+						onChange={ (e) => { const t = e.target.value; setText(t); handleNoteUpdate(noteId, t); } }
 						value={text}>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>

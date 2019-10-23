@@ -10,7 +10,7 @@ function NoteListN(props) {
         const api = new DevelopersApi();
 
         var opts = { 
-            'noteItem': new NoteItem(Date(), '') // {NoteItem} Note item to add
+            noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add
         };
 
         api.addNote(opts, (error, data, response) => {

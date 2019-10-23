@@ -18,7 +18,7 @@ export function Notepad(props) {
     function getNote() {
         const api = new DevelopersApi();
         const opts = { 
-            'id': noteId
+            id: noteId
         };
         api.searchNote(opts, (error, data, response) => {
             if (error) {
