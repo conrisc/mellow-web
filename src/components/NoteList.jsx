@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { DevelopersApi, NoteItem } from 'what_api';
 
 
 function NoteListN(props) {
     const noteId = props.noteId;
+    const [ notes, setNotes ] = useState([]);
 
     function createEmptyNote() {
         const api = new DevelopersApi();
@@ -23,6 +24,21 @@ function NoteListN(props) {
         });
     }
 
+    function getNotes() {
+        const api = new DevelopersApi();
+
+        api.searchNote({}, (error, data, response) => {
+            if (error)
+                console.error(error);
+            else {
+                console.log('getNotes: ', data, response);
+                setNotes(data);
+            }
+        });
+    }
+
+    getNotes();
+
     return (
         <div>
             <div>
@@ -31,10 +47,11 @@ function NoteListN(props) {
                 </button>
             </div>
             <div>
-                <Link to="/notepad/1">Note 1</Link>
-                <Link to="/notepad/2">Note 2</Link>
-                <Link to="/notepad/3">Note 3</Link>
-                <Link to="/notepad/4">Note 4</Link>
+                {
+                    notes.map((noteItem, index) =>
+                        <Link to={`/notepad/${noteItem._id}`} key={index}>Note {index}</Link>
+                    )
+                }
             </div>
         </div>
     );
