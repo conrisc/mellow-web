@@ -5,7 +5,7 @@ import { DevelopersApi, NoteItem } from 'what_api';
 
 function NoteListN(props) {
     const noteId = props.noteId;
-    const [ notes, setNotes ] = useState([]);
+    const notes = props.notes;
 
     function createEmptyNote() {
         const api = new DevelopersApi();
@@ -24,20 +24,6 @@ function NoteListN(props) {
         });
     }
 
-    function getNotes() {
-        const api = new DevelopersApi();
-
-        api.searchNote({}, (error, data, response) => {
-            if (error)
-                console.error(error);
-            else {
-                console.log('getNotes: ', data, response);
-                setNotes(data);
-            }
-        });
-    }
-
-    getNotes();
 
     return (
         <div>
