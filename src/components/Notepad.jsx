@@ -6,21 +6,24 @@ import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
 import { Spinner } from './Spinner';
 
-let lol = true;
-
 export function Notepad(props) {
     const { noteId } = useParams();
-    const [ note, setNote ] = useState(null);
     const [ notes, setNotes ] = useState([]);
+    const [ note, setNote ] = useState(null);
+
+    useEffect(() => {
+        getNotes();
+    }, []);
 
     useEffect(() => {
         if (noteId)
             displayNote();
-    }, [noteId]);
+    }, [noteId, notes]);
+
 
     // function getNote() {
     //     const api = new DevelopersApi();
-    //     const opts = {
+    //     const opts = { 
     //         id: noteId
     //     };
     //     api.searchNote(opts, (error, data, response) => {
@@ -35,26 +38,23 @@ export function Notepad(props) {
     // }
 
     function displayNote() {
-        setNote(notes.find(noteItem => noteItem._id === noteId));
+        const newNote = notes.find(noteItem => noteItem._id === noteId) || null;
+        setNote(newNote);
     }
 
     function getNotes() {
-        const api = new DevelopersApi();
+        return new Promise((resolve, reject) => {
+            const api = new DevelopersApi();
 
-        api.searchNote({}, (error, data, response) => {
-            if (error)
-                console.error(error);
-            else {
-                console.log('getNotes: ', data, response);
-                setNotes(data);
-            }
+            api.searchNote({}, (error, data, response) => {
+                if (error)
+                    console.error(error);
+                else {
+                    console.log('getNotes: ', data, response);
+                    setNotes(data);
+                }
+            });
         });
-    }
-
-    if (lol) {
-        getNotes();
-        setInterval(getNotes, 5000);
-        lol = false;
     }
 
     return (
