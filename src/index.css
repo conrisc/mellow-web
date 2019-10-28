@@ -14,7 +14,8 @@ body, p {
 .notepad {
     /* background-image: linear-gradient(to right top, #4168a6, #3b7fbf, #3097d6, #1fafec, #00c8ff); */
     background-image: linear-gradient(to bottom, #f4f4f4, #eeeeee, #e9e9e9, #e3e3e3, #dedede);
-    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
     /* background: #eeeeee; */
 }
 
@@ -29,6 +30,10 @@ body, p {
 
 .spinner {
     padding: 20px;
+}
+
+.block {
+    display: block;
 }
 
 :root {

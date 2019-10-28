@@ -23,18 +23,19 @@ function NoteCardN(props) {
     }
 
     return (
-        <div className="row">
-            <Link to={`/notepad/${note._id}`}>Link</Link>
-            <div className="col s12 m5">
-                <div className="card-panel teal">
-                    <div className="btn-flat" onClick={removeNote}>
-                        <i className="fas fa-times"></i>
+        <div className="">
+            <Link to={`/notepad/${note._id}`}>
+                <div className="col s6 xl4">
+                    <div className="card small">
+                        <div className="btn-flat" onClick={removeNote}>
+                            <i className="fas fa-times"></i>
+                        </div>
+                        <span className="card-content truncate">
+                            {note.text}
+                        </span>
                     </div>
-                    <span className="white-text truncate">
-                        {note.text}
-                    </span>
                 </div>
-            </div>
+            </Link>
         </div>
     );
 }

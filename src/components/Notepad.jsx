@@ -64,16 +64,18 @@ export function Notepad(props) {
     }
 
     return (
-        <div className="row notepad">
-            <div className={"col s12 l6" + (noteId !== undefined ? ' hide-on-med-and-down' : '' )}>
-                <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} />
-            </div>
-            <div className={"col s12 l6"  + (noteId === undefined ? ' hide' : '' )}>
-                { 
-                    note ?
-                    <NoteEditor note={note} onNoteChange={onNoteChange} /> :
-                    <Spinner />
-                }
+        <div className="notepad">
+            <div className="row">
+                <div className={"col s12 l6" + (noteId !== undefined ? ' hide-on-med-and-down' : '' )}>
+                    <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} />
+                </div>
+                <div className={"col s12 l6"  + (noteId === undefined ? ' hide' : '' )}>
+                    { 
+                        note ?
+                        <NoteEditor note={note} onNoteChange={onNoteChange} /> :
+                        <Spinner />
+                    }
+                </div>
             </div>
         </div>
     );
