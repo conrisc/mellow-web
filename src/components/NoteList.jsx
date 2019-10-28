@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { DevelopersApi, NoteItem } from 'what_api';
+
+import { NoteCard } from './NoteCard';
 
 
 function NoteListN(props) {
@@ -36,7 +38,7 @@ function NoteListN(props) {
             <div>
                 {
                     notes.map((noteItem, index) =>
-                        <Link to={`/notepad/${noteItem._id}`} key={index}>Note {index}</Link>
+                        <NoteCard note={noteItem} key={index} updateNotes={props.updateNotes} />
                     )
                 }
             </div>
