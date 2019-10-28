@@ -19,7 +19,6 @@ body, p {
     /* background: #eeeeee; */
 }
 
-
 .input-field input[type=text]:focus + label {
     color: #000;
 }
@@ -32,9 +31,9 @@ body, p {
     padding: 20px;
 }
 
-.block {
+/* .block {
     display: block;
-}
+} */
 
 :root {
     --input-color: #00b0ff;
@@ -57,3 +56,10 @@ textarea.materialize-textarea {
 textarea.materialize-textarea + label {
     color: var(--input-color);
 }
+
+/* .fixed-action-btn {
+    right: auto;
+    bottom: auto;
+    left: 10px;
+    top: 10px;
+} */

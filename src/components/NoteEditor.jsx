@@ -33,8 +33,6 @@ export function NoteEditor(props) {
 		M.textareaAutoResize(textRef.current);
 	}, [noteId]);
 
-    // useEffect(() => saveNote, []);
-
     return (
         <div>
             <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only">
