@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { throttle } from 'throttle-debounce';
 import { DevelopersApi, NoteItem } from 'what_api';
+import M from 'materialize-css';
 
 const api = new DevelopersApi();
 
@@ -24,15 +25,15 @@ const handleNoteUpdate = throttle(2000, saveNote);
 
 export function NoteEditor(props) {
 	const noteId = props.note._id;
-	const [text, setText] = useState(props.note.text);
-	const textFocus = React.createRef();
+	const text = props.note.text;
+	const textRef = React.createRef();
 
 	useEffect(() => {
-		setText(props.note.text)
-		textFocus.current.focus();
+		textRef.current.focus();
+		M.textareaAutoResize(textRef.current);
 	}, [noteId]);
 
-    useEffect(() => saveNote, []);
+    // useEffect(() => saveNote, []);
 
     return (
         <div>
@@ -42,10 +43,10 @@ export function NoteEditor(props) {
             <form>
                 <div className="input-field">
 					<textarea autoFocus
-						ref={textFocus}
+						ref={textRef}
 						id="textarea1"
 						className="materialize-textarea"
-						onChange={ (e) => { const t = e.target.value; setText(t); handleNoteUpdate(noteId, t); } }
+						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }
 						value={text}>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>

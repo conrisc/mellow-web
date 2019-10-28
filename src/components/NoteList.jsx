@@ -19,6 +19,7 @@ function NoteListN(props) {
                 console.error(error);
             } else {
                 console.log('API called successfully.', data, response);
+                props.updateNotes();
                 props.history.push(`/notepad/${data}`);
             }
         });

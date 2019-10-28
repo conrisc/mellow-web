@@ -20,6 +20,12 @@ export function Notepad(props) {
             displayNote();
     }, [noteId, notes]);
 
+    function onNoteChange(noteId, text) {
+        const note = notes.find(noteItem => noteItem._id === noteId);
+        const newNote = { ...note, text };
+        const newNotes = notes.filter(noteItem => noteItem._id !== noteId);
+        setNotes([...newNotes, newNote]);
+    }
 
     // function getNote() {
     //     const api = new DevelopersApi();
@@ -60,12 +66,12 @@ export function Notepad(props) {
     return (
         <div className="row notepad">
             <div className={"col s12 l6" + (noteId !== undefined ? ' hide-on-med-and-down' : '' )}>
-                <NoteList noteId={noteId} notes={notes} />
+                <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} />
             </div>
             <div className={"col s12 l6"  + (noteId === undefined ? ' hide' : '' )}>
                 { 
                     note ?
-                    <NoteEditor note={note} /> :
+                    <NoteEditor note={note} onNoteChange={onNoteChange} /> :
                     <Spinner />
                 }
             </div>
