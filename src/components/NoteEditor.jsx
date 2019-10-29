@@ -28,9 +28,10 @@ export function NoteEditor(props) {
 	const textRef = React.createRef();
 
 	useEffect(() => {
-		textRef.current.focus();
+		// textRef.current.focus();
 		textRef.current.value = text;
 		M.textareaAutoResize(textRef.current);
+		M.updateTextFields();
 	}, [noteId]);
 
     return (

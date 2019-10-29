@@ -130,11 +130,11 @@ function NotepadN(props) {
     return (
         <div className="notepad">
             <div className="row">
-                <div className={"col s12 l6" + (noteId !== undefined ? ' hide-on-med-and-down' : '' )}>
+                <div className={"col s12 l6 smooth-transform" + (noteId !== undefined ? ' translate-left' : '' )}>
                     <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} removeNote={removeNote} 
                         createEmptyNote={createEmptyNote} />
                 </div>
-                <div className={"col s12 l6"  + (noteId === undefined ? ' hide' : '' )}>
+                <div className={"col s12 l6 smooth-transform" + (noteId === undefined ? ' translate-right' : '')}>
                     { 
                         note ?
                         <NoteEditor note={note} onNoteChange={onNoteChange} /> :

@@ -17,7 +17,7 @@ export function NoteCard(props) {
         <div className="">
             <Link to={`/notepad/${note._id}`}>
                 <div className="col s6 xl4">
-                    <div className={`card small ${noteColor}`}>
+                    <div className={`card small ${noteColor} smooth-bg`}>
                         <div className="btn-flat note-rm-btn" onClick={handleRemoveClick}>
                             <i className="fas fa-times"></i>
                         </div>
