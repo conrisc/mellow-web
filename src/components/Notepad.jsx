@@ -43,10 +43,15 @@ function NotepadN(props) {
     }
 
     function onNoteChange(noteId, text) {
-        const note = notes.find(noteItem => noteItem._id === noteId);
-        const newNote = { ...note, text };
-        const newNotes = notes.filter(noteItem => noteItem._id !== noteId);
-        setNotes([...newNotes, newNote]);
+        const newNotes = notes.map((el) => {
+            if (el._id === noteId) {
+                const updatedNote = new NoteItem(el.creationDate, text);
+                updatedNote._id = el._id;
+                return updatedNote;
+            }
+            return el;
+        })
+        setNotes(newNotes);
     }
 
     // function getNote() {
