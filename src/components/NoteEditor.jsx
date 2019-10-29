@@ -29,6 +29,7 @@ export function NoteEditor(props) {
 
 	useEffect(() => {
 		textRef.current.focus();
+		textRef.current.value = text;
 		M.textareaAutoResize(textRef.current);
 	}, [noteId]);
 
@@ -43,8 +44,7 @@ export function NoteEditor(props) {
 						ref={textRef}
 						id="textarea1"
 						className="materialize-textarea"
-						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }
-						value={text}>
+						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>
                 </div>

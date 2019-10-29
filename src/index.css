@@ -42,7 +42,7 @@ body, p {
 } */
 
 :root {
-    --input-color: #00b0ff;
+    --input-color: #40c4ff; /* #00b0ff; */
 }
 
 textarea.materialize-textarea:focus:not([readonly]) + label {
