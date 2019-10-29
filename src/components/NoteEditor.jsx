@@ -36,7 +36,7 @@ export function NoteEditor(props) {
 
     return (
         <div>
-            <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only">
+            <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only light-blue lighten-2">
                 <i className="fas fa-angle-left"></i>
             </Link>
             <form>
@@ -44,7 +44,7 @@ export function NoteEditor(props) {
 					<textarea autoFocus
 						ref={textRef}
 						id="textarea1"
-						className="materialize-textarea"
+						className="materialize-textarea white-text"
 						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export function NoteCard(props) {
     const note = props.note;
-    const noteColor = props.active ? 'light-blue accent-2' : 'grey lighten-5';
+    const noteColor = props.active ? 'note-active' : 'grey lighten-5';
     const textColor = props.active ? 'white-text' : 'black-text'
 
     function handleRemoveClick(event) {

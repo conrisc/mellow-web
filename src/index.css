@@ -12,8 +12,9 @@ body, p {
 }
 
 .notepad {
-    background-image: linear-gradient(to right top, #4168a6, #3b7fbf, #3097d6, #1fafec, #00c8ff);
+    /* background-image: linear-gradient(to right top, #4168a6, #3b7fbf, #3097d6, #1fafec, #00c8ff); */
     /* background-image: linear-gradient(to bottom, #f4f4f4, #eeeeee, #e9e9e9, #e3e3e3, #dedede); */
+    background-image: linear-gradient(to left bottom, #4dc6e3, #4ecadc, #56ced3, #62d1ca, #70d3c1);
     min-height: 100vh;
     overflow: hidden;
     /* background: #eeeeee; */
@@ -25,9 +26,14 @@ body, p {
     right: 0;
 }
 
+.note-active {
+    background: #e2d0a8;
+}
+
 .input-field input[type=text]:focus + label {
     color: #000;
 }
+
 .input-field input[type=text]:focus {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
@@ -45,34 +51,34 @@ body, p {
     transition: transform 0.2s;
 }
 
-.translate-right {
-    transform: translateX(100%);
-}
-
 @media only screen and (max-width: 992px) {
-    .translate-left {
-        transform: translateX(-100%);
+    .transform-left {
+        transform: translateX(-50%);
+    }
+
+    .width-2x-sm {
+        width: 200%;
     }
 }
 
 :root {
-    --input-color: #40c4ff; /* #00b0ff; */
+    --label-color: #212121; /* #40c4ff; /* #00b0ff; */
 }
 
 textarea.materialize-textarea:focus:not([readonly]) + label {
-    color: var(--input-color);
+    color: var(--label-color);
 }
 
 textarea.materialize-textarea:focus:not([readonly]) {
-    border-bottom: 1px solid var(--input-color);
-    box-shadow: 0 1px 0 0 var(--input-color);
+    border-bottom: 1px solid var(--label-color);
+    box-shadow: 0 1px 0 0 var(--label-color);
 }
 
 textarea.materialize-textarea {
-    border-bottom: 1px solid var(--input-color);
-    box-shadow: 0 1px 0 0 var(--input-color);
+    border-bottom: 1px solid var(--label-color);
+    box-shadow: 0 1px 0 0 var(--label-color);
 }
 
 textarea.materialize-textarea + label {
-    color: var(--input-color);
+    color: var(--label-color);
 }

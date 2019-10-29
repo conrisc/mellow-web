@@ -11,29 +11,11 @@ function NotepadN(props) {
     const [ notes, setNotes ] = useState([]);
     const [ note, setNote ] = useState(null);
     const prevNote = useRef(null);
-    const leftPanelRef = useRef(null);
-    const rightPanelRef = useRef(null);
 
     useEffect(() => {
         let left = !noteId;
         initActionButton();
         getNotes();
-        leftPanelRef.current.addEventListener("transitionstart", (event) => {
-            if(event.propertyName === 'transform') {
-                event.target.classList.remove('hide-on-med-and-down')
-                event.target.classList.remove('hide')
-            }
-        });
-
-        leftPanelRef.current.addEventListener("transitionend", (event) => {
-            if (event.propertyName === 'transform') {
-                if (left)
-                    event.target.classList.add('hide-on-med-and-down')
-                else 
-                    event.target.classList.add('hide')
-                left = !left;
-            }
-        });
     }, []);
 
     useEffect(() => {
@@ -104,6 +86,7 @@ function NotepadN(props) {
                     console.log('getNotes: ', data, response);
                     setNotes(data);
                 }
+                resolve();
             });
         });
     }
@@ -148,12 +131,12 @@ function NotepadN(props) {
 
     return (
         <div className="notepad">
-            <div className="row">
-                <div ref={leftPanelRef} className={"col s12 l6 smooth-transform" + (noteId !== undefined ? ' translate-left' : '' )}>
+            <div className={"row smooth-transform width-2x-sm" + (noteId ? ' transform-left' : '')}>
+                <div className={"col s6 l6"}>
                     <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} removeNote={removeNote} 
                         createEmptyNote={createEmptyNote} />
                 </div>
-                <div ref={rightPanelRef} className={"col s12 l6 smooth-transform" + (noteId === undefined ? ' translate-right' : '')}>
+                <div className={"col s6 l6"}>
                     { 
                         note ?
                         <NoteEditor note={note} onNoteChange={onNoteChange} /> :
