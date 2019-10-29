@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { throttle } from 'throttle-debounce';
 import { DevelopersApi, NoteItem } from 'what_api';
-import M from 'materialize-css';
 
 const api = new DevelopersApi();
 

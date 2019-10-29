@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Link} from 'react-router-dom';
 
 import { Notepad } from './Notepad'
 
@@ -10,7 +10,8 @@ export function Content() {
                 <Notepad />
             </Route>
             <Route path="/">
-                <p>This is home</p>
+                <h1>Home page</h1>
+                <Link to="/notepad">Notepad</Link>
             </Route>
         </Switch>
     );

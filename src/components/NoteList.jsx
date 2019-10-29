@@ -12,7 +12,7 @@ function NoteListN(props) {
     return (
         <div>
             <div>
-                <button onClick={props.createEmptyNote} className="waves-effect waves-light btn cyan">
+                <button onClick={props.createEmptyNote} className="waves-effect waves-light btn">
                     <i className="fas fa-plus-circle"></i>
                 </button>
             </div>
