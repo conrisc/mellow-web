@@ -8,7 +8,10 @@ module.exports = {
         publicPath: '/'
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            'what_api': path.resolve(__dirname, 'external/index.js')
+        }
     },
     module: {
         rules: [

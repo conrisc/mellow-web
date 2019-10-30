@@ -20,12 +20,12 @@
   },
   "babel": {
     "plugins": [
-        [
-          "@babel/plugin-proposal-class-properties",
-          {
-            "loose": true
-          }
-        ]
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
     ],
     "env": {
       "test": {
@@ -41,11 +41,12 @@
     "@fortawesome/fontawesome-free": "^5.11.2",
     "express": "^4.17.1",
     "materialize-css": "^1.0.0-rc.2",
+    "path": "^0.12.7",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-router-dom": "^5.1.2",
-    "throttle-debounce": "^2.1.0",
-    "path": "^0.12.7"
+    "superagent": "^5.1.0",
+    "throttle-debounce": "^2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
