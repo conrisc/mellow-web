@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, withRouter } from 'react-router-dom';
+import { useParams, withRouter, Link } from 'react-router-dom';
 import { DevelopersApi, NoteItem } from 'what_api';
 
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
-import { Spinner } from './Spinner';
+import { Info } from './Info';
 
 function NotepadN(props) {
     const { noteId } = useParams();
     const [ notes, setNotes ] = useState([]);
     const [ note, setNote ] = useState(null);
+    const [ shouldShowSpinner, setSpinnerState ] = useState(true);
     const prevNote = useRef(null);
 
     useEffect(() => {
-        let left = !noteId;
         initActionButton();
         getNotes();
     }, []);
@@ -85,6 +85,7 @@ function NotepadN(props) {
                 else {
                     console.log('getNotes: ', data, response);
                     setNotes(data);
+                    setSpinnerState(false);
                 }
                 resolve();
             });
@@ -136,11 +137,14 @@ function NotepadN(props) {
                     <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} removeNote={removeNote} 
                         createEmptyNote={createEmptyNote} />
                 </div>
-                <div className={"col s6 l6"}>
+                <div className={"col s6 l6" + (noteId ? '' : ' hide')}>
+                    <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only light-blue lighten-2">
+                        <i className="fas fa-angle-left"></i>
+                    </Link>
                     { 
                         note ?
                         <NoteEditor note={note} onNoteChange={onNoteChange} /> :
-                        <Spinner />
+                        <Info shouldShowSpinner={shouldShowSpinner} msg={'Note not found! :('} />
                     }
                 </div>
             </div>

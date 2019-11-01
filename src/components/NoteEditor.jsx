@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { throttle } from 'throttle-debounce';
 import { DevelopersApi, NoteItem } from 'what_api';
 
@@ -35,10 +34,7 @@ export function NoteEditor(props) {
 	}, [noteId]);
 
     return (
-        <div>
-            <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only light-blue lighten-2">
-                <i className="fas fa-angle-left"></i>
-            </Link>
+        <div className="mt-3">
             <form>
                 <div className="input-field">
 					<textarea autoFocus
