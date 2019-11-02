@@ -1,6 +1,6 @@
 {
-  "short_name": "What app",
-  "name": "What app",
+  "short_name": "What note",
+  "name": "What note",
   "icons": [
     {
       "src":"images/logo.png",
@@ -8,7 +8,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/?utm_source=homescreen",
+  "start_url": "/notepad?utm_source=homescreen",
   "background_color": "#FF00B3",
   "theme_color": "#458fc0",
   "display": "standalone"

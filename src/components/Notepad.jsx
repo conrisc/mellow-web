@@ -16,6 +16,7 @@ function NotepadN(props) {
     useEffect(() => {
         initActionButton();
         getNotes();
+        document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-notepad.json');
     }, []);
 
     useEffect(() => {
