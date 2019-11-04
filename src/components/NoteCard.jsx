@@ -9,13 +9,13 @@ export function NoteCard(props) {
     function handleRemoveClick(event) {
         event.stopPropagation();
         event.preventDefault();
-        props.removeNote(note._id);
+        props.removeNote(note.id);
     }
 
 
     return (
         <div className="">
-            <Link to={`/notepad/${note._id}`}>
+            <Link to={`/notepad/${note.id}`}>
                 <div className="col s6 xl4">
                     <div className={`card small ${noteColor} smooth-bg`}>
                         <div className="btn-flat note-rm-btn" onClick={handleRemoveClick}>

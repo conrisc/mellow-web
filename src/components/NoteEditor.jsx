@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { WhatApi } from 'what_api';
+import { DevelopersApi, NoteItem } from 'what_api';
 
-const api = new WhatApi.DevelopersApi();
+const api = new DevelopersApi();
 
 function saveNote(noteId, text) {
 	var opts = { 
-		noteItem: new WhatApi.NoteItem(Date(), text) // {NoteItem} Note item to add
+		noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
 	};
 
-	opts.noteItem._id = noteId;
+	opts.noteItem.id = noteId;
 
 	api.updateNote(opts)
 		.then(() => {
@@ -22,7 +22,7 @@ function saveNote(noteId, text) {
 const handleNoteUpdate = throttle(2000, saveNote);
 
 export function NoteEditor(props) {
-	const noteId = props.note._id;
+	const noteId = props.note.id;
 	const text = props.note.text;
 	const textRef = React.createRef();
 

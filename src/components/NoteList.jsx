@@ -24,7 +24,7 @@ function NoteListN(props) {
                             key={index}
                             updateNotes={props.updateNotes}
                             removeNote={props.removeNote}
-                            active={noteId === noteItem._id}
+                            active={noteId === noteItem.id}
                         />
                     )
                 }

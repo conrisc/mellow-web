@@ -25,7 +25,7 @@ function NotepadN(props) {
     }, [noteId, notes]);
 
     useEffect(() => {
-        if (prevNote.current && (!note || prevNote.current._id !== note._id))
+        if (prevNote.current && (!note || prevNote.current.id !== note.id))
             validateNote(prevNote.current);
         prevNote.current = note;
     }, [note])
@@ -33,21 +33,21 @@ function NotepadN(props) {
 	useEffect(() => cleanup, []);
 	
 	function cleanup() {
-        if (prevNote.current && (!note || prevNote.current._id !== note._id))
+        if (prevNote.current && (!note || prevNote.current.id !== note.id))
             validateNote(prevNote.current);
     }
 
     function validateNote(n) {
         console.log('validate note', n);
         if (n.text === '')
-            removeNote(n._id);
+            removeNote(n.id);
     }
 
     function onNoteChange(noteId, text) {
         const newNotes = notes.map((el) => {
-            if (el._id === noteId) {
+            if (el.id === noteId) {
                 const updatedNote = new NoteItem(el.creationDate, text);
-                updatedNote._id = el._id;
+                updatedNote.id = el.id;
                 return updatedNote;
             }
             return el;
@@ -72,7 +72,7 @@ function NotepadN(props) {
     // }
 
     function displayNote() {
-        const newNote = notes.find(noteItem => noteItem._id === noteId) || null;
+        const newNote = notes.find(noteItem => noteItem.id === noteId) || null;
         setNote(newNote);
     }
 
