@@ -80,16 +80,16 @@ function NotepadN(props) {
         return new Promise((resolve, reject) => {
             const api = new DevelopersApi();
 
-            api.searchNote({}, (error, data, response) => {
-                if (error)
-                    console.error(error);
-                else {
-                    console.log('getNotes: ', data, response);
+            api.searchNote({})
+                .then(data => {
+                    console.log('getNotes: ', data);
                     setNotes(data);
                     setSpinnerState(false);
-                }
-                resolve();
-            });
+                    resolve();
+                }, error => {
+                    console.error(error);
+                    resolve();
+                });
         });
     }
 
@@ -102,15 +102,14 @@ function NotepadN(props) {
             id: nId
         };
 
-        api.removeNote(nId, (error, data, response) => {
-            if (error)
-                console.error(error);
-            else {
+        api.removeNote(nId)
+            .then(() => {
                 getNotes();
                 if (noteId === nId)
                     props.history.push('/notepad');
-            }
-        });
+            }, error => {
+                console.error(error);
+            });
     }
 
     function createEmptyNote() {
@@ -120,15 +119,14 @@ function NotepadN(props) {
             noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add
         };
 
-        api.addNote(opts, (error, data, response) => {
-            if (error) {
-                console.error(error);
-            } else {
-                console.log('API called successfully.', data, response);
+        api.addNote(opts)
+            .then(data => {
+                console.log('API called successfully.', data);
                 getNotes();
                 props.history.push(`/notepad/${data}`);
-            }
-        });
+            }, error => {
+                console.error(error);
+            });
     }
 
     return (

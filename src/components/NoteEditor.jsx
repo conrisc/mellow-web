@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { DevelopersApi, NoteItem } from 'what_api';
+import { WhatApi } from 'what_api';
 
-const api = new DevelopersApi();
+const api = new WhatApi.DevelopersApi();
 
 function saveNote(noteId, text) {
 	var opts = { 
-		noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
+		noteItem: new WhatApi.NoteItem(Date(), text) // {NoteItem} Note item to add
 	};
 
 	opts.noteItem._id = noteId;
 
-    api.updateNote(opts, (error, data, response) => {
-		if (error)
+	api.updateNote(opts)
+		.then(() => {
+			console.log('Note updated');
+		 }, error => {
 			console.log('Error while saving note: ', error);
-		else 
-			console.log('Note updated', data, response);
-	});
+		 });
 }
 
 const handleNoteUpdate = throttle(2000, saveNote);
