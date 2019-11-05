@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { debounce } from 'throttle-debounce';
+import { DevelopersApi } from 'what_api';
+
+import { TrackList } from './TrackList';
 
 const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
 
@@ -17,6 +20,28 @@ setTimeout(() => {
 
 export function Musiq(props) {
     const [ searchResult, setSearchResult ] = useState([]);
+    const [ songs, setSongs ] = useState([]);
+
+    useEffect(() => {
+        getSongs();
+    }, []);
+
+    function getSongs() {
+        const api = new DevelopersApi();
+
+        const opts = {
+            skip: 3,
+            limit: 5
+        };
+
+        api.searchSong(opts)
+            .then(data => {
+                console.log(data);
+                setSongs(data);
+            }, error => {
+                console.error(error);
+            });
+    }
 
     function searchVideo(text) {
         return gapi.client.youtube.search.list({
@@ -36,17 +61,24 @@ export function Musiq(props) {
     return (
         <div>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange(t)}}></input>
-            {
-                searchResult.map((el, index) => {
-                    return <div key={index}>
-                        <a href={`https://youtube.com/watch?v=${el.id.videoId}`}>
-                            <h5>{el.snippet.title}</h5>
-                            <h6>{el.id.videoId}</h6>
-                            <img src={el.snippet.thumbnails.medium.url}></img>
-                        </a>
-                    </div>;
-                })
-            }
+            <div className="row">
+                <div className="col s6">
+                    <TrackList songs={songs} findSong={searchVideo} />
+                </div>
+                <div className="col s6">
+                    {
+                        searchResult.map((el, index) => {
+                            return <div key={index}>
+                                <a href={`https://youtube.com/watch?v=${el.id.videoId}`}>
+                                    <h5>{el.snippet.title}</h5>
+                                    <h6>{el.id.videoId}</h6>
+                                    <img src={el.snippet.thumbnails.medium.url}></img>
+                                </a>
+                            </div>;
+                        })
+                    }
+                </div>
+            </div>
         </div>
     );
 }
