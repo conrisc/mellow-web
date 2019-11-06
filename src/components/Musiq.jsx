@@ -3,6 +3,7 @@ import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
 import { TrackList } from './TrackList';
+import { YTList } from './YTList';
 
 const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
 
@@ -19,7 +20,7 @@ setTimeout(() => {
 }, 1000);
 
 export function Musiq(props) {
-    const [ searchResult, setSearchResult ] = useState([]);
+    const [ ytItems, setYtItems ] = useState([]);
     const [ songs, setSongs ] = useState([]);
 
     useEffect(() => {
@@ -30,13 +31,12 @@ export function Musiq(props) {
         const api = new DevelopersApi();
 
         const opts = {
-            skip: 3,
-            limit: 5
+            skip: 0,
+            limit: 300 
         };
 
         api.searchSong(opts)
             .then(data => {
-                console.log(data);
                 setSongs(data);
             }, error => {
                 console.error(error);
@@ -44,14 +44,18 @@ export function Musiq(props) {
     }
 
     function searchVideo(text) {
+        if (!text || text === '') {
+            console.log('searchVideo: input is empty');
+            return;
+        }
+
         return gapi.client.youtube.search.list({
             "part": "snippet",
             "maxResults": 5,
             "type": "video",
             "q": text
         }).then((response) => {
-                console.log("Response", response);
-                setSearchResult(response.result ? response.result.items : []);
+                setYtItems(response.result ? response.result.items : []);
             },
             (err) => { console.error("Execute error", err); });
     }
@@ -66,17 +70,7 @@ export function Musiq(props) {
                     <TrackList songs={songs} findSong={searchVideo} />
                 </div>
                 <div className="col s6">
-                    {
-                        searchResult.map((el, index) => {
-                            return <div key={index}>
-                                <a href={`https://youtube.com/watch?v=${el.id.videoId}`}>
-                                    <h5>{el.snippet.title}</h5>
-                                    <h6>{el.id.videoId}</h6>
-                                    <img src={el.snippet.thumbnails.medium.url}></img>
-                                </a>
-                            </div>;
-                        })
-                    }
+                    <YTList items={ytItems} />
                 </div>
             </div>
         </div>
