@@ -31,7 +31,8 @@ const dataTypes = {
     PLAY: 'play',
     PAUSE: 'pause',
     VOLUME_UP: 'volume_up',
-    VOLUME_DOWN: 'volume_down'
+    VOLUME_DOWN: 'volume_down',
+    LOAD_VIDEO: 'load_video'
 }
 
 export function Musiq(props) {
@@ -66,12 +67,20 @@ export function Musiq(props) {
                     player.current.pauseVideo();
                     break;
                 case dataTypes.VOLUME_UP:
-                    if (volume.current < 100);
+                    if (volume.current < 100) {
                         volume.current += 5;
+                        player.current.setVolume(volume.current);
+                    }
                     break;
                 case dataTypes.VOLUME_DOWN:
-                    if (volume.current > 0);
+                    if (volume.current > 0) {
                         volume.current -= 5;
+                        player.current.setVolume(volume.current);
+                    }
+                    break;
+                case dataTypes.LOAD_VIDEO:
+                    player.current.loadVideoById(dataFromServer.videoId)
+                    player.current.playVideo();
                     break;
             }
         };
@@ -156,21 +165,43 @@ export function Musiq(props) {
         ws.current.send(JSON.stringify(data));
     }
 
+    function loadVideo(videoId) {
+        const data = {
+            type: dataTypes.LOAD_VIDEO,
+            videoId
+        }
+        ws.current.send(JSON.stringify(data));
+    }
+
     return (
         <div>
-            <Link to='/' className="btn">Go back</Link>
-            <button onClick={sendMessage}>send</button>
-            <button onClick={play}>play</button>
-            <button onClick={pause}>pause</button>
-            <button onClick={up}>up</button>
-            <button onClick={down}>down</button>
+            <div className="row">
+                <div className="col s2">
+                    <Link to='/' className="btn">Go back</Link>
+                </div>
+                <div className="col s2">
+                    <button className="btn" onClick={sendMessage}>send</button>
+                </div>
+                <div className="col s2">
+                    <button className="btn" onClick={play}>play</button>
+                </div>
+                <div className="col s2">
+                    <button className="btn" onClick={pause}>pause</button>
+                </div>
+                <div className="col s2">
+                    <button className="btn" onClick={up}>up</button>
+                </div>
+                <div className="col s2">
+                    <button className="btn" onClick={down}>down</button>
+                </div>
+            </div>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange(t)}}></input>
             <div className="row">
                 <div className="col s6">
                     <TrackList songs={songs} findSong={searchVideo} />
                 </div>
                 <div className="col s6">
-                    <YTList items={ytItems} />
+                    <YTList items={ytItems} loadVideo={loadVideo} />
                 </div>
                 <div id="player"></div>
             </div>
