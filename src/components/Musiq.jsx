@@ -30,19 +30,22 @@ const dataTypes = {
     JOIN: 'join',
     PLAY: 'play',
     PAUSE: 'pause',
-    VOLUME_UP: 'volume_up',
-    VOLUME_DOWN: 'volume_down',
+    SET_VOLUME: 'set_volume',
     LOAD_VIDEO: 'load_video'
 }
 
 export function Musiq(props) {
     const [ ytItems, setYtItems ] = useState([]);
     const [ songs, setSongs ] = useState([]);
-    let player = useRef();
-    let ws = useRef();
-    let volume = useRef(100);
+    const [ volume, setVolume ] = useState(100);
+    const setVolume2Debounced = useRef();
+    const handleSearchChange = useRef();
+    const player = useRef();
+    const ws = useRef();
 
     useEffect(() => {
+        setVolume2Debounced.current = debounce(1000, setVolume2);
+        handleSearchChange.current = debounce(1000, searchVideo);
         getSongs();
 
         ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
@@ -56,6 +59,7 @@ export function Musiq(props) {
         };
         ws.current.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
+            console.log('WS <onmessage>: ', dataFromServer);
             switch (dataFromServer.type) {
                 case dataTypes.NEW_MESSAGE:
                     console.log('WS <NEW_MESSAGE>: ', dataFromServer);
@@ -66,17 +70,9 @@ export function Musiq(props) {
                 case dataTypes.PAUSE:
                     player.current.pauseVideo();
                     break;
-                case dataTypes.VOLUME_UP:
-                    if (volume.current < 100) {
-                        volume.current += 5;
-                        player.current.setVolume(volume.current);
-                    }
-                    break;
-                case dataTypes.VOLUME_DOWN:
-                    if (volume.current > 0) {
-                        volume.current -= 5;
-                        player.current.setVolume(volume.current);
-                    }
+                case dataTypes.SET_VOLUME:
+                    setVolume(dataFromServer.volume);
+                    player.current.setVolume(dataFromServer.volume);
                     break;
                 case dataTypes.LOAD_VIDEO:
                     player.current.loadVideoById(dataFromServer.videoId)
@@ -130,7 +126,6 @@ export function Musiq(props) {
             (err) => { console.error("Execute error", err); });
     }
 
-    const handleSearchChange = debounce(1000, searchVideo);
 
     function sendMessage() {
          const data = {
@@ -152,18 +147,14 @@ export function Musiq(props) {
         };
         ws.current.send(JSON.stringify(data));
     }
-    function up() {
+    function setVolume2(vol) {
          const data = {
-            type: dataTypes.VOLUME_UP
+            type: dataTypes.SET_VOLUME,
+            volume: vol
         };
         ws.current.send(JSON.stringify(data));
     }
-    function down() {
-         const data = {
-            type: dataTypes.VOLUME_DOWN
-        };
-        ws.current.send(JSON.stringify(data));
-    }
+
 
     function loadVideo(videoId) {
         const data = {
@@ -189,13 +180,20 @@ export function Musiq(props) {
                     <button className="btn" onClick={pause}>pause</button>
                 </div>
                 <div className="col s2">
-                    <button className="btn" onClick={up}>up</button>
-                </div>
-                <div className="col s2">
-                    <button className="btn" onClick={down}>down</button>
+                      <form action="#">
+                        <p className="range-field">
+                            <input type="range" min="0" max="100" value={volume}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    setVolume(v);
+                                    setVolume2Debounced.current(v);
+                                }}
+                            />
+                        </p>
+                    </form>
                 </div>
             </div>
-            <input type="text" onChange={e => {const t = e.target.value; handleSearchChange(t)}}></input>
+            <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input>
             <div className="row">
                 <div className="col s6">
                     <TrackList songs={songs} findSong={searchVideo} />
