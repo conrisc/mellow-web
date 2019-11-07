@@ -30,6 +30,10 @@ body, p {
     margin-top: 30px;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .msg-info {
     font-size: 18px;
     color: #EEE;
@@ -61,13 +65,43 @@ body, p {
 }
 
 @media only screen and (max-width: 992px) {
-    .transform-left {
+    .transform-left-50 {
         transform: translateX(-50%);
+    }
+
+    .transform-right-100 {
+        transform: translateX(100%);
+    }
+
+    .transform-left-110 {
+        transform: translateX(-110%);
     }
 
     .width-2x-sm {
         width: 200%;
     }
+
+    .pos-fixed-sm {
+        position: fixed;
+    }
+}
+
+@media only screen and (min-width: 993px) {
+    .hide-on-big {
+        display: none;
+    }
+}
+
+.right-0 {
+    right: 0 !important;
+}
+
+.pos-absolute {
+    position: absolute;
+}
+
+.pos-relative {
+    position: relative;
 }
 
 :root {

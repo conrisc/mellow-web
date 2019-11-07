@@ -131,7 +131,7 @@ function NotepadN(props) {
 
     return (
         <div className="notepad">
-            <div className={"row smooth-transform width-2x-sm" + (noteId ? ' transform-left' : '')}>
+            <div className={"row smooth-transform width-2x-sm" + (noteId ? ' transform-left-50' : '')}>
                 <div className={"col s6 l6"}>
                     <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} removeNote={removeNote} 
                         createEmptyNote={createEmptyNote} />

@@ -35,14 +35,40 @@ const dataTypes = {
     PING: 'ping'
 }
 
+const fakeYTData = [
+    {
+        id: { videoId: 'someId' },
+        snippet: {
+            title: 'Some title',
+            thumbnails: {
+                default: {
+                    url: 'https://youtube.com'
+                }
+            }
+        }
+    },
+    {
+        id: { videoId: 'someId' },
+        snippet: {
+            title: 'Some other title',
+            thumbnails: {
+                default: {
+                    url: 'https://youtube.com'
+                }
+            }
+        }
+    }
+];
+
 export function Musiq(props) {
-    const [ ytItems, setYtItems ] = useState([]);
+    const [ ytItems, setYtItems ] = useState(fakeYTData);
     const [ songs, setSongs ] = useState([]);
     const [ volume, setVolume ] = useState(100);
     const setVolume2Debounced = useRef();
     const handleSearchChange = useRef();
-    const player = useRef();
+    const player = useRef(null);
     const ws = useRef();
+    const YTListRef = useRef();
 
     useEffect(() => {
         setVolume2Debounced.current = debounce(1000, setVolume2);
@@ -115,6 +141,10 @@ export function Musiq(props) {
             }, error => {
                 console.error(error);
             });
+    }
+
+    function getPlayer() {
+        // player.current = 
     }
 
     function searchVideo(text) {
@@ -190,7 +220,7 @@ export function Musiq(props) {
                 <div className="col s2">
                     <button className="btn" onClick={pause}>pause</button>
                 </div>
-                <div className="col s2">
+                <div className="col s3">
                       <form action="#">
                         <p className="range-field">
                             <input type="range" min="0" max="100" value={volume}
@@ -205,11 +235,12 @@ export function Musiq(props) {
                 </div>
             </div>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input>
-            <div className="row">
-                <div className="col s6">
+            <div className="row pos-relative">
+                <div className="col s12 l6">
                     <TrackList songs={songs} findSong={searchVideo} />
                 </div>
-                <div className="col s6">
+                <div ref={YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text">
+                    <button className="btn btn-small hide-on-large-only transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
                     <YTList items={ytItems} loadVideo={loadVideo} />
                 </div>
                 <div id="player"></div>
