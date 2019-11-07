@@ -31,7 +31,8 @@ const dataTypes = {
     PLAY: 'play',
     PAUSE: 'pause',
     SET_VOLUME: 'set_volume',
-    LOAD_VIDEO: 'load_video'
+    LOAD_VIDEO: 'load_video',
+    PING: 'ping'
 }
 
 export function Musiq(props) {
@@ -91,6 +92,13 @@ export function Musiq(props) {
                 playerVars: { 'origin': 'https://what-appy.herokuapp.com/' }
             })
         })
+
+        let pingPong = setInterval(() => {
+            sendPing();
+        }, 40000)
+        return () => {
+            clearInterval(pingPong);
+        }
     }, []);
 
     function getSongs() {
@@ -126,11 +134,17 @@ export function Musiq(props) {
             (err) => { console.error("Execute error", err); });
     }
 
+    function sendPing() {
+         const data = {
+            type: dataTypes.PING,
+        };
+        ws.current.send(JSON.stringify(data));
+    }
 
-    function sendMessage() {
+    function sendMessage(text) {
          const data = {
             type: dataTypes.NEW_MESSAGE,
-            message: 'fajna wiadomosc2',
+            message: 'some msg',
         };
         ws.current.send(JSON.stringify(data));
     }
@@ -169,9 +183,6 @@ export function Musiq(props) {
             <div className="row">
                 <div className="col s2">
                     <Link to='/' className="btn">Go back</Link>
-                </div>
-                <div className="col s2">
-                    <button className="btn" onClick={sendMessage}>send</button>
                 </div>
                 <div className="col s2">
                     <button className="btn" onClick={play}>play</button>
