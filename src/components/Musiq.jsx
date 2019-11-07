@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
@@ -25,17 +25,59 @@ const loadYT = new Promise((resolve) => {
 })
 
 
+const dataTypes = {
+    NEW_MESSAGE: 'new_message',
+    JOIN: 'join',
+    PLAY: 'play',
+    PAUSE: 'pause',
+    VOLUME_UP: 'volume_up',
+    VOLUME_DOWN: 'volume_down'
+}
+
 export function Musiq(props) {
     const [ ytItems, setYtItems ] = useState([]);
     const [ songs, setSongs ] = useState([]);
-    let player;
+    let player = useRef();
+    let ws = useRef();
+    let volume = useRef(100);
 
     useEffect(() => {
         getSongs();
 
-        console.log(loadYT);
+        ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
+
+        ws.current.onopen = () => {
+            console.log('WebSocket Client Connected');
+            const data = {
+                type: dataTypes.JOIN,
+            }
+            ws.current.send(JSON.stringify(data));
+        };
+        ws.current.onmessage = (message) => {
+            const dataFromServer = JSON.parse(message.data);
+            switch (dataFromServer.type) {
+                case dataTypes.NEW_MESSAGE:
+                    console.log('WS <NEW_MESSAGE>: ', dataFromServer);
+                    break;
+                case dataTypes.PLAY:
+                    player.current.playVideo();
+                    break;
+                case dataTypes.PAUSE:
+                    player.current.pauseVideo();
+                    break;
+                case dataTypes.VOLUME_UP:
+                    if (volume.current < 100);
+                        volume.current += 5;
+                    break;
+                case dataTypes.VOLUME_DOWN:
+                    if (volume.current > 0);
+                        volume.current -= 5;
+                    break;
+            }
+        };
+
         loadYT.then((YT) => {
-            player = new YT.Player('player', {
+            player.current = new YT.Player('player', {
                 height: 390,
                 width: 640,
                 videoId: 'LlY90lG_Fuw',
@@ -81,10 +123,47 @@ export function Musiq(props) {
 
     const handleSearchChange = debounce(1000, searchVideo);
 
+    function sendMessage() {
+         const data = {
+            type: dataTypes.NEW_MESSAGE,
+            message: 'fajna wiadomosc2',
+        };
+        ws.current.send(JSON.stringify(data));
+    }
+
+    function play() {
+         const data = {
+            type: dataTypes.PLAY
+        };
+        ws.current.send(JSON.stringify(data));
+    }
+    function pause() {
+         const data = {
+            type: dataTypes.PAUSE
+        };
+        ws.current.send(JSON.stringify(data));
+    }
+    function up() {
+         const data = {
+            type: dataTypes.VOLUME_UP
+        };
+        ws.current.send(JSON.stringify(data));
+    }
+    function down() {
+         const data = {
+            type: dataTypes.VOLUME_DOWN
+        };
+        ws.current.send(JSON.stringify(data));
+    }
 
     return (
         <div>
             <Link to='/' className="btn">Go back</Link>
+            <button onClick={sendMessage}>send</button>
+            <button onClick={play}>play</button>
+            <button onClick={pause}>pause</button>
+            <button onClick={up}>up</button>
+            <button onClick={down}>down</button>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange(t)}}></input>
             <div className="row">
                 <div className="col s6">
