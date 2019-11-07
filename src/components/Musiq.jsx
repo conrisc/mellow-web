@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
@@ -19,12 +20,30 @@ setTimeout(() => {
     loadClient();
 }, 1000);
 
+const loadYT = new Promise((resolve) => {
+    window.onYouTubeIframeAPIReady = () => resolve(window.YT)
+})
+
+
 export function Musiq(props) {
     const [ ytItems, setYtItems ] = useState([]);
     const [ songs, setSongs ] = useState([]);
+    let player;
 
     useEffect(() => {
         getSongs();
+
+        console.log(loadYT);
+        loadYT.then((YT) => {
+            player = new YT.Player('player', {
+                height: 390,
+                width: 640,
+                videoId: 'LlY90lG_Fuw',
+                events: {
+                },
+                playerVars: { 'origin': 'https://what-appy.herokuapp.com/' }
+            })
+        })
     }, []);
 
     function getSongs() {
@@ -32,7 +51,7 @@ export function Musiq(props) {
 
         const opts = {
             skip: 0,
-            limit: 300 
+            limit: 10
         };
 
         api.searchSong(opts)
@@ -62,8 +81,10 @@ export function Musiq(props) {
 
     const handleSearchChange = debounce(1000, searchVideo);
 
+
     return (
         <div>
+            <Link to='/' className="btn">Go back</Link>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange(t)}}></input>
             <div className="row">
                 <div className="col s6">
@@ -72,6 +93,7 @@ export function Musiq(props) {
                 <div className="col s6">
                     <YTList items={ytItems} />
                 </div>
+                <div id="player"></div>
             </div>
         </div>
     );
