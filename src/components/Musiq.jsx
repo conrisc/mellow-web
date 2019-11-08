@@ -71,6 +71,9 @@ export function Musiq(props) {
     const ws = useRef();
     const YTListRef = useRef();
 
+    const [ skip, setSkip ] = useState(0);
+    const [ limit, setLimit ] = useState(10);
+
     useEffect(() => {
         setVolume2Debounced.current = debounce(1000, setVolume2);
         handleSearchChange.current = debounce(1000, searchVideo);
@@ -132,8 +135,8 @@ export function Musiq(props) {
         const api = new DevelopersApi();
 
         const opts = {
-            skip: 0,
-            limit: 20
+            skip: skip,
+            limit: limit
         };
 
         api.searchSong(opts)
@@ -232,13 +235,16 @@ export function Musiq(props) {
                                 }}
                             />
                         </p>
+                        <input type="number" value={skip} onChange={e => setSkip(e.target.value)}></input>
+                        <input type="number" value={limit} onChange={e => setLimit(e.target.value)}></input>
+                        <button className="btn btn-small" onClick={getSongs}>Reload</button>
                     </form>
                 </div>
             </div>
             <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input>
             <div className="row pos-relative">
                 <div className="col s12 l6">
-                    <TrackList songs={songs} findSong={searchVideo} />
+                    <TrackList songs={songs} findSong={searchVideo} loadVideo={loadVideo} />
                 </div>
                 <div ref={YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text">
                     <button className="btn btn-small hide-on-large-only transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
