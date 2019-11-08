@@ -86,10 +86,8 @@ body, p {
     }
 }
 
-@media only screen and (min-width: 993px) {
-    .hide-on-big {
-        display: none;
-    }
+.transform-bottom-390px {
+    transform: translateY(390px);
 }
 
 .right-0 {
@@ -102,6 +100,13 @@ body, p {
 
 .pos-relative {
     position: relative;
+}
+
+.bottom-panel {
+    position: fixed;
+    bottom: -6px;
+    right: 0;
+    width: 640px;
 }
 
 :root {

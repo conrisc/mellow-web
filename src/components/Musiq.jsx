@@ -5,6 +5,7 @@ import { DevelopersApi } from 'what_api';
 
 import { TrackList } from './TrackList';
 import { YTList } from './YTList';
+import { BottomPanel } from './BottomPanel';
 
 const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
 
@@ -132,7 +133,7 @@ export function Musiq(props) {
 
         const opts = {
             skip: 0,
-            limit: 10
+            limit: 20
         };
 
         api.searchSong(opts)
@@ -243,8 +244,8 @@ export function Musiq(props) {
                     <button className="btn btn-small hide-on-large-only transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
                     <YTList items={ytItems} loadVideo={loadVideo} />
                 </div>
-                <div id="player"></div>
             </div>
+            <BottomPanel />
         </div>
     );
 }
