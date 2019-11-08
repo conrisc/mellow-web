@@ -97,13 +97,13 @@ body, p {
         position: fixed;
     }
 
-    .z-depth-2 {
+    .z-depth-2-sm {
         box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3) 
     }
 }
 
-.transform-bottom-390px {
-    transform: translateY(390px);
+.transform-bottom-360px {
+    transform: translateY(360px);
 }
 
 .transform-bottom-110 {

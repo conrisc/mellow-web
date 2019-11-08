@@ -68,17 +68,28 @@ export function Musiq(props) {
     const [ volume, setVolume ] = useState(100);
     const setVolume2Debounced = useRef();
     const handleSearchChange = useRef();
+    const onScrollDebounced = useRef();
     const player = useRef(null);
     const ws = useRef();
     const YTListRef = useRef();
+    const songsLoader = useRef();
 
     const [ skip, setSkip ] = useState(0);
-    const [ limit, setLimit ] = useState(10);
+    const [ limit, setLimit ] = useState(30);
+
+    useEffect(() => {
+        onScrollDebounced.current = debounce(1000, onScroll)
+        window.addEventListener('scroll', onScrollDebounced.current);
+
+        return () => {
+            window.removeEventListener('scroll', onScrollDebounced.current);
+        }
+    }, [skip, limit, songs]);
 
     useEffect(() => {
         setVolume2Debounced.current = debounce(1000, setVolume2);
         handleSearchChange.current = debounce(1000, searchVideo);
-        getSongs();
+        songsLoader.current = getSongs();
 
         ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
 
@@ -115,12 +126,8 @@ export function Musiq(props) {
 
         loadYT.then((YT) => {
             player.current = new YT.Player('player', {
-                height: 390,
-                width: 640,
-                videoId: 'LlY90lG_Fuw',
-                events: {
-                },
-                playerVars: { 'origin': 'https://what-appy.herokuapp.com/' }
+                height: 360,
+                width: 640
             })
         })
 
@@ -132,6 +139,13 @@ export function Musiq(props) {
         }
     }, []);
 
+    function onScroll() {
+        if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
+            songsLoader.current = songsLoader.current
+                .then(updateSongs);
+        }
+    }
+
     function getSongs() {
         const api = new DevelopersApi();
 
@@ -140,7 +154,7 @@ export function Musiq(props) {
             limit: limit
         };
 
-        api.searchSong(opts)
+        return api.searchSong(opts)
             .then(data => {
                 setSongs(data);
             }, error => {
@@ -148,8 +162,21 @@ export function Musiq(props) {
             });
     }
 
-    function getPlayer() {
-        // player.current = 
+    function updateSongs () {
+        const api = new DevelopersApi();
+
+        const opts = {
+            skip: skip+limit,
+            limit
+        };
+
+        return api.searchSong(opts)
+            .then(data => {
+                setSongs([...songs, ...data]);
+                setSkip(skip + data.length)
+            }, error => {
+                console.error(error);
+            });
     }
 
     function searchVideo(text) {
@@ -211,10 +238,6 @@ export function Musiq(props) {
             videoId
         }
         ws.current.send(JSON.stringify(data));
-    }
-
-    function handleScroll(event) {
-        console.log(event);
     }
 
     return (

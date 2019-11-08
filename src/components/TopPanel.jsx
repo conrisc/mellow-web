@@ -33,10 +33,10 @@ export function TopPanel(props) {
                 </div>
                 <div className="row">
                     <div className="col s4">
-                        <input type="number" value={props.skip} onChange={e => props.setSkip(e.target.value)}></input>
+                        <input type="number" value={props.skip} onChange={e => { props.setSkip(Number(e.target.value)) }}></input>
                     </div>
                     <div className="col s4">
-                        <input type="number" value={props.limit} onChange={e => props.setLimit(e.target.value)}></input>
+                        <input type="number" value={props.limit} onChange={e => { props.setLimit(Number(e.target.value)) }}></input>
                     </div>
                     <div className="col s4 center-align">
                         <button className="btn btn-small" onClick={props.getSongs}>Reload</button>
