@@ -5,6 +5,7 @@ import { DevelopersApi } from 'what_api';
 
 import { TrackList } from './TrackList';
 import { YTList } from './YTList';
+import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
 
 const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
@@ -212,42 +213,31 @@ export function Musiq(props) {
         ws.current.send(JSON.stringify(data));
     }
 
+    function handleScroll(event) {
+        console.log(event);
+    }
+
     return (
         <div>
-            <div className="row">
-                <div className="col s2">
-                    <Link to='/' className="btn">Go back</Link>
-                </div>
-                <div className="col s2">
-                    <button className="btn" onClick={play}>play</button>
-                </div>
-                <div className="col s2">
-                    <button className="btn" onClick={pause}>pause</button>
-                </div>
-                <div className="col s3">
-                      <form action="#">
-                        <p className="range-field">
-                            <input type="range" min="0" max="100" value={volume}
-                                onChange={e => {
-                                    const v = e.target.value;
-                                    setVolume(v);
-                                    setVolume2Debounced.current(v);
-                                }}
-                            />
-                        </p>
-                        <input type="number" value={skip} onChange={e => setSkip(e.target.value)}></input>
-                        <input type="number" value={limit} onChange={e => setLimit(e.target.value)}></input>
-                        <button className="btn btn-small" onClick={getSongs}>Reload</button>
-                    </form>
-                </div>
-            </div>
-            <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input>
+            <TopPanel 
+                play={play}
+                pause={pause}
+                volume={volume}
+                setVolume={setVolume}
+                setVolume2Debounced={setVolume2Debounced}
+                skip={skip}
+                setSkip={setSkip}
+                limit={limit}
+                setLimit={setLimit}
+                getSongs={getSongs}
+            />
+            {/* <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input> */}
             <div className="row pos-relative">
                 <div className="col s12 l6">
                     <TrackList songs={songs} findSong={searchVideo} loadVideo={loadVideo} />
                 </div>
-                <div ref={YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text">
-                    <button className="btn btn-small hide-on-large-only transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
+                <div ref={YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
+                    <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
                     <YTList items={ytItems} loadVideo={loadVideo} />
                 </div>
             </div>

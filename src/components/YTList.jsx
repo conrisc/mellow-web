@@ -5,9 +5,10 @@ export function YTList(props) {
 
     return (
         <div>
+            <ul className="collection">
             {
                 items.map((el, index) => {
-                    return <div key={index}>
+                    return <li key={index}>
                             <div className="row">
                                 <div className="col s8">
                                     <a href={`https://youtube.com/watch?v=${el.id.videoId}`}>
@@ -20,9 +21,10 @@ export function YTList(props) {
                                     <img src={el.snippet.thumbnails.default.url}></img>
                                 </div>
                             </div>
-                    </div>;
+                    </li>;
                 })
             }
+            </ul>
         </div>
     );
 }
