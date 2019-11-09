@@ -73,6 +73,7 @@ export function Musiq(props) {
     const ws = useRef();
     const YTListRef = useRef();
     const songsLoader = useRef();
+    const [ wsMsg, setWsMsg ] = useState([]);
 
     const [ skip, setSkip ] = useState(0);
     const [ limit, setLimit ] = useState(30);
@@ -123,6 +124,16 @@ export function Musiq(props) {
                     break;
             }
         };
+
+        ws.current.onclose = (message) => {
+            console.warn('OnClose: ', message);
+            setWsMsg([...wsMsg, 'OnClose: ' + message.type]);
+        }
+
+        ws.current.onclose = (message) => {
+            console.error('OnError: ', message);
+            setWsMsg([...wsMsg, 'OnError: ' + message.type]);
+        }
 
         loadYT.then((YT) => {
             player.current = new YT.Player('player', {
@@ -255,6 +266,7 @@ export function Musiq(props) {
                 getSongs={getSongs}
             />
             {/* <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input> */}
+            <div>{wsMsg}</div>
             <div className="row pos-relative">
                 <div className="col s12 l6">
                     <TrackList songs={songs} findSong={searchVideo} loadVideo={loadVideo} />
