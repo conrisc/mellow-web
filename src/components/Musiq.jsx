@@ -74,15 +74,13 @@ export function Musiq(props) {
     const ws = useRef();
     const YTListRef = useRef();
     const songsLoader = useRef();
-    const [ wsMsg, setWsMsg ] = useState([]);
 
     const [ skip, setSkip ] = useState(0);
     const [ limit, setLimit ] = useState(30);
 
-    const [ toasts, setToasts ] = useState([
-        {date: new Date(), text: "Uwaga fajnie!"},
-        {date: new Date(), text: "Uwaga fajnie!"}
-    ]);
+    const [ toasts, setToasts ] = useState([]);
+
+    const [ isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
         onScrollDebounced.current = debounce(1000, onScroll)
@@ -94,52 +92,13 @@ export function Musiq(props) {
     }, [skip, limit, songs]);
 
     useEffect(() => {
+        window.addEventListener('offline', (e) => { console.log('offline'); });
+        window.addEventListener('online', (e) => { console.log('online'); });
         setVolume2Debounced.current = debounce(1000, setVolume2);
         handleSearchChange.current = debounce(1000, searchVideo);
         songsLoader.current = getSongs();
 
-        ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
-
-        ws.current.onopen = () => {
-            console.log('WebSocket Client Connected');
-            const data = {
-                type: dataTypes.JOIN,
-            }
-            ws.current.send(JSON.stringify(data));
-        };
-        ws.current.onmessage = (message) => {
-            const dataFromServer = JSON.parse(message.data);
-            console.log('WS <onmessage>: ', dataFromServer);
-            switch (dataFromServer.type) {
-                case dataTypes.NEW_MESSAGE:
-                    console.log('WS <NEW_MESSAGE>: ', dataFromServer);
-                    break;
-                case dataTypes.PLAY:
-                    player.current.playVideo();
-                    break;
-                case dataTypes.PAUSE:
-                    player.current.pauseVideo();
-                    break;
-                case dataTypes.SET_VOLUME:
-                    setVolume(dataFromServer.volume);
-                    player.current.setVolume(dataFromServer.volume);
-                    break;
-                case dataTypes.LOAD_VIDEO:
-                    player.current.loadVideoById(dataFromServer.videoId)
-                    player.current.playVideo();
-                    break;
-            }
-        };
-
-        ws.current.onclose = (message) => {
-            console.warn('OnClose: ', message);
-            setWsMsg([...wsMsg, 'OnClose: ' + message.type]);
-        }
-
-        ws.current.onclose = (message) => {
-            console.error('OnError: ', message);
-            setWsMsg([...wsMsg, 'OnError: ' + message.type]);
-        }
+        connect();
 
         loadYT.then((YT) => {
             player.current = new YT.Player('player', {
@@ -155,6 +114,76 @@ export function Musiq(props) {
             clearInterval(pingPong);
         }
     }, []);
+
+    function connect() {
+        ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
+
+        ws.current.onopen = () => {
+            console.log('WebSocket Client Connected', ws.current.readyState);
+            setIsConnected(true);
+            const data = {
+                type: dataTypes.JOIN,
+            }
+            ws.current.send(JSON.stringify(data));
+        };
+        ws.current.onmessage = (message) => {
+            const dataFromServer = JSON.parse(message.data);
+            console.log('WS <onmessage>: ', dataFromServer);
+            switch (dataFromServer.type) {
+                case dataTypes.NEW_MESSAGE:
+                    console.log('WS <NEW_MESSAGE>: ', dataFromServer);
+                    break;
+                case dataTypes.PLAY:
+                    player.current.playVideo();
+                    setToasts([{
+                        date: new Date(),
+                        text: 'Playing video'
+                    }, ...toasts]);
+                    break;
+                case dataTypes.PAUSE:
+                    player.current.pauseVideo();
+                    console.log('Pausing', toasts);
+                    setToasts([{
+                        date: new Date(),
+                        text: 'Pausing video'
+                    }, ...toasts]);
+                    break;
+                case dataTypes.SET_VOLUME:
+                    setVolume(dataFromServer.volume);
+                    setToasts([{
+                        date: new Date(),
+                        text: `Setting volume to ${dataFromServer.volume}`
+                    }, ...toasts]);
+                    player.current.setVolume(dataFromServer.volume);
+                    break;
+                case dataTypes.LOAD_VIDEO:
+                    player.current.loadVideoById(dataFromServer.videoId)
+                    player.current.playVideo();
+                    setToasts([{
+                        date: new Date(),
+                        text: `Loading video: ${dataFromServer.videoId}`
+                    }, ...toasts]);
+                    break;
+            }
+        };
+
+        ws.current.onclose = (message) => {
+            console.warn('OnClose: ', message, ws.current.readyState);
+            setIsConnected(false);
+            setToasts([{
+                date: new Date(),
+                text: `WS<onclose>: ${message.type}`
+            }, ...toasts]);
+        }
+
+        ws.current.onerror = (message) => {
+            console.error('OnError: ', message, ws.current.readyState);
+            setToasts([{
+                date: new Date(),
+                text: `WS<onerror>: ${message.type}`
+            }, ...toasts]);
+        }
+    }
 
     function onScroll() {
         if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
@@ -175,6 +204,10 @@ export function Musiq(props) {
             .then(data => {
                 setSongs(data);
             }, error => {
+                setToasts([{
+                    date: new Date(),
+                    text: 'Cound not get songs'
+                }, ...toasts]);
                 console.error(error);
             });
     }
@@ -192,6 +225,10 @@ export function Musiq(props) {
                 setSongs([...songs, ...data]);
                 setSkip(skip + data.length)
             }, error => {
+                setToasts([{
+                    date: new Date(),
+                    text: 'Cound not update songs'
+                }, ...toasts]);
                 console.error(error);
             });
     }
@@ -210,7 +247,13 @@ export function Musiq(props) {
         }).then((response) => {
                 setYtItems(response.result ? response.result.items : []);
             },
-            (err) => { console.error("Execute error", err); });
+            (err) => {
+                setToasts([{
+                    date: new Date(),
+                    text: 'Cound not search youtube videos'
+                }, ...toasts]);
+                console.error("Execute error", err); 
+            });
     }
 
     function sendPing() {
@@ -259,7 +302,7 @@ export function Musiq(props) {
 
     return (
         <div>
-            <Toast data={toasts}></Toast>
+            <Toast data={toasts} setToasts={setToasts}></Toast>
             <TopPanel 
                 play={play}
                 pause={pause}
@@ -271,9 +314,10 @@ export function Musiq(props) {
                 limit={limit}
                 setLimit={setLimit}
                 getSongs={getSongs}
+                connect={connect}
+                isConnected={isConnected}
             />
             {/* <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input> */}
-            <div>{wsMsg}</div>
             <div className="row pos-relative">
                 <div className="col s12 l6">
                     <TrackList songs={songs} findSong={searchVideo} loadVideo={loadVideo} />

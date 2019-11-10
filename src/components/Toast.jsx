@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 export function Toast(props) {
-    const [ toasts, setToasts ]= useState(props.data.filter(isNew));
+    const toasts = props.data;
 
     function isNew(toast) {
         return (new Date() - toast.date) < 15000;
@@ -12,10 +12,11 @@ export function Toast(props) {
         return () => {
             clearInterval(timerId);
         }
-    }, []);
+    });
 
     function updateToasts() {
-        setToasts(props.data.filter(isNew));
+        const newToasts = toasts.filter(isNew);
+        props.setToasts(newToasts);
     }
 
     return (
