@@ -7,6 +7,7 @@ import { TrackList } from './TrackList';
 import { YTList } from './YTList';
 import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
+import { Toast } from './Toast';
 
 const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
 
@@ -77,6 +78,11 @@ export function Musiq(props) {
 
     const [ skip, setSkip ] = useState(0);
     const [ limit, setLimit ] = useState(30);
+
+    const [ toasts, setToasts ] = useState([
+        {date: new Date(), text: "Uwaga fajnie!"},
+        {date: new Date(), text: "Uwaga fajnie!"}
+    ]);
 
     useEffect(() => {
         onScrollDebounced.current = debounce(1000, onScroll)
@@ -253,6 +259,7 @@ export function Musiq(props) {
 
     return (
         <div>
+            <Toast data={toasts}></Toast>
             <TopPanel 
                 play={play}
                 pause={pause}

@@ -122,6 +122,25 @@ body, p {
     position: relative;
 }
 
+.toast-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2000;
+}
+
+.toast-item {
+    padding: 10px;
+    background: white;
+    border-radius: 2px;
+    width: 200px;
+    margin-top: 5px;
+}
+
+.small-text {
+    font-size: 11px;
+}
+
 .top-panel {
     top: 0;
     width: 100%;
