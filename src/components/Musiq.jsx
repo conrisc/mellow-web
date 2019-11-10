@@ -63,70 +63,103 @@ const fakeYTData = [
     }
 ];
 
-export function Musiq(props) {
-    const [ ytItems, setYtItems ] = useState(fakeYTData);
-    const [ songs, setSongs ] = useState([]);
-    const [ volume, setVolume ] = useState(100);
-    const setVolume2Debounced = useRef();
-    const handleSearchChange = useRef();
-    const onScrollDebounced = useRef();
-    const player = useRef(null);
-    const ws = useRef();
-    const YTListRef = useRef();
-    const songsLoader = useRef();
+export class Musiq extends React.Component {
 
-    const [ skip, setSkip ] = useState(0);
-    const [ limit, setLimit ] = useState(30);
+    constructor(props) {
+        super(props);
 
-    const [ toasts, setToasts ] = useState([]);
-
-    const [ isConnected, setIsConnected] = useState(false);
-
-    useEffect(() => {
-        onScrollDebounced.current = debounce(1000, onScroll)
-        window.addEventListener('scroll', onScrollDebounced.current);
-
-        return () => {
-            window.removeEventListener('scroll', onScrollDebounced.current);
+        this.state = {
+            ytItems: fakeYTData,
+            songs: [],
+            volume: 100,
+            skip: 0,
+            limit: 30,
+            toasts: [],
+            isConnected: false
         }
-    }, [skip, limit, songs]);
+        this.player = null;
+        this.ws = new WebSocket('wss://what-appy-server.herokuapp.com');
+        this.YTListRef = React.createRef();
+        this.songsLoader = this.getSongs();
+        this.remote = {
+            sendPing: () => {
+                const data = {
+                    type: dataTypes.PING,
+                };
+                this.ws.send(JSON.stringify(data));
+            },
+            sendMessage: (text) => {
+                const data = {
+                    type: dataTypes.NEW_MESSAGE,
+                    message: 'some msg',
+                };
+                this.ws.send(JSON.stringify(data));
+            },
+            play: () => {
+                const data = {
+                    type: dataTypes.PLAY
+                };
+                this.ws.send(JSON.stringify(data));
+            },
+            pause: () => {
+                const data = {
+                    type: dataTypes.PAUSE
+                };
+                this.ws.send(JSON.stringify(data));
+            },
+            setVolume2: (vol) => {
+                const data = {
+                    type: dataTypes.SET_VOLUME,
+                    volume: vol
+                };
+                this.ws.send(JSON.stringify(data));
+            },
+            loadVideo: (videoId) => {
+                const data = {
+                    type: dataTypes.LOAD_VIDEO,
+                    videoId
+                }
+                this.ws.send(JSON.stringify(data));
+            }
+        }
+        this.handleSearchChange = debounce(1000, this.searchVideo);
+        this.setVolume2Debounced = debounce(1000, this.remote.setVolume2);
+        this.onScrollDebounced = debounce(1000, this.onScroll)
+        this.ping = setInterval(() => {
+            this.remote.sendPing();
+        }, 40000);
+    }
 
-    useEffect(() => {
+    componentDidMount() {
         window.addEventListener('offline', (e) => { console.log('offline'); });
         window.addEventListener('online', (e) => { console.log('online'); });
-        setVolume2Debounced.current = debounce(1000, setVolume2);
-        handleSearchChange.current = debounce(1000, searchVideo);
-        songsLoader.current = getSongs();
+        window.addEventListener('scroll', this.onScrollDebounced);
 
-        connect();
+        this.connect();
 
         loadYT.then((YT) => {
-            player.current = new YT.Player('player', {
+            this.player = new YT.Player('player', {
                 height: 360,
                 width: 640
             })
         })
+    }
 
-        let pingPong = setInterval(() => {
-            sendPing();
-        }, 40000)
-        return () => {
-            clearInterval(pingPong);
-        }
-    }, []);
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onScrollDebounced);
+        clearInterval(this.ping);
+    }
 
-    function connect() {
-        ws.current = new WebSocket('wss://what-appy-server.herokuapp.com');
-
-        ws.current.onopen = () => {
-            console.log('WebSocket Client Connected', ws.current.readyState);
-            setIsConnected(true);
+    connect() {
+        this.ws.onopen = () => {
+            console.log('WebSocket Client Connected', this.ws.readyState);
+            this.setState({ isConnected: true });
             const data = {
                 type: dataTypes.JOIN,
             }
-            ws.current.send(JSON.stringify(data));
+            this.ws.send(JSON.stringify(data));
         };
-        ws.current.onmessage = (message) => {
+        this.ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
             console.log('WS <onmessage>: ', dataFromServer);
             switch (dataFromServer.type) {
@@ -134,106 +167,121 @@ export function Musiq(props) {
                     console.log('WS <NEW_MESSAGE>: ', dataFromServer);
                     break;
                 case dataTypes.PLAY:
-                    player.current.playVideo();
-                    setToasts([{
-                        date: new Date(),
-                        text: 'Playing video'
-                    }, ...toasts]);
+                    this.player.playVideo();
+                    this.setState({ toasts: 
+                        [{
+                            date: new Date(),
+                            text: 'Playing video'
+                        }, ...this.state.toasts] 
+                    });
                     break;
                 case dataTypes.PAUSE:
-                    player.current.pauseVideo();
-                    console.log('Pausing', toasts);
-                    setToasts([{
-                        date: new Date(),
-                        text: 'Pausing video'
-                    }, ...toasts]);
+                    this.player.pauseVideo();
+                    console.log('Pausing', this.state.toasts);
+                    this.setState({ toasts: 
+                        [{
+                            date: new Date(),
+                            text: 'Pausing video'
+                        }, ...this.state.toasts]
+                    });
                     break;
                 case dataTypes.SET_VOLUME:
                     setVolume(dataFromServer.volume);
-                    setToasts([{
-                        date: new Date(),
-                        text: `Setting volume to ${dataFromServer.volume}`
-                    }, ...toasts]);
-                    player.current.setVolume(dataFromServer.volume);
+                    this.setState({ volume: dataFromServer.volume });
+                    this.setState({ toasts:
+                        [{
+                            date: new Date(),
+                            text: `Setting volume to ${dataFromServer.volume}`
+                        }, ...this.state.toasts]
+                    });
+                    this.player.setVolume(dataFromServer.volume);
                     break;
                 case dataTypes.LOAD_VIDEO:
-                    player.current.loadVideoById(dataFromServer.videoId)
-                    player.current.playVideo();
-                    setToasts([{
-                        date: new Date(),
-                        text: `Loading video: ${dataFromServer.videoId}`
-                    }, ...toasts]);
+                    this.player.loadVideoById(dataFromServer.videoId)
+                    this.player.playVideo();
+                    this.setState({ toasts:
+                        [{
+                            date: new Date(),
+                            text: `Loading video: ${dataFromServer.videoId}`
+                        }, ...this.state.toasts
+                    ]});
                     break;
             }
         };
 
-        ws.current.onclose = (message) => {
-            console.warn('OnClose: ', message, ws.current.readyState);
-            setIsConnected(false);
-            setToasts([{
-                date: new Date(),
-                text: `WS<onclose>: ${message.type}`
-            }, ...toasts]);
+        this.ws.onclose = (message) => {
+            console.warn('OnClose: ', message, this.ws.readyState);
+            this.setState({ isConnected: false })
+            this.setState({ toasts: 
+                [{
+                    date: new Date(),
+                    text: `WS<onclose>: ${message.type}`
+                }, ...this.state.toasts]
+            });
         }
 
-        ws.current.onerror = (message) => {
-            console.error('OnError: ', message, ws.current.readyState);
-            setToasts([{
-                date: new Date(),
-                text: `WS<onerror>: ${message.type}`
-            }, ...toasts]);
+        this.ws.onerror = (message) => {
+            console.error('OnError: ', message, this.ws.readyState);
+            this.setToasts({ toasts:
+                [{
+                    date: new Date(),
+                    text: `WS<onerror>: ${message.type}`
+                }, ...this.state.toasts]
+            });
         }
     }
 
-    function onScroll() {
+    onScroll() {
         if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
-            songsLoader.current = songsLoader.current
-                .then(updateSongs);
+            this.songsLoader = this.songsLoader
+                .then(this.updateSongs);
         }
     }
 
-    function getSongs() {
+    getSongs() {
         const api = new DevelopersApi();
 
         const opts = {
-            skip: skip,
-            limit: limit
+            skip: this.state.skip,
+            limit: this.state.limit
         };
 
         return api.searchSong(opts)
             .then(data => {
-                setSongs(data);
+                this.setState({ songs: data })
             }, error => {
-                setToasts([{
-                    date: new Date(),
-                    text: 'Cound not get songs'
-                }, ...toasts]);
+                this.setState({ toasts:
+                    [{
+                        date: new Date(),
+                        text: 'Cound not get songs'
+                    }, ...this.state.toasts]}
+                );
                 console.error(error);
             });
     }
 
-    function updateSongs () {
+    updateSongs () {
         const api = new DevelopersApi();
 
         const opts = {
-            skip: skip+limit,
-            limit
+            skip: this.state.skip + this.state.limit,
+            limit: this.state.limit
         };
 
         return api.searchSong(opts)
             .then(data => {
-                setSongs([...songs, ...data]);
-                setSkip(skip + data.length)
+                this.setState({ songs: [...this.state.songs, ...data] });
+                this.setState({skip: this.state.skip + data.length});
             }, error => {
                 setToasts([{
                     date: new Date(),
                     text: 'Cound not update songs'
-                }, ...toasts]);
+                }, ...this.state.toasts]);
                 console.error(error);
             });
     }
 
-    function searchVideo(text) {
+    searchVideo(text) {
         if (!text || text === '') {
             console.log('searchVideo: input is empty');
             return;
@@ -245,89 +293,65 @@ export function Musiq(props) {
             "type": "video",
             "q": text
         }).then((response) => {
-                setYtItems(response.result ? response.result.items : []);
+                this.setState({ytItems: response.result ? response.result.items : []})
             },
             (err) => {
-                setToasts([{
-                    date: new Date(),
-                    text: 'Cound not search youtube videos'
-                }, ...toasts]);
+                this.setState({ toasts:
+                    [{
+                        date: new Date(),
+                        text: 'Cound not search youtube videos'
+                    }, ...(this.state.toasts)]
+                });
                 console.error("Execute error", err); 
             });
     }
 
-    function sendPing() {
-         const data = {
-            type: dataTypes.PING,
-        };
-        ws.current.send(JSON.stringify(data));
+    setVolume(value) {
+        this.setState({ volume: value });
     }
 
-    function sendMessage(text) {
-         const data = {
-            type: dataTypes.NEW_MESSAGE,
-            message: 'some msg',
-        };
-        ws.current.send(JSON.stringify(data));
+    setSkip(value) {
+        this.setState({ skip: value });
     }
 
-    function play() {
-         const data = {
-            type: dataTypes.PLAY
-        };
-        ws.current.send(JSON.stringify(data));
-    }
-    function pause() {
-         const data = {
-            type: dataTypes.PAUSE
-        };
-        ws.current.send(JSON.stringify(data));
-    }
-    function setVolume2(vol) {
-         const data = {
-            type: dataTypes.SET_VOLUME,
-            volume: vol
-        };
-        ws.current.send(JSON.stringify(data));
+    setLimit(value) {
+        this.setState({ limit: value });
     }
 
-
-    function loadVideo(videoId) {
-        const data = {
-            type: dataTypes.LOAD_VIDEO,
-            videoId
-        }
-        ws.current.send(JSON.stringify(data));
+    setToasts(value) {
+        this.setState({ toasts: value });
     }
 
-    return (
-        <div>
-            <Toast data={toasts} setToasts={setToasts}></Toast>
-            <TopPanel 
-                play={play}
-                pause={pause}
-                volume={volume}
-                setVolume={setVolume}
-                setVolume2Debounced={setVolume2Debounced}
-                skip={skip}
-                setSkip={setSkip}
-                limit={limit}
-                setLimit={setLimit}
-                getSongs={getSongs}
-                connect={connect}
-                isConnected={isConnected}
-            />
-            {/* <input type="text" onChange={e => {const t = e.target.value; handleSearchChange.current(t)}}></input> */}
-            <div className="row pos-relative">
-                <div className="col s12 l6">
-                    <TrackList songs={songs} findSong={searchVideo} loadVideo={loadVideo} />
+    render() {
+        return (
+            <div>
+                <Toast data={this.state.toasts} setToasts={(v) => this.setToasts(v)}></Toast>
+                <TopPanel 
+                    play={() => this.remote.play()}
+                    pause={() => this.remote.pause()}
+                    volume={this.state.volume}
+                    setVolume={(v) => this.setVolume(v)}
+                    setVolume2Debounced={() => this.setVolume2Debounced()}
+                    skip={this.state.skip}
+                    setSkip={(v) => this.setSkip(v)}
+                    limit={this.state.limit}
+                    setLimit={(v) => this.setLimit(v)}
+                    getSongs={(v) => this.getSongs(v)}
+                    connect={() => this.connect()}
+                    isConnected={this.state.isConnected}
+                />
+                {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
+                <div className="row pos-relative">
+                    <div className="col s12 l6">
+                        <TrackList songs={this.state.songs} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.remote.loadVideo(id)} />
+                    </div>
+                    <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
+                        <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
+                        <YTList items={this.state.ytItems} loadVideo={(id) => this.remote.loadVideo(id)} />
+                    </div>
                 </div>
-                <div ref={YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
-                    <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
-                    <YTList items={ytItems} loadVideo={loadVideo} />
-                </div>
+                <BottomPanel />
             </div>
-            <BottomPanel />
-        </div>
-    );
-}
+        );
+    }
+};
