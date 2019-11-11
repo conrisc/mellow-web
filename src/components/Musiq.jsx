@@ -92,63 +92,33 @@ export class Musiq extends React.Component {
                         break;
                     case dataTypes.PLAY:
                         this.player.playVideo();
-                        this.setState({ toasts:
-                            [{
-                                date: new Date(),
-                                text: 'Playing video'
-                            }, ...this.state.toasts]
-                        });
+                        this.pushToast('Playing video');
                         break;
                     case dataTypes.PAUSE:
                         this.player.pauseVideo();
-                        this.setState({ toasts:
-                            [{
-                                date: new Date(),
-                                text: 'Pausing video'
-                            }, ...this.state.toasts]
-                        });
+                        this.pushToast('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
                         setVolume(dataFromServer.volume);
                         this.setState({ volume: dataFromServer.volume });
-                        this.setState({ toasts:
-                            [{
-                                date: new Date(),
-                                text: `Setting volume to ${dataFromServer.volume}`
-                            }, ...this.state.toasts]
-                        });
+                        this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         this.player.setVolume(dataFromServer.volume);
                         break;
                     case dataTypes.LOAD_VIDEO:
                         this.player.loadVideoById(dataFromServer.videoId)
                         this.player.playVideo();
-                        this.setState({ toasts:
-                            [{
-                                date: new Date(),
-                                text: `Loading video: ${dataFromServer.videoId}`
-                            }, ...this.state.toasts
-                        ]});
+                        this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
             },
             onclose: (message) => {
                 console.warn('OnClose: ', message);
                 this.setState({ isConnected: false })
-                this.setState({ toasts:
-                    [{
-                        date: new Date(),
-                        text: `WS<onclose>: ${message.type}`
-                    }, ...this.state.toasts]
-                });
+                this.pushToast(`WS<onclose>: ${message.type}`);
             },
             onerror: (message) => {
                 console.error('OnError: ', message);
-                this.setToasts({ toasts:
-                    [{
-                        date: new Date(),
-                        text: `WS<onerror>: ${message.type}`
-                    }, ...this.state.toasts]
-                });
+                this.pushToast(`WS<onerror>: ${message.type}`);
             }
         }
         this.ws.open(listeners);
@@ -173,12 +143,7 @@ export class Musiq extends React.Component {
             .then(data => {
                 this.setState({ songs: data })
             }, error => {
-                this.setState({ toasts:
-                    [{
-                        date: new Date(),
-                        text: 'Cound not get songs'
-                    }, ...this.state.toasts]}
-                );
+                this.pushToast('Cound not get songs');
                 console.error(error);
             });
     }
@@ -196,10 +161,7 @@ export class Musiq extends React.Component {
                 this.setState({ songs: [...this.state.songs, ...data] });
                 this.setState({skip: this.state.skip + data.length});
             }, error => {
-                setToasts([{
-                    date: new Date(),
-                    text: 'Cound not update songs'
-                }, ...this.state.toasts]);
+                this.pushToast('Cound not update songs');
                 console.error(error);
             });
     }
@@ -219,12 +181,7 @@ export class Musiq extends React.Component {
                 this.setState({ytItems: response.result ? response.result.items : []})
             },
             (err) => {
-                this.setState({ toasts:
-                    [{
-                        date: new Date(),
-                        text: 'Cound not search youtube videos'
-                    }, ...(this.state.toasts)]
-                });
+                this.pushToast('Cound not search youtube videos');
                 console.error("Execute error", err); 
             });
     }
@@ -247,6 +204,15 @@ export class Musiq extends React.Component {
 
     loadVideo(videoId) {
         this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
+    }
+
+    pushToast(text) {
+        this.setState({ toasts:
+            [{
+                date: new Date(),
+                text
+            }, ...this.state.toasts]
+        });
     }
 
     render() {
