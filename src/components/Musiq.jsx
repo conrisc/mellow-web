@@ -9,24 +9,6 @@ import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
 import { Toast } from './Toast';
 
-const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
-
-gapi.load("client");
-function loadClient() {
-    gapi.client.setApiKey(API_KEY);
-    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
-        .then(() => { console.log("GAPI client loaded for API"); },
-            (err) => { console.error("Error loading GAPI client for API", err); });
-}
-
-setTimeout(() => {
-    loadClient();
-}, 1000);
-
-const loadYT = new Promise((resolve) => {
-    window.onYouTubeIframeAPIReady = () => resolve(window.YT)
-})
-
 
 const dataTypes = {
     NEW_MESSAGE: 'new_message',
