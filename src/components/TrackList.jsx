@@ -16,7 +16,7 @@ export function TrackList(props) {
                             <div className="col">
                                 <h6 className="bold">{songItem.title}</h6>
                                 {
-                                    songItem.tags.map(tagItem => <span className="tag-item">{tagItem}</span>)
+                                    songItem.tags.map((tagItem, index) => <span key="index" className="tag-item">{tagItem}</span>)
                                 }
                                 <p>
                                     <span className="small-text grey-text">{date}</span>

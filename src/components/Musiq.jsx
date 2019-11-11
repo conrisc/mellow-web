@@ -8,6 +8,8 @@ import { YTList } from './YTList';
 import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
 import { Toast } from './Toast';
+import { TagsList } from './TagsList';
+
 import { WSConnection } from '../services/wsConnection';
 import { dataTypes } from '../constants/wsConstants';
 
@@ -21,9 +23,10 @@ export class Musiq extends React.Component {
             songs: [],
             volume: 100,
             skip: 0,
-            limit: 30,
+            limit: 20,
             toasts: [],
-            isConnected: false
+            isConnected: false,
+            tags: []
         }
         this.player = null;
         this.YTListRef = React.createRef();
@@ -44,6 +47,7 @@ export class Musiq extends React.Component {
                 width: 640
             })
         })
+
     }
 
     componentWillUnmount() {
@@ -108,7 +112,8 @@ export class Musiq extends React.Component {
 
         const opts = {
             skip: this.state.skip,
-            limit: this.state.limit
+            limit: this.state.limit,
+            tags:  this.state.tags
         };
 
         return api.searchSong(opts)
@@ -125,7 +130,8 @@ export class Musiq extends React.Component {
 
         const opts = {
             skip: this.state.skip + this.state.limit,
-            limit: this.state.limit
+            limit: this.state.limit,
+            tags: this.state.tags
         };
 
         return api.searchSong(opts)
@@ -175,6 +181,7 @@ export class Musiq extends React.Component {
         return (
             <div>
                 <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
+                <TagsList />
                 <TopPanel 
                     ws={this.ws}
                     connect={() => this.connect()}
