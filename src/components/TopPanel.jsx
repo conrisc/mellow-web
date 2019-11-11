@@ -1,8 +1,23 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
+import { dataTypes } from '../constants/wsConstants';
+
 export function TopPanel(props) {
     const panelRef = useRef();
+    const ws = props.ws;
+
+    function play() {
+        ws.sendData(dataTypes.PLAY);
+    }
+
+    function pause() {
+        ws.sendData(dataTypes.PAUSE);
+    }
+
+    function setVolume(volume) {
+        ws.sendDataDebounced(dataTypes.SET_VOLUME, { volume });
+    }
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white pos-fixed-sm z-depth-1 z-depth-2-sm center-align">
@@ -15,10 +30,10 @@ export function TopPanel(props) {
                         <button className={"btn green" + (props.isConnected ? ' disabled' : '')} onClick={props.connect}>Connect</button>
                     </div>
                     <div className="col m2">
-                        <button className="btn" onClick={props.play}>play</button>
+                        <button className="btn" onClick={play}>play</button>
                     </div>
                     <div className="col m2">
-                        <button className="btn" onClick={props.pause}>pause</button>
+                        <button className="btn" onClick={pause}>pause</button>
                     </div>
                     <div className="col s12 m6 l6">
                             <form action="#">
@@ -27,7 +42,7 @@ export function TopPanel(props) {
                                     onChange={e => {
                                         const v = e.target.value;
                                         props.setVolume(v);
-                                        props.setVolume2Debounced.current(v);
+                                        setVolume(v);
                                     }}
                                 />
                             </p>

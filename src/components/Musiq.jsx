@@ -8,17 +8,8 @@ import { YTList } from './YTList';
 import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
 import { Toast } from './Toast';
-
-
-const dataTypes = {
-    NEW_MESSAGE: 'new_message',
-    JOIN: 'join',
-    PLAY: 'play',
-    PAUSE: 'pause',
-    SET_VOLUME: 'set_volume',
-    LOAD_VIDEO: 'load_video',
-    PING: 'ping'
-}
+import { WSConnection } from '../services/wsConnection';
+import { dataTypes } from '../constants/wsConstants';
 
 const fakeYTData = [
     {
@@ -60,56 +51,11 @@ export class Musiq extends React.Component {
             isConnected: false
         }
         this.player = null;
-        this.ws = new WebSocket('wss://what-appy-server.herokuapp.com');
         this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
-        this.remote = {
-            sendPing: () => {
-                const data = {
-                    type: dataTypes.PING,
-                };
-                this.ws.send(JSON.stringify(data));
-            },
-            sendMessage: (text) => {
-                const data = {
-                    type: dataTypes.NEW_MESSAGE,
-                    message: 'some msg',
-                };
-                this.ws.send(JSON.stringify(data));
-            },
-            play: () => {
-                const data = {
-                    type: dataTypes.PLAY
-                };
-                this.ws.send(JSON.stringify(data));
-            },
-            pause: () => {
-                const data = {
-                    type: dataTypes.PAUSE
-                };
-                this.ws.send(JSON.stringify(data));
-            },
-            setVolume2: (vol) => {
-                const data = {
-                    type: dataTypes.SET_VOLUME,
-                    volume: vol
-                };
-                this.ws.send(JSON.stringify(data));
-            },
-            loadVideo: (videoId) => {
-                const data = {
-                    type: dataTypes.LOAD_VIDEO,
-                    videoId
-                }
-                this.ws.send(JSON.stringify(data));
-            }
-        }
         this.handleSearchChange = debounce(1000, this.searchVideo);
-        this.setVolume2Debounced = debounce(1000, this.remote.setVolume2);
         this.onScrollDebounced = debounce(1000, this.onScroll)
-        this.ping = setInterval(() => {
-            this.remote.sendPing();
-        }, 40000);
+        this.ws = new WSConnection();
     }
 
     componentDidMount() {
@@ -129,88 +75,83 @@ export class Musiq extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.onScrollDebounced);
-        clearInterval(this.ping);
+        this.ws.close();
     }
 
     connect() {
-        this.ws.onopen = () => {
-            console.log('WebSocket Client Connected', this.ws.readyState);
-            this.setState({ isConnected: true });
-            const data = {
-                type: dataTypes.JOIN,
+        const listeners = {
+            onopen: () => {
+                this.setState({ isConnected: true });
+            },
+            onmessage: (message) => {
+                const dataFromServer = JSON.parse(message.data);
+                console.log('WS <onmessage>: ', dataFromServer);
+                switch (dataFromServer.type) {
+                    case dataTypes.NEW_MESSAGE:
+                        console.log('WS <NEW_MESSAGE>: ', dataFromServer);
+                        break;
+                    case dataTypes.PLAY:
+                        this.player.playVideo();
+                        this.setState({ toasts:
+                            [{
+                                date: new Date(),
+                                text: 'Playing video'
+                            }, ...this.state.toasts]
+                        });
+                        break;
+                    case dataTypes.PAUSE:
+                        this.player.pauseVideo();
+                        this.setState({ toasts:
+                            [{
+                                date: new Date(),
+                                text: 'Pausing video'
+                            }, ...this.state.toasts]
+                        });
+                        break;
+                    case dataTypes.SET_VOLUME:
+                        setVolume(dataFromServer.volume);
+                        this.setState({ volume: dataFromServer.volume });
+                        this.setState({ toasts:
+                            [{
+                                date: new Date(),
+                                text: `Setting volume to ${dataFromServer.volume}`
+                            }, ...this.state.toasts]
+                        });
+                        this.player.setVolume(dataFromServer.volume);
+                        break;
+                    case dataTypes.LOAD_VIDEO:
+                        this.player.loadVideoById(dataFromServer.videoId)
+                        this.player.playVideo();
+                        this.setState({ toasts:
+                            [{
+                                date: new Date(),
+                                text: `Loading video: ${dataFromServer.videoId}`
+                            }, ...this.state.toasts
+                        ]});
+                        break;
+                }
+            },
+            onclose: (message) => {
+                console.warn('OnClose: ', message);
+                this.setState({ isConnected: false })
+                this.setState({ toasts:
+                    [{
+                        date: new Date(),
+                        text: `WS<onclose>: ${message.type}`
+                    }, ...this.state.toasts]
+                });
+            },
+            onerror: (message) => {
+                console.error('OnError: ', message);
+                this.setToasts({ toasts:
+                    [{
+                        date: new Date(),
+                        text: `WS<onerror>: ${message.type}`
+                    }, ...this.state.toasts]
+                });
             }
-            this.ws.send(JSON.stringify(data));
-        };
-        this.ws.onmessage = (message) => {
-            const dataFromServer = JSON.parse(message.data);
-            console.log('WS <onmessage>: ', dataFromServer);
-            switch (dataFromServer.type) {
-                case dataTypes.NEW_MESSAGE:
-                    console.log('WS <NEW_MESSAGE>: ', dataFromServer);
-                    break;
-                case dataTypes.PLAY:
-                    this.player.playVideo();
-                    this.setState({ toasts: 
-                        [{
-                            date: new Date(),
-                            text: 'Playing video'
-                        }, ...this.state.toasts] 
-                    });
-                    break;
-                case dataTypes.PAUSE:
-                    this.player.pauseVideo();
-                    console.log('Pausing', this.state.toasts);
-                    this.setState({ toasts: 
-                        [{
-                            date: new Date(),
-                            text: 'Pausing video'
-                        }, ...this.state.toasts]
-                    });
-                    break;
-                case dataTypes.SET_VOLUME:
-                    setVolume(dataFromServer.volume);
-                    this.setState({ volume: dataFromServer.volume });
-                    this.setState({ toasts:
-                        [{
-                            date: new Date(),
-                            text: `Setting volume to ${dataFromServer.volume}`
-                        }, ...this.state.toasts]
-                    });
-                    this.player.setVolume(dataFromServer.volume);
-                    break;
-                case dataTypes.LOAD_VIDEO:
-                    this.player.loadVideoById(dataFromServer.videoId)
-                    this.player.playVideo();
-                    this.setState({ toasts:
-                        [{
-                            date: new Date(),
-                            text: `Loading video: ${dataFromServer.videoId}`
-                        }, ...this.state.toasts
-                    ]});
-                    break;
-            }
-        };
-
-        this.ws.onclose = (message) => {
-            console.warn('OnClose: ', message, this.ws.readyState);
-            this.setState({ isConnected: false })
-            this.setState({ toasts: 
-                [{
-                    date: new Date(),
-                    text: `WS<onclose>: ${message.type}`
-                }, ...this.state.toasts]
-            });
         }
-
-        this.ws.onerror = (message) => {
-            console.error('OnError: ', message, this.ws.readyState);
-            this.setToasts({ toasts:
-                [{
-                    date: new Date(),
-                    text: `WS<onerror>: ${message.type}`
-                }, ...this.state.toasts]
-            });
-        }
+        this.ws.open(listeners);
     }
 
     onScroll() {
@@ -304,32 +245,34 @@ export class Musiq extends React.Component {
         this.setState({ toasts: value });
     }
 
+    loadVideo(videoId) {
+        this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
+    }
+
     render() {
         return (
             <div>
                 <Toast data={this.state.toasts} setToasts={(v) => this.setToasts(v)}></Toast>
                 <TopPanel 
-                    play={() => this.remote.play()}
-                    pause={() => this.remote.pause()}
+                    ws={this.ws}
+                    connect={() => this.connect()}
+                    isConnected={this.state.isConnected}
                     volume={this.state.volume}
                     setVolume={(v) => this.setVolume(v)}
-                    setVolume2Debounced={() => this.setVolume2Debounced()}
                     skip={this.state.skip}
                     setSkip={(v) => this.setSkip(v)}
                     limit={this.state.limit}
                     setLimit={(v) => this.setLimit(v)}
                     getSongs={(v) => this.getSongs(v)}
-                    connect={() => this.connect()}
-                    isConnected={this.state.isConnected}
                 />
                 {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
                 <div className="row pos-relative">
                     <div className="col s12 l6">
-                        <TrackList songs={this.state.songs} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.remote.loadVideo(id)} />
+                        <TrackList songs={this.state.songs} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.loadVideo(id)} />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
                         <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
-                        <YTList items={this.state.ytItems} loadVideo={(id) => this.remote.loadVideo(id)} />
+                        <YTList items={this.state.ytItems} loadVideo={(id) => this.loadVideo(id)} />
                     </div>
                 </div>
                 <BottomPanel />
