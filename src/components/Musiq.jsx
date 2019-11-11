@@ -99,7 +99,6 @@ export class Musiq extends React.Component {
                         this.pushToast('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
-                        setVolume(dataFromServer.volume);
                         this.setState({ volume: dataFromServer.volume });
                         this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         this.player.setVolume(dataFromServer.volume);
@@ -186,22 +185,6 @@ export class Musiq extends React.Component {
             });
     }
 
-    setVolume(value) {
-        this.setState({ volume: value });
-    }
-
-    setSkip(value) {
-        this.setState({ skip: value });
-    }
-
-    setLimit(value) {
-        this.setState({ limit: value });
-    }
-
-    setToasts(value) {
-        this.setState({ toasts: value });
-    }
-
     loadVideo(videoId) {
         this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
     }
@@ -218,17 +201,17 @@ export class Musiq extends React.Component {
     render() {
         return (
             <div>
-                <Toast data={this.state.toasts} setToasts={(v) => this.setToasts(v)}></Toast>
+                <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
                 <TopPanel 
                     ws={this.ws}
                     connect={() => this.connect()}
                     isConnected={this.state.isConnected}
                     volume={this.state.volume}
-                    setVolume={(v) => this.setVolume(v)}
+                    setVolume={(v) => this.setState({ volume: v })}
                     skip={this.state.skip}
-                    setSkip={(v) => this.setSkip(v)}
+                    setSkip={(v) => this.setState({ skip: v })}
                     limit={this.state.limit}
-                    setLimit={(v) => this.setLimit(v)}
+                    setLimit={(v) => this.setState({ limit: v })}
                     getSongs={(v) => this.getSongs(v)}
                 />
                 {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
