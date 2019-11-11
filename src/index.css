@@ -156,6 +156,13 @@ body, p {
     z-index: 1000;
 }
 
+.tag-item {
+    color: #FEFEFE;
+    background: #3BF;
+    padding: 2px 5px;
+    border-radius: 2px;
+}
+
 :root {
     --label-color: #db9e1a; /* #40c4ff; /* #00b0ff; */
 }

@@ -15,8 +15,11 @@ export function TrackList(props) {
                         return <li className="collection-item row" key={index}>
                             <div className="col">
                                 <h6 className="bold">{songItem.title}</h6>
+                                {
+                                    songItem.tags.map(tagItem => <span className="tag-item">{tagItem}</span>)
+                                }
                                 <p>
-                                    <span>{date}</span>
+                                    <span className="small-text grey-text">{date}</span>
                                 </p>
                             </div>
                             <div className="col s3 right right-text">
