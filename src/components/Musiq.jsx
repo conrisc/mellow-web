@@ -11,38 +11,13 @@ import { Toast } from './Toast';
 import { WSConnection } from '../services/wsConnection';
 import { dataTypes } from '../constants/wsConstants';
 
-const fakeYTData = [
-    {
-        id: { videoId: 'someId' },
-        snippet: {
-            title: 'Some title',
-            thumbnails: {
-                default: {
-                    url: 'https://youtube.com'
-                }
-            }
-        }
-    },
-    {
-        id: { videoId: 'someId' },
-        snippet: {
-            title: 'Some other title',
-            thumbnails: {
-                default: {
-                    url: 'https://youtube.com'
-                }
-            }
-        }
-    }
-];
-
 export class Musiq extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            ytItems: fakeYTData,
+            ytItems: [],
             songs: [],
             volume: 100,
             skip: 0,
@@ -59,8 +34,6 @@ export class Musiq extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('offline', (e) => { console.log('offline'); });
-        window.addEventListener('online', (e) => { console.log('online'); });
         window.addEventListener('scroll', this.onScrollDebounced);
 
         this.connect();
