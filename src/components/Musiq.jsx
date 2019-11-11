@@ -53,8 +53,8 @@ export class Musiq extends React.Component {
         this.player = null;
         this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
-        this.handleSearchChange = debounce(1000, this.searchVideo);
-        this.onScrollDebounced = debounce(1000, this.onScroll)
+        this.handleSearchChange = debounce(1000, () => this.searchVideo());
+        this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection();
     }
 
@@ -157,7 +157,7 @@ export class Musiq extends React.Component {
     onScroll() {
         if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
             this.songsLoader = this.songsLoader
-                .then(this.updateSongs);
+                .then(() => this.updateSongs());
         }
     }
 
