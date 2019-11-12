@@ -31,6 +31,7 @@ export class Musiq extends React.Component {
         this.player = null;
         this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
+        this.getTags();
         this.handleSearchChange = debounce(1000, () => this.searchVideo());
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection();
@@ -113,7 +114,7 @@ export class Musiq extends React.Component {
         const opts = {
             skip: this.state.skip,
             limit: this.state.limit,
-            tags:  this.state.tags
+            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
         return api.searchSong(opts)
@@ -131,7 +132,7 @@ export class Musiq extends React.Component {
         const opts = {
             skip: this.state.skip + this.state.limit,
             limit: this.state.limit,
-            tags: this.state.tags
+            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
         return api.searchSong(opts)
@@ -140,6 +141,25 @@ export class Musiq extends React.Component {
                 this.setState({skip: this.state.skip + data.length});
             }, error => {
                 this.pushToast('Cound not update songs');
+                console.error(error);
+            });
+    }
+
+     getTags() {
+        const api = new DevelopersApi();
+
+        const opts = {
+            skip: 0,
+            limit: 300
+        };
+
+        api.searchTag(opts)
+            .then(data => {
+                this.setState({
+                    tags: data.map(tagItem => ({ tagItem, selected: false }))
+                })
+            }, error => {
+                // this.pushToast('Cound not get songs');
                 console.error(error);
             });
     }
@@ -177,11 +197,26 @@ export class Musiq extends React.Component {
         });
     }
 
+    toggleTag(tagElement) {
+        const newTags = this.state.tags.map(el => {
+            if (tagElement.tagItem.id === el.tagItem.id)
+                return { 
+                    tagItem: tagElement.tagItem,
+                    selected: !tagElement.selected
+                }
+            return el;
+        });
+        this.setState(
+            { tags: newTags, skip: 0, limit: 20 },
+            () => this.getSongs()
+        );
+    }
+
     render() {
         return (
             <div>
                 <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
-                <TagsList />
+                <TagsList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 
                     ws={this.ws}
                     connect={() => this.connect()}

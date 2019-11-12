@@ -2,34 +2,19 @@ import React, { useEffect, useState, useRef } from 'react';
 import { DevelopersApi, TagItem } from 'what_api';
 
 export function TagsList(props) {
-    const [ tags, setTags ] = useState([]);
     const tagNameInputRef = useRef();
 
     useEffect(() => {
-        getTags();
         const elems = document.querySelectorAll('.sidenav');
         const instances = M.Sidenav.init(elems, {});
     }, []);
 
-    function getTags() {
-        const api = new DevelopersApi();
-
-        const opts = {
-            skip: 0,
-            limit: 300
-        };
-
-        api.searchTag(opts)
-            .then(data => {
-                setTags(data)
-            }, error => {
-                // this.pushToast('Cound not get songs');
-                console.error(error);
-            });
-    }
-
     function addTag() {
         const tagName = tagNameInputRef.current.value;
+        if (!tagName.match(/^\w[\w\s-]*\w$/)) {
+            console.warn('Tag name does not match criteria!')
+            return;
+        }
 
         const api = new DevelopersApi();
 
@@ -50,16 +35,21 @@ export function TagsList(props) {
             <a href="#" data-target="slide-out" className="sidenav-trigger">
                 Tags
             </a>
-            <ul id="slide-out" className="sidenav">
+            <div id="slide-out" className="sidenav">
                 <h5>Tags</h5>
+                <ul className="collection">
+                    {
+                        props.tags.map(tagElement =>
+                            <li key={tagElement.tagItem.id}
+                                className={"collection-item" + (tagElement.selected ? ' active' : '')}
+                                onClick={() => props.toggleTag(tagElement)}>{tagElement.tagItem.name}
+                            </li>
+                        )
+                    }
+                </ul>
                 <input ref={tagNameInputRef} type="text"></input>
                 <button onClick={addTag}>Add tag</button>
-                {
-                    tags.map(tagItem =>
-                        <p>{tagItem.name}</p>
-                    )
-                }
-            </ul>
+            </div>
         </div>
     );
 }
