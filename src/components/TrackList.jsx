@@ -1,4 +1,5 @@
 import React from 'react';
+import { DevelopersApi } from 'what_api';
 
 export function TrackList(props) {
     const songs = props.songs;
@@ -9,6 +10,28 @@ export function TrackList(props) {
         }, 
     {});
     
+    function get(title) {
+        const api = new DevelopersApi();
+
+        const opts = {
+            url: `https://www.youtube.com/results?search_query=${title}`
+        }
+
+        api.getData(opts.url)
+            .then(data => {
+                const resultContainer = data.match(/<ol id=\"item-section(.*\s*)*?<\/ol>/)[0];
+                const result = resultContainer.split('<div class="yt-lockup ')
+                    .slice(1,7)
+                    .map((el)=> {
+                        return {
+                            title: el.match('<a href=.*?title="([^"]*)')[1],
+                            url: el.match('<a href="([^"]*)')[1],
+                            imgUrl: el.match('<img.*?src="([^"?]*)')[1]
+                        }
+                    });
+                console.log(result);
+            })
+    }
 
     return (
         <div>
@@ -48,6 +71,12 @@ export function TrackList(props) {
                                 onClick={() => props.findSong(songItem.title)}
                                 title="Find this song using youtube">
                                     <i className="fab fa-youtube"></i>
+                                </button>
+                                <button
+                                className="btn btn-small"
+                                onClick={() => get(songItem.title)}
+                                title="Find this song using youtube">
+                                    SC
                                 </button>
                                 <button
                                 className={"btn btn-small" + (videoId ? '' : ' disabled')}

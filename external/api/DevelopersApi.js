@@ -184,6 +184,57 @@ export class DevelopersApi {
 
 
     /**
+     * Get data
+     * By passing in url, you can fetch data 
+     * @param {String} url url
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link 'String'} and HTTP response
+     */
+    getDataWithHttpInfo(url) {
+      let postBody = null;
+
+      // verify the required parameter 'url' is set
+      if (url === undefined || url === null) {
+        throw new Error("Missing the required parameter 'url' when calling getData");
+      }
+
+
+      let pathParams = {
+      };
+      let queryParams = {
+        'url': url
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['text/html'];
+      let returnType = 'String';
+
+      return this.apiClient.callApi(
+        '/web', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType
+      );
+    }
+
+    /**
+     * Get data
+     * By passing in url, you can fetch data 
+     * @param {String} url url
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link 'String'}
+     */
+    getData(url) {
+      return this.getDataWithHttpInfo(url)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
      * removes a note item
      * Removes an item from the database
      * @param {String} id note id
