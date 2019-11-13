@@ -2,6 +2,12 @@ import React from 'react';
 
 export function TrackList(props) {
     const songs = props.songs;
+    const tagsIdToNameMap = props.tags.reduce(
+        (acc, tagElement) => { 
+            acc[tagElement.tagItem.id] = tagElement.tagItem.name;
+            return acc;
+        }, 
+    {});
     
 
     return (
@@ -16,7 +22,7 @@ export function TrackList(props) {
                             <div className="col">
                                 <h6 className="bold">{songItem.title}</h6>
                                 {
-                                    songItem.tags.map((tagItem, index) => <span key="index" className="tag-item">{tagItem}</span>)
+                                    songItem.tags.map(tagId => <span key={tagId} className="tag-item">{tagsIdToNameMap[tagId]}</span>)
                                 }
                                 <p>
                                     <span className="small-text grey-text">{date}</span>

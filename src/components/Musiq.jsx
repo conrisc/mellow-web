@@ -232,7 +232,7 @@ export class Musiq extends React.Component {
                 {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
                 <div className="row pos-relative">
                     <div className="col s12 l6">
-                        <TrackList songs={this.state.songs} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.loadVideo(id)} />
+                        <TrackList songs={this.state.songs} tags={this.state.tags} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.loadVideo(id)} />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
                         <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
