@@ -18,7 +18,8 @@ export function YTList(props) {
                                     <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Play video</button>
                                 </div>
                                 <div className="col">
-                                    <img src={el.thumbnailUrl}></img>
+                                    <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
+                                    {/* <img src={el.thumbnailUrl}></img> */}
                                 </div>
                             </div>
                     </li>;

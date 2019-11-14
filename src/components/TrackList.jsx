@@ -51,7 +51,7 @@ export function TrackList(props) {
                                     <span className="small-text grey-text">{date}</span>
                                 </p>
                             </div>
-                            <div className="col s3 right right-text">
+                            <div className="col s5 right right-text">
                                 <a
                                 href={"https://www.youtube.com/results?search_query="+songItem.title}
                                 className="btn btn-small"
@@ -83,6 +83,12 @@ export function TrackList(props) {
                                 onClick={() => props.loadVideo(videoId)}
                                 title="Play song on other devices">
                                     <i className="fas fa-play"></i>
+                                </button>
+                                <button
+                                className={"btn btn-small" + (videoId ? '' : ' disabled')}
+                                onClick={() => props.playVideo(videoId)}
+                                title="Play song on this device">
+                                    PY
                                 </button>
                             </div>
                         </li>;

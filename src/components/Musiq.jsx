@@ -82,8 +82,7 @@ export class Musiq extends React.Component {
                         this.player.setVolume(dataFromServer.volume);
                         break;
                     case dataTypes.LOAD_VIDEO:
-                        this.player.loadVideoById(dataFromServer.videoId)
-                        this.player.playVideo();
+                        this.playVideo(dataFromServer.videoId)
                         this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
@@ -99,6 +98,11 @@ export class Musiq extends React.Component {
             }
         }
         this.ws.open(listeners);
+    }
+
+    playVideo(videoId) {
+        this.player.loadVideoById(videoId)
+        this.player.playVideo();
     }
 
     onScroll() {
@@ -248,7 +252,8 @@ export class Musiq extends React.Component {
                             tags={this.state.tags}
                             findSong={(t) => this.searchVideo(t)}
                             loadVideo={(id) => this.loadVideo(id)}
-                            setItems = {(r) => this.setState({ytItems: r})}
+                            setItems={(r) => this.setState({ytItems: r})}
+                            playVideo={(id) => this.playVideo(id)}
                         />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
