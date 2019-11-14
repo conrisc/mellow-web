@@ -34,7 +34,7 @@ export class Musiq extends React.Component {
         this.getTags();
         this.handleSearchChange = debounce(1000, () => this.searchVideo());
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
-        this.ws = new WSConnection();
+        this.ws = new WSConnection(true, 10000);
     }
 
     componentDidMount() {
