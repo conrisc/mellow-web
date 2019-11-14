@@ -11,11 +11,14 @@ export function YTList(props) {
                     return <li key={index}>
                             <div className="row">
                                 <div className="col s8">
-                                    <a href={`https://youtube.com/watch?v=${el.videoId}`}>
-                                        <span>{el.title}</span><br/>
-                                    </a>
-                                    <span>{el.videoId}</span>
-                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Play video</button>
+                                    <a href={`https://youtube.com/watch?v=${el.videoId}`}
+                                        target="_blank" rel="noopener noreferrer"
+                                        title="Open song in youtube"
+                                    >
+                                        <span>{el.title}</span>
+                                    </a><br />
+                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Remote play</button>
+                                    <button className="btn red" onClick={() => props.playVideo(el.videoId)}>Play video</button>
                                 </div>
                                 <div className="col">
                                     <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
