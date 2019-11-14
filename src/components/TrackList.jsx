@@ -14,22 +14,12 @@ export function TrackList(props) {
         const api = new DevelopersApi();
 
         const opts = {
-            url: `https://www.youtube.com/results?search_query=${title}`
+            limit: 10
         }
 
-        api.getData(opts.url)
-            .then(data => {
-                const resultContainer = data.match(/<ol id=\"item-section(.*\s*)*?<\/ol>/)[0];
-                const results = resultContainer.split('<div class="yt-lockup ')
-                    .slice(1,7)
-                    .map((el)=> {
-                        return {
-                            title: el.match('<a href=.*?title="([^"]*)')[1],
-                            videoId: el.match('<a href=.*?v=([^"&]*)')[1],
-                            thumbnailUrl: el.match('<img.*?src="([^"?]*)')[1]
-                        }
-                    });
-                props.setItems(results);
+        api.getYtItems(title, opts)
+            .then(ytItems => {
+                props.setItems(ytItems);
             })
     }
 
