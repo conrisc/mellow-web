@@ -20,16 +20,16 @@ export function TrackList(props) {
         api.getData(opts.url)
             .then(data => {
                 const resultContainer = data.match(/<ol id=\"item-section(.*\s*)*?<\/ol>/)[0];
-                const result = resultContainer.split('<div class="yt-lockup ')
+                const results = resultContainer.split('<div class="yt-lockup ')
                     .slice(1,7)
                     .map((el)=> {
                         return {
                             title: el.match('<a href=.*?title="([^"]*)')[1],
-                            url: el.match('<a href="([^"]*)')[1],
-                            imgUrl: el.match('<img.*?src="([^"?]*)')[1]
+                            videoId: el.match('<a href=.*?v=([^"&]*)')[1],
+                            thumbnailUrl: el.match('<img.*?src="([^"?]*)')[1]
                         }
                     });
-                console.log(result);
+                props.setItems(results);
             })
     }
 

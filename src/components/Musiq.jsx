@@ -175,13 +175,24 @@ export class Musiq extends React.Component {
             "maxResults": 5,
             "type": "video",
             "q": text
-        }).then((response) => {
-                this.setState({ytItems: response.result ? response.result.items : []})
+        }).then(
+            (response) => {
+                const items = response.result ?
+                    response.result.items.map(el => {
+                        return {
+                            title: el.snippet.title,
+                            videoId: el.id.videoId,
+                            thumbnailUrl: el.snippet.thumbnails.default.url
+                        }
+                    })
+                    : [];
+                this.setState({ ytItems: items })
             },
             (err) => {
                 this.pushToast('Cound not search youtube videos');
                 console.error("Execute error", err); 
-            });
+            }
+        );
     }
 
     loadVideo(videoId) {
@@ -232,7 +243,13 @@ export class Musiq extends React.Component {
                 {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
                 <div className="row pos-relative">
                     <div className="col s12 l6">
-                        <TrackList songs={this.state.songs} tags={this.state.tags} findSong={(t) => this.searchVideo(t)} loadVideo={(id) => this.loadVideo(id)} />
+                        <TrackList
+                            songs={this.state.songs}
+                            tags={this.state.tags}
+                            findSong={(t) => this.searchVideo(t)}
+                            loadVideo={(id) => this.loadVideo(id)}
+                            setItems = {(r) => this.setState({ytItems: r})}
+                        />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
                         <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>

@@ -11,14 +11,14 @@ export function YTList(props) {
                     return <li key={index}>
                             <div className="row">
                                 <div className="col s8">
-                                    <a href={`https://youtube.com/watch?v=${el.id.videoId}`}>
-                                        <span>{el.snippet.title}</span><br/>
+                                    <a href={`https://youtube.com/watch?v=${el.videoId}`}>
+                                        <span>{el.title}</span><br/>
                                     </a>
-                                    <span>{el.id.videoId}</span>
-                                    <button className="btn red" onClick={() => props.loadVideo(el.id.videoId)}>Play video</button>
+                                    <span>{el.videoId}</span>
+                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Play video</button>
                                 </div>
                                 <div className="col">
-                                    <img src={el.snippet.thumbnails.default.url}></img>
+                                    <img src={el.thumbnailUrl}></img>
                                 </div>
                             </div>
                     </li>;
