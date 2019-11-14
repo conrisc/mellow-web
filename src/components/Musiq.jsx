@@ -88,12 +88,11 @@ export class Musiq extends React.Component {
                 }
             },
             onclose: (message) => {
-                console.warn('OnClose: ', message);
                 this.setState({ isConnected: false })
                 this.pushToast(`WS<onclose>: ${message.type}`);
             },
             onerror: (message) => {
-                console.error('OnError: ', message);
+                this.setState({ isConnected: false })
                 this.pushToast(`WS<onerror>: ${message.type}`);
             }
         }

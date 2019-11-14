@@ -20,6 +20,15 @@ export class WSConnection {
             }
             this.ws.send(JSON.stringify(data));
         };
+        this.ws.onclose = (message) => {
+            console.warn('OnClose: ', message);
+            this.close();
+
+        };
+        this.ws.onerror = (message) => {
+            console.error('OnError: ', message);
+            this.close();
+        };
         this.assignListeners(listeners);
         this.pingerId = setInterval(() => {
             this.sendData(dataTypes.PING);
@@ -29,6 +38,7 @@ export class WSConnection {
     close() {
         clearInterval(this.pingerId);
         this.pingerId = null;
+        console.log('Websocket connection has been closed');
     }
 
     assignListeners(listeners) {
