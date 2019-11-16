@@ -10,19 +10,6 @@ export function TrackList(props) {
         }, 
     {});
     
-    function get(title) {
-        const api = new DevelopersApi();
-
-        const opts = {
-            limit: 10
-        }
-
-        api.getYtItems(title, opts)
-            .then(ytItems => {
-                props.setItems(ytItems);
-            })
-    }
-
     return (
         <div>
             <ul className="collection">
@@ -64,7 +51,7 @@ export function TrackList(props) {
                                 </button>
                                 <button
                                 className="btn btn-small"
-                                onClick={() => get(songItem.title)}
+                                onClick={() => props.getYtItems(songItem.title)}
                                 title="Find this song using youtube">
                                     SC
                                 </button>

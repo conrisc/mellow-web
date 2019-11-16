@@ -32,7 +32,7 @@ export class Musiq extends React.Component {
         this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
         this.getTags();
-        this.handleSearchChange = debounce(1000, () => this.searchVideo());
+        this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection(true, 10000);
         this.nextTrackIndex = 0;
@@ -208,6 +208,23 @@ export class Musiq extends React.Component {
         );
     }
 
+    getYtItems(title) {
+        if (!title || title === '') {
+            console.log('getYtItems: title is empty');
+            return;
+        }
+        const api = new DevelopersApi();
+
+        const opts = {
+            limit: 10
+        }
+
+        api.getYtItems(title, opts)
+            .then(ytItems => {
+                this.setState({ ytItems });
+            })
+    }
+
     loadVideo(videoId) {
         this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
     }
@@ -253,7 +270,6 @@ export class Musiq extends React.Component {
                     setLimit={(v) => this.setState({ limit: v })}
                     getSongs={(v) => this.getSongs(v)}
                 />
-                {/* <input type="text" onChange={e => {const t = e.target.value; this.handleSearchChange(t)}}></input> */}
                 <div className="row pos-relative">
                     <div className="col s12 l6">
                         <TrackList
@@ -261,8 +277,8 @@ export class Musiq extends React.Component {
                             tags={this.state.tags}
                             findSong={(t) => this.searchVideo(t)}
                             loadVideo={(id) => this.loadVideo(id)}
-                            setItems={(r) => this.setState({ytItems: r})}
                             playVideo={(id, i) => this.playVideo(id, i)}
+                            getYtItems={(t) => this.getYtItems(t)}
                         />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
@@ -271,6 +287,7 @@ export class Musiq extends React.Component {
                             items={this.state.ytItems}
                             loadVideo={(id) => this.loadVideo(id)}
                             playVideo={(id) => this.playVideo(id)}
+                            getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
                         />
                     </div>
                 </div>

@@ -5,6 +5,7 @@ export function YTList(props) {
 
     return (
         <div>
+            <input type="text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
             <ul className="collection">
             {
                 items.map((el, index) => {
