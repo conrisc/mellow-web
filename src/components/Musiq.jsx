@@ -35,6 +35,7 @@ export class Musiq extends React.Component {
         this.handleSearchChange = debounce(1000, () => this.searchVideo());
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection(true, 10000);
+        this.nextTrackIndex = 0;
     }
 
     componentDidMount() {
@@ -46,6 +47,14 @@ export class Musiq extends React.Component {
             this.player = new YT.Player('player', {
                 height: 360,
                 width: 640
+            });
+            this.player.addEventListener('onStateChange', state => {
+                const songItem = this.state.songs[this.nextTrackIndex];
+                if (state.data === 0 && songItem) {
+                    const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+                    const videoId = videoIdMatch ? videoIdMatch[1] : '';
+                    this.playVideo(videoId, this.nextTrackIndex);
+                }
             })
         })
 
@@ -99,9 +108,10 @@ export class Musiq extends React.Component {
         this.ws.open(listeners);
     }
 
-    playVideo(videoId) {
+    playVideo(videoId, index) {
         this.player.loadVideoById(videoId)
         this.player.playVideo();
+        this.nextTrackIndex = index + 1;
     }
 
     onScroll() {
@@ -252,7 +262,7 @@ export class Musiq extends React.Component {
                             findSong={(t) => this.searchVideo(t)}
                             loadVideo={(id) => this.loadVideo(id)}
                             setItems={(r) => this.setState({ytItems: r})}
-                            playVideo={(id) => this.playVideo(id)}
+                            playVideo={(id, i) => this.playVideo(id, i)}
                         />
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
