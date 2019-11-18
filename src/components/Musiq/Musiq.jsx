@@ -178,37 +178,6 @@ export class Musiq extends React.Component {
             });
     }
 
-    // searchVideo(text) {
-    //     if (!text || text === '') {
-    //         console.log('searchVideo: input is empty');
-    //         return;
-    //     }
-
-    //     return gapi.client.youtube.search.list({
-    //         "part": "snippet",
-    //         "maxResults": 5,
-    //         "type": "video",
-    //         "q": text
-    //     }).then(
-    //         (response) => {
-    //             const items = response.result ?
-    //                 response.result.items.map(el => {
-    //                     return {
-    //                         title: el.snippet.title,
-    //                         videoId: el.id.videoId,
-    //                         thumbnailUrl: el.snippet.thumbnails.default.url
-    //                     }
-    //                 })
-    //                 : [];
-    //             this.setState({ ytItems: items })
-    //         },
-    //         (err) => {
-    //             this.pushToast('Cound not search youtube videos');
-    //             console.error("Execute error", err); 
-    //         }
-    //     );
-    // }
-
     getYtItems(title) {
         if (!title || title === '') {
             console.log('getYtItems: title is empty');
