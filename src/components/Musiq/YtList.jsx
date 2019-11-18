@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function YTList(props) {
+export function YtList(props) {
     const items = props.items;
 
     return (

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-import { dataTypes } from '../constants/wsConstants';
+import { dataTypes } from 'Constants/wsConstants';
 
 export function TopPanel(props) {
     const panelRef = useRef();

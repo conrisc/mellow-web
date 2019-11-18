@@ -43,17 +43,17 @@ export function TrackList(props) {
                                 title="Open song in youtube">
                                     <i className="fas fa-link"></i>
                                 </a>
-                                <button
+                                {/* <button
                                 className="btn btn-small"
                                 onClick={() => props.findSong(songItem.title)}
                                 title="Find this song using youtube">
                                     <i className="fab fa-youtube"></i>
-                                </button>
+                                </button> */}
                                 <button
                                 className="btn btn-small"
                                 onClick={() => props.getYtItems(songItem.title)}
                                 title="Find this song using youtube">
-                                    SC
+                                    <i className="fab fa-youtube"></i>
                                 </button>
                                 <button
                                 className={"btn btn-small" + (videoId ? '' : ' disabled')}

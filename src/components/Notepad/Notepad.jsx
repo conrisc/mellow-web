@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, withRouter, Link } from 'react-router-dom';
 import { DevelopersApi, NoteItem } from 'what_api';
 
+import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
-import { Info } from './Info';
 
 function NotepadN(props) {
     const { noteId } = useParams();

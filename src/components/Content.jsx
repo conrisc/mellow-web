@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route, Link} from 'react-router-dom';
 
-import { Notepad } from './Notepad';
-import { Musiq } from './Musiq';
+import { Notepad } from './Notepad/Notepad';
+import { Musiq } from './Musiq/Musiq';
 
 export function Content() {
     return (

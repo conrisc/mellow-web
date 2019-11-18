@@ -3,15 +3,16 @@ import { Link } from 'react-router-dom';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
+import { WSConnection } from 'Services/wsConnection';
+import { dataTypes } from 'Constants/wsConstants';
+
+import { Toast } from 'CommonComponents/Toast';
 import { TrackList } from './TrackList';
-import { YTList } from './YTList';
+import { YtList } from './YtList';
 import { TopPanel } from './TopPanel';
 import { BottomPanel } from './BottomPanel';
-import { Toast } from './Toast';
 import { TagsList } from './TagsList';
 
-import { WSConnection } from '../services/wsConnection';
-import { dataTypes } from '../constants/wsConstants';
 
 export class Musiq extends React.Component {
 
@@ -177,36 +178,36 @@ export class Musiq extends React.Component {
             });
     }
 
-    searchVideo(text) {
-        if (!text || text === '') {
-            console.log('searchVideo: input is empty');
-            return;
-        }
+    // searchVideo(text) {
+    //     if (!text || text === '') {
+    //         console.log('searchVideo: input is empty');
+    //         return;
+    //     }
 
-        return gapi.client.youtube.search.list({
-            "part": "snippet",
-            "maxResults": 5,
-            "type": "video",
-            "q": text
-        }).then(
-            (response) => {
-                const items = response.result ?
-                    response.result.items.map(el => {
-                        return {
-                            title: el.snippet.title,
-                            videoId: el.id.videoId,
-                            thumbnailUrl: el.snippet.thumbnails.default.url
-                        }
-                    })
-                    : [];
-                this.setState({ ytItems: items })
-            },
-            (err) => {
-                this.pushToast('Cound not search youtube videos');
-                console.error("Execute error", err); 
-            }
-        );
-    }
+    //     return gapi.client.youtube.search.list({
+    //         "part": "snippet",
+    //         "maxResults": 5,
+    //         "type": "video",
+    //         "q": text
+    //     }).then(
+    //         (response) => {
+    //             const items = response.result ?
+    //                 response.result.items.map(el => {
+    //                     return {
+    //                         title: el.snippet.title,
+    //                         videoId: el.id.videoId,
+    //                         thumbnailUrl: el.snippet.thumbnails.default.url
+    //                     }
+    //                 })
+    //                 : [];
+    //             this.setState({ ytItems: items })
+    //         },
+    //         (err) => {
+    //             this.pushToast('Cound not search youtube videos');
+    //             console.error("Execute error", err); 
+    //         }
+    //     );
+    // }
 
     getYtItems(title) {
         if (!title || title === '') {
@@ -275,7 +276,7 @@ export class Musiq extends React.Component {
                         <TrackList
                             songs={this.state.songs}
                             tags={this.state.tags}
-                            findSong={(t) => this.searchVideo(t)}
+                            // findSong={(t) => this.searchVideo(t)}
                             loadVideo={(id) => this.loadVideo(id)}
                             playVideo={(id, i) => this.playVideo(id, i)}
                             getYtItems={(t) => this.getYtItems(t)}
@@ -283,7 +284,7 @@ export class Musiq extends React.Component {
                     </div>
                     <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
                         <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
-                        <YTList
+                        <YtList
                             items={this.state.ytItems}
                             loadVideo={(id) => this.loadVideo(id)}
                             playVideo={(id) => this.playVideo(id)}

@@ -1,5 +1,5 @@
 import { debounce } from 'throttle-debounce';
-import { dataTypes } from '../constants/wsConstants';
+import { dataTypes } from 'Constants/wsConstants';
 
 const url = 'wss://what-appy-server.herokuapp.com';
 const interval = 1000;
