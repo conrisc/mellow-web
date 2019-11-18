@@ -1,14 +1,12 @@
 import React from 'react';
 
 export function YtList(props) {
-    const items = props.items;
-
     return (
         <div>
             <input type="text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
             <ul className="collection">
             {
-                items.map((el, index) => {
+                props.ytItems.map((el, index) => {
                     return <li key={index}>
                             <div className="row">
                                 <div className="col s8">

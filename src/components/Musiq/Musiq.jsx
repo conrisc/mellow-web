@@ -7,9 +7,8 @@ import { WSConnection } from 'Services/wsConnection';
 import { dataTypes } from 'Constants/wsConstants';
 
 import { Toast } from 'CommonComponents/Toast';
-import { TrackList } from './TrackList';
-import { YtList } from './YtList';
 import { TopPanel } from './TopPanel';
+import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
 import { TagsList } from './TagsList';
 
@@ -20,7 +19,6 @@ export class Musiq extends React.Component {
         super(props);
 
         this.state = {
-            ytItems: [],
             songs: [],
             volume: 100,
             skip: 0,
@@ -33,10 +31,9 @@ export class Musiq extends React.Component {
         this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
         this.getTags();
-        this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection(true, 10000);
-        this.nextTrackIndex = 0;
+        this.nextSongsIndex = 0;
     }
 
     componentDidMount() {
@@ -50,11 +47,11 @@ export class Musiq extends React.Component {
                 width: 640
             });
             this.player.addEventListener('onStateChange', state => {
-                const songItem = this.state.songs[this.nextTrackIndex];
+                const songItem = this.state.songs[this.nextSongIndex];
                 if (state.data === 0 && songItem) {
                     const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
                     const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                    this.playVideo(videoId, this.nextTrackIndex);
+                    this.playVideo(videoId, this.nextSongIndex);
                 }
             })
         })
@@ -112,7 +109,7 @@ export class Musiq extends React.Component {
     playVideo(videoId, index) {
         this.player.loadVideoById(videoId)
         this.player.playVideo();
-        this.nextTrackIndex = index + 1;
+        this.nextSongIndex = index + 1;
     }
 
     onScroll() {
@@ -178,27 +175,6 @@ export class Musiq extends React.Component {
             });
     }
 
-    getYtItems(title) {
-        if (!title || title === '') {
-            console.log('getYtItems: title is empty');
-            return;
-        }
-        const api = new DevelopersApi();
-
-        const opts = {
-            limit: 10
-        }
-
-        api.getYtItems(title, opts)
-            .then(ytItems => {
-                this.setState({ ytItems });
-            })
-    }
-
-    loadVideo(videoId) {
-        this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
-    }
-
     pushToast(text) {
         this.setState({ toasts:
             [{
@@ -240,27 +216,10 @@ export class Musiq extends React.Component {
                     setLimit={(v) => this.setState({ limit: v })}
                     getSongs={(v) => this.getSongs(v)}
                 />
-                <div className="row pos-relative">
-                    <div className="col s12 l6">
-                        <TrackList
-                            songs={this.state.songs}
-                            tags={this.state.tags}
-                            // findSong={(t) => this.searchVideo(t)}
-                            loadVideo={(id) => this.loadVideo(id)}
-                            playVideo={(id, i) => this.playVideo(id, i)}
-                            getYtItems={(t) => this.getYtItems(t)}
-                        />
-                    </div>
-                    <div ref={this.YTListRef} className="col s11 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
-                        <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
-                        <YtList
-                            items={this.state.ytItems}
-                            loadVideo={(id) => this.loadVideo(id)}
-                            playVideo={(id) => this.playVideo(id)}
-                            getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
-                        />
-                    </div>
-                </div>
+                <MainView 
+                    songs={this.state.songs}
+                    tags={this.state.tags}
+                    playVideo={(id, i) => this.playVideo(id, i)}/>
                 <BottomPanel />
             </div>
         );

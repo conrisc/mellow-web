@@ -1,7 +1,7 @@
 import React from 'react';
 import { DevelopersApi } from 'what_api';
 
-export function TrackList(props) {
+export function SongList(props) {
     const songs = props.songs;
     const tagsIdToNameMap = props.tags.reduce(
         (acc, tagElement) => { 
