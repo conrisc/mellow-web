@@ -43,7 +43,6 @@ export class MainView extends React.Component {
             <div className="row pos-relative">
                 <div className="col s12 l6">
                     <SongList
-                        songs={this.props.songs}
                         tags={this.props.tags}
                         loadVideo={(id) => this.loadVideo(id)}
                         playVideo={(id, i) => this.props.playVideo(id, i)}

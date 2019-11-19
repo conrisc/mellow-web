@@ -212,7 +212,6 @@ export class Musiq extends React.Component {
                     setVolume={(v) => this.setState({ volume: v })}
                 />
                 <MainView 
-                    songs={this.state.songs}
                     tags={this.state.tags}
                     playVideo={(id, i) => this.playVideo(id, i)}/>
                 <BottomPanel />
