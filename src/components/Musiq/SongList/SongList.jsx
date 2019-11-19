@@ -20,12 +20,18 @@ export class SongList extends React.Component {
             shouldShowLoader: true
         }
         this.getSongsDebounced = debounce(2000, () => this.getSongs())
+        this.onScrollDebounced = debounce(1000, () => this.onScroll())
     }
 
     componentDidMount() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
-        this.getSongs();
+        this.songsLoader = this.getSongs();
+        window.addEventListener('scroll', this.onScrollDebounced);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onScrollDebounced);
     }
 
     getSongs() {
@@ -53,6 +59,40 @@ export class SongList extends React.Component {
                 console.error(error);
             });
     }
+
+    updateSongs () {
+        const api = new DevelopersApi();
+
+        const opts = {
+            skip: this.state.skip + this.state.limit,
+            limit: this.state.limit,
+            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
+        };
+
+        this.setState({
+            shouldShowLoader: true
+        });
+        return api.searchSong(opts)
+            .then(data => {
+                this.setState({
+                    songs: [...this.state.songs, ...data],
+                    skip: this.state.skip + data.length,
+                    shouldShowLoader: false
+                });
+            }, error => {
+                // this.pushToast('Cound not update songs');
+                console.error(error);
+            });
+    }
+
+
+    onScroll() {
+        if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
+            this.songsLoader = this.songsLoader
+                .then(() => this.updateSongs());
+        }
+    }
+
 
     render() {
         return (

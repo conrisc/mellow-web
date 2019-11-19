@@ -28,15 +28,12 @@ export class Musiq extends React.Component {
             tags: []
         }
         this.player = null;
-        this.songsLoader = this.getSongs();
         this.getTags();
-        this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.ws = new WSConnection(true, 10000);
         this.nextSongsIndex = 0;
     }
 
     componentDidMount() {
-        window.addEventListener('scroll', this.onScrollDebounced);
 
         this.connect();
 
@@ -58,7 +55,6 @@ export class Musiq extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.onScrollDebounced);
         this.ws.close();
     }
 
@@ -111,12 +107,6 @@ export class Musiq extends React.Component {
         this.nextSongIndex = index + 1;
     }
 
-    onScroll() {
-        if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
-            this.songsLoader = this.songsLoader
-                .then(() => this.updateSongs());
-        }
-    }
 
     getSongs() {
         const api = new DevelopersApi();
@@ -132,25 +122,6 @@ export class Musiq extends React.Component {
                 this.setState({ songs: data })
             }, error => {
                 this.pushToast('Cound not get songs');
-                console.error(error);
-            });
-    }
-
-    updateSongs () {
-        const api = new DevelopersApi();
-
-        const opts = {
-            skip: this.state.skip + this.state.limit,
-            limit: this.state.limit,
-            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
-        };
-
-        return api.searchSong(opts)
-            .then(data => {
-                this.setState({ songs: [...this.state.songs, ...data] });
-                this.setState({skip: this.state.skip + data.length});
-            }, error => {
-                this.pushToast('Cound not update songs');
                 console.error(error);
             });
     }
