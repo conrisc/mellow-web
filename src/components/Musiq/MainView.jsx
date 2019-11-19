@@ -14,6 +14,7 @@ export class MainView extends React.Component {
             ytItems: []
         };
         this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
+        this.YTListRef = React.createRef();
     }
 
     getYtItems(title) {

@@ -2,6 +2,9 @@ import React from 'react';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
+import { SongActionButtons } from './SongActionButtons';
+import { SongFilterPanel } from './SongFilterPanel';
+
 export class SongList extends React.Component {
 
     constructor(props) {
@@ -18,6 +21,7 @@ export class SongList extends React.Component {
     componentDidMount() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
+        this.getSongs();
     }
 
     getSongs() {
@@ -47,32 +51,17 @@ export class SongList extends React.Component {
         {});
         return (
             <div>
-                <div className="row">
-                    <div className="input-field col s2">
-                        <input
-                            id="skip"
-                            type="number"
-                            value={this.state.skip}
-                            onChange={e => { this.setState({ skip: Number(e.target.value) }); this.getSongsDebounced(); }}
-                            min="0"
-                        />
-                        <label htmlFor="skip">Skip</label>
-                    </div>
-                    <div className="input-field col s2">
-                        <select value={this.state.limit} onChange={e => this.setState({ limit: Number(e.target.value) })}>
-                            <option value={10}>10</option>
-                            <option value={30}>30</option>
-                            <option value={50}>50</option>
-                        </select>
-                        <label>Limit</label>
-                    </div>
-                </div>
+                <SongFilterPanel
+                    skip={this.state.skip}
+                    setSkip={skip => this.setState({skip})}
+                    limit={this.state.limit}
+                    setLimit={limit => this.setState({limit})}
+                    getSongsDebounced={this.getSongsDebounced}
+                />
                 <ul className="collection">
                     {
                         this.state.songs.map((songItem, index) => {
                             const date = new Date(songItem.dateAdded).toGMTString();
-                            const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-                            const videoId = videoIdMatch ? videoIdMatch[1] : '';
                             return (
                                 <li className="collection-item row" key={index}>
                                     <div className="col">
@@ -84,40 +73,11 @@ export class SongList extends React.Component {
                                             <span className="small-text grey-text">{date}</span>
                                         </p>
                                     </div>
-                                    <div className="col s5 right right-text">
-                                        <a
-                                        href={"https://www.youtube.com/results?search_query="+songItem.title}
-                                        className="btn btn-small"
-                                        target="_blank" rel="noopener noreferrer"
-                                        title="Search song in youtube">
-                                            <i className="fas fa-link"></i>
-                                        </a>
-                                        <a
-                                        href={songItem.url}
-                                        className={"btn btn-small" + (songItem.url ? '' : ' disabled')}
-                                        target="_blank" rel="noopener noreferrer"
-                                        title="Open song in youtube">
-                                            <i className="fas fa-link"></i>
-                                        </a>
-                                        <button
-                                        className="btn btn-small"
-                                        onClick={() => props.getYtItems(songItem.title)}
-                                        title="Find this song using youtube">
-                                            <i className="fab fa-youtube"></i>
-                                        </button>
-                                        <button
-                                        className={"btn btn-small" + (videoId ? '' : ' disabled')}
-                                        onClick={() => props.loadVideo(videoId)}
-                                        title="Play song on other devices">
-                                            <i className="fas fa-play"></i>
-                                        </button>
-                                        <button
-                                        className={"btn btn-small" + (videoId ? '' : ' disabled')}
-                                        onClick={() => props.playVideo(videoId, index)}
-                                        title="Play song on this device">
-                                            PY
-                                        </button>
-                                    </div>
+                                    <SongActionButtons 
+                                        songItem={songItem}
+                                        getYtItems={this.props.getYtItems}
+                                        playVideo={this.props.playVideo}
+                                    />
                                 </li>
                             );
                         })

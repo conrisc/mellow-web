@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DevelopersApi, TagItem } from 'what_api';
 
-export function TagsList(props) {
+export function TagList(props) {
     const tagNameInputRef = useRef();
 
     useEffect(() => {

@@ -10,7 +10,7 @@ import { Toast } from 'CommonComponents/Toast';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
-import { TagsList } from './TagsList';
+import { TagList } from './TagList';
 
 
 export class Musiq extends React.Component {
@@ -28,7 +28,6 @@ export class Musiq extends React.Component {
             tags: []
         }
         this.player = null;
-        this.YTListRef = React.createRef();
         this.songsLoader = this.getSongs();
         this.getTags();
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
@@ -203,7 +202,7 @@ export class Musiq extends React.Component {
         return (
             <div>
                 <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
-                <TagsList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
+                <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 
                     ws={this.ws}
                     connect={() => this.connect()}
