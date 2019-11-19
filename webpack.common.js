@@ -10,7 +10,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
         alias: {
-            'what_api': path.resolve(__dirname, 'external/index.js'),
+            'what_api': path.resolve(__dirname, 'whatAPI/javascript/src/index.js'),
             Services: path.resolve(__dirname, 'src/services/'),
             Constants: path.resolve(__dirname, 'src/constants/'),
             CommonComponents: path.resolve(__dirname, 'src/components/common/')
