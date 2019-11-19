@@ -210,11 +210,6 @@ export class Musiq extends React.Component {
                     isConnected={this.state.isConnected}
                     volume={this.state.volume}
                     setVolume={(v) => this.setState({ volume: v })}
-                    skip={this.state.skip}
-                    setSkip={(v) => this.setState({ skip: v })}
-                    limit={this.state.limit}
-                    setLimit={(v) => this.setState({ limit: v })}
-                    getSongs={(v) => this.getSongs(v)}
                 />
                 <MainView 
                     songs={this.state.songs}

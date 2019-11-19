@@ -49,17 +49,6 @@ export function TopPanel(props) {
                         </form>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col s4">
-                        <input type="number" value={props.skip} onChange={e => { props.setSkip(Number(e.target.value)) }}></input>
-                    </div>
-                    <div className="col s4">
-                        <input type="number" value={props.limit} onChange={e => { props.setLimit(Number(e.target.value)) }}></input>
-                    </div>
-                    <div className="col s4 center-align">
-                        <button className="btn btn-small" onClick={props.getSongs}>Reload</button>
-                    </div>
-                </div>
             </div>
             <button className="btn btn-small hide-on-large-only transform-bottom-110 cyan lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</button>
         </div>
