@@ -6,7 +6,7 @@ export function Spinner(props) {
         //     <i className="fas fa-spinner fa-pulse fa-3x pink-text"></i>
         // </div>
         <div className="preloader-wrapper small active">
-            <div className="spinner-layer spinner-blue">
+            <div className="spinner-layer spinner-blue-only">
             <div className="circle-clipper left">
                 <div className="circle"></div>
             </div>

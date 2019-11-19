@@ -2,7 +2,7 @@ import React from 'react';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
-import { SongList } from './SongList';
+import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
 
 export class MainView extends React.Component {
