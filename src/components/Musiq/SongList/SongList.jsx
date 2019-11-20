@@ -21,17 +21,18 @@ export class SongList extends React.Component {
         }
         this.getSongsDebounced = debounce(2000, () => this.getSongs())
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
+        this.songListRef = React.createRef();
     }
 
     componentDidMount() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
         this.songsLoader = this.getSongs();
-        window.addEventListener('scroll', this.onScrollDebounced);
+        this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.onScrollDebounced);
+        this.songListRef.current.removeEventListener('scroll', this.onScrollDebounced);
     }
 
     getSongs() {
@@ -87,7 +88,7 @@ export class SongList extends React.Component {
 
 
     onScroll() {
-        if (window.scrollY + window.innerHeight > document.body.scrollHeight - 200) {
+        if (this.songListRef.current.clientHeight + this.songListRef.current.scrollTop > this.songListRef.current.scrollHeight - 100) {
             this.songsLoader = this.songsLoader
                 .then(() => this.updateSongs());
         }
@@ -96,7 +97,7 @@ export class SongList extends React.Component {
 
     render() {
         return (
-            <div>
+            <div ref={this.songListRef} className="single-view col s12 l6">
                 <SongFilterPanel
                     skip={this.state.skip}
                     setSkip={skip => this.setState({skip})}
