@@ -35,7 +35,7 @@ export function SongActionButtons(props) {
             </button>
             <button
             className={"btn btn-small" + (videoId ? '' : ' disabled')}
-            onClick={() => props.playVideo(videoId, index)}
+            onClick={() => props.playVideo(videoId, props.index)}
             title="Play song on this device">
                 PY
             </button>

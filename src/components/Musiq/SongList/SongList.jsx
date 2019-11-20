@@ -115,6 +115,7 @@ export class SongList extends React.Component {
                                         tags={this.props.tags}
                                     />
                                     <SongActionButtons 
+                                        index={index}
                                         songItem={songItem}
                                         getYtItems={this.props.getYtItems}
                                         playVideo={this.props.playVideo}

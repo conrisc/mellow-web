@@ -171,7 +171,7 @@ export class Musiq extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="musiq">
                 <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
                 <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 

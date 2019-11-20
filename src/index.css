@@ -56,9 +56,21 @@ body, p {
     box-shadow: 0 1px 0 0 #000;
 }
 
+.musiq {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+.main-view {
+    height: 100%;
+    flex: 1 1 auto;
+    margin: 0;
+}
+
 .single-view {
-    height: 85vh;
-    overflow-y: scroll;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .spinner {
@@ -151,6 +163,7 @@ body, p {
     width: 100%;
     z-index: 1000;
     padding: 10px;
+    flex: 0 1 1;
 }
 
 .bottom-panel {
