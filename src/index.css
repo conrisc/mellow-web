@@ -60,6 +60,7 @@ body, p {
     display: flex;
     flex-flow: column;
     height: 100vh;
+    overflow-x: hidden;
 }
 
 .main-view {
@@ -86,8 +87,8 @@ body, p {
 }
 
 @media only screen and (max-width: 992px) {
-    .mt-4-sm {
-        margin-top: 50px;
+    .main-view {
+        width: 200%;
     }
 
     .transform-left-50 {
@@ -96,14 +97,6 @@ body, p {
 
     .transform-top-100 {
         transform: translateY(-100%);
-    }
-
-    .transform-right-100 {
-        transform: translateX(100%);
-    }
-
-    .transform-left-110 {
-        transform: translateX(-110%);
     }
 
     .width-2x-sm {
@@ -125,14 +118,6 @@ body, p {
 
 .transform-bottom-110 {
     transform: translateY(110%);
-}
-
-.right-0 {
-    right: 0 !important;
-}
-
-.pos-absolute {
-    position: absolute;
 }
 
 .pos-relative {
@@ -163,7 +148,7 @@ body, p {
     width: 100%;
     z-index: 1000;
     padding: 10px;
-    flex: 0 1 1;
+    flex: 0 1 auto;
 }
 
 .bottom-panel {
@@ -172,6 +157,12 @@ body, p {
     right: 0;
     width: 640px;
     z-index: 1000;
+}
+
+.switch-button {
+    top: 0;
+    right: 0;
+    z-index: 10;
 }
 
 .tag-item {

@@ -97,7 +97,7 @@ export class SongList extends React.Component {
 
     render() {
         return (
-            <div ref={this.songListRef} className="single-view col s12 l6">
+            <div ref={this.songListRef} className="single-view col s6">
                 <SongFilterPanel
                     skip={this.state.skip}
                     setSkip={skip => this.setState({skip})}

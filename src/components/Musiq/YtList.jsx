@@ -2,7 +2,7 @@ import React from 'react';
 
 export function YtList(props) {
     return (
-        <div>
+        <div className="single-view col s6 grey darken-3 white-text">
             <input type="text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
             <ul className="collection">
             {

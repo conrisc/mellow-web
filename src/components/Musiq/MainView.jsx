@@ -14,7 +14,7 @@ export class MainView extends React.Component {
             ytItems: []
         };
         this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
-        this.YTListRef = React.createRef();
+        this.mainViewRef = React.createRef();
     }
 
     getYtItems(title) {
@@ -41,22 +41,20 @@ export class MainView extends React.Component {
 
     render() {
         return (
-            <div className="main-view row pos-relative">
+            <div ref={this.mainViewRef} className="main-view row pos-relative smooth-transform">
+                <button className="switch-button btn btn-small pos-fixed-sm hide-on-large-only red" onClick={() => this.mainViewRef.current.classList.toggle('transform-left-50')}>SWITCH</button>
                 <SongList
                     tags={this.props.tags}
                     loadVideo={(id) => this.loadVideo(id)}
                     playVideo={(id, i) => this.props.playVideo(id, i)}
                     getYtItems={(t) => this.getYtItems(t)}
                 />
-                <div ref={this.YTListRef} className="single-view col s12 l6 smooth-transform transform-right-100 pos-fixed-sm right-0 grey darken-3 white-text z-depth-2-sm mt-4-sm">
-                    <button className="btn btn-small hide-on-large-only pos-absolute transform-left-110 red" onClick={() => this.YTListRef.current.classList.toggle('transform-right-100')}>YT</button>
-                    <YtList
-                        ytItems={this.state.ytItems}
-                        loadVideo={(id) => this.loadVideo(id)}
-                        playVideo={(id) => this.props.playVideo(id)}
-                        getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
-                    />
-                </div>
+                <YtList
+                    ytItems={this.state.ytItems}
+                    loadVideo={(id) => this.loadVideo(id)}
+                    playVideo={(id) => this.props.playVideo(id)}
+                    getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
+                />
             </div>
         );
     }
