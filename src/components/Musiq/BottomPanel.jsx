@@ -5,7 +5,7 @@ export function BottomPanel(props) {
 
     return (
         <div ref={panelRef} className="bottom-panel smooth-transform transform-bottom-360px">
-            <button className="btn btn-sm z-depth-3" onClick={() => { panelRef.current.classList.toggle('transform-bottom-360px')} }>SHOW/HIDE</button>
+            <button className="player-btn btn btn-small pos-absolute z-depth-3" onClick={() => { panelRef.current.classList.toggle('transform-bottom-360px')} }>PLAYER</button>
             <div id="player"></div>
         </div>
     );
