@@ -31,6 +31,8 @@ export class Musiq extends React.Component {
         this.getTags();
         this.ws = new WSConnection(true, 10000);
         this.nextSongsIndex = 0;
+        this.musiqRef = React.createRef();
+        this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
     }
 
     componentDidMount() {
@@ -51,11 +53,13 @@ export class Musiq extends React.Component {
                 }
             })
         })
-
+        this.heightResizer();
+        window.addEventListener('resize', this.heightResizer);
     }
 
     componentWillUnmount() {
         this.ws.close();
+        window.removeEventListener('resize', this.heightResizer);
     }
 
     connect() {
@@ -171,7 +175,7 @@ export class Musiq extends React.Component {
 
     render() {
         return (
-            <div className="musiq">
+            <div ref={this.musiqRef} className="musiq">
                 <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
                 <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 
