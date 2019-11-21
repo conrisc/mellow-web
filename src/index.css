@@ -63,15 +63,50 @@ body, p {
     overflow-x: hidden;
 }
 
+.top-panel {
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px;
+    flex: 0 1 auto;
+}
+
+.bottom-panel {
+    position: fixed;
+    bottom: -6px;
+    right: 0;
+    width: 640px;
+    z-index: 1000;
+}
+
+.tag-item {
+    color: #FEFEFE;
+    background: #3BF;
+    padding: 2px 5px;
+    border-radius: 2px;
+}
+
 .main-view {
-    height: 100%;
     flex: 1 1 auto;
     margin: 0;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.view-items {
+    flex: 1 1 auto;
+    height: 100%;
+    overflow: hidden;
 }
 
 .single-view {
     height: 100%;
     overflow-y: auto;
+}
+
+.view-switch {
+    flex: 0 1 auto;
 }
 
 .spinner {
@@ -83,7 +118,11 @@ body, p {
 }
 
 .smooth-transform {
-    transition: transform 0.2s;
+    transition: transform 0.1s;
+}
+
+.w-50 {
+    width: 50%;
 }
 
 @media only screen and (max-width: 992px) {
@@ -141,35 +180,6 @@ body, p {
 
 .small-text {
     font-size: 11px;
-}
-
-.top-panel {
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    padding: 10px;
-    flex: 0 1 auto;
-}
-
-.bottom-panel {
-    position: fixed;
-    bottom: -6px;
-    right: 0;
-    width: 640px;
-    z-index: 1000;
-}
-
-.switch-button {
-    top: 0;
-    right: 0;
-    z-index: 10;
-}
-
-.tag-item {
-    color: #FEFEFE;
-    background: #3BF;
-    padding: 2px 5px;
-    border-radius: 2px;
 }
 
 :root {

@@ -4,6 +4,7 @@ import { DevelopersApi } from 'what_api';
 
 import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
+import { ViewSwitch } from './ViewSwitch';
 
 export class MainView extends React.Component {
 
@@ -42,19 +43,21 @@ export class MainView extends React.Component {
     render() {
         return (
             <div ref={this.mainViewRef} className="main-view row pos-relative smooth-transform">
-                <button className="switch-button btn btn-small pos-fixed-sm hide-on-large-only red" onClick={() => this.mainViewRef.current.classList.toggle('transform-left-50')}>SWITCH</button>
-                <SongList
-                    tags={this.props.tags}
-                    loadVideo={(id) => this.loadVideo(id)}
-                    playVideo={(id, i) => this.props.playVideo(id, i)}
-                    getYtItems={(t) => this.getYtItems(t)}
-                />
-                <YtList
-                    ytItems={this.state.ytItems}
-                    loadVideo={(id) => this.loadVideo(id)}
-                    playVideo={(id) => this.props.playVideo(id)}
-                    getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
-                />
+                <div className="view-items">
+                    <SongList
+                        tags={this.props.tags}
+                        loadVideo={(id) => this.loadVideo(id)}
+                        playVideo={(id, i) => this.props.playVideo(id, i)}
+                        getYtItems={(t) => this.getYtItems(t)}
+                    />
+                    <YtList
+                        ytItems={this.state.ytItems}
+                        loadVideo={(id) => this.loadVideo(id)}
+                        playVideo={(id) => this.props.playVideo(id)}
+                        getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
+                    />
+                </div>
+                <ViewSwitch mainViewRef={this.mainViewRef} />
             </div>
         );
     }
