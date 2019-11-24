@@ -37,7 +37,7 @@ export class MainView extends React.Component {
 
 
     loadVideo(videoId) {
-        this.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
+        this.props.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
     }
 
     render() {

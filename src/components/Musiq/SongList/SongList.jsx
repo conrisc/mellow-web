@@ -86,7 +86,6 @@ export class SongList extends React.Component {
             });
     }
 
-
     onScroll() {
         if (this.songListRef.current.clientHeight + this.songListRef.current.scrollTop > this.songListRef.current.scrollHeight - 100) {
             this.songsLoader = this.songsLoader
@@ -118,6 +117,7 @@ export class SongList extends React.Component {
                                         index={index}
                                         songItem={songItem}
                                         getYtItems={this.props.getYtItems}
+                                        loadVideo={this.props.loadVideo}
                                         playVideo={this.props.playVideo}
                                     />
                                 </li>
