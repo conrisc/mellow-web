@@ -27,7 +27,7 @@ export class WSConnection {
             this.ws.send(JSON.stringify(data));
             this.pingerId = setInterval(() => {
                 this.sendData(dataTypes.PING);
-            }, 30000);
+            }, 10000);
         };
         this.ws.onclose = (message) => {
             console.warn('OnClose: ', message);

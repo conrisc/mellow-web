@@ -21,8 +21,6 @@ export class Musiq extends React.Component {
         this.state = {
             songs: [],
             volume: 100,
-            skip: 0,
-            limit: 20,
             toasts: [],
             isConnected: false,
             tags: []
@@ -111,25 +109,6 @@ export class Musiq extends React.Component {
         this.nextSongIndex = index + 1;
     }
 
-
-    getSongs() {
-        const api = new DevelopersApi();
-
-        const opts = {
-            skip: this.state.skip,
-            limit: this.state.limit,
-            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
-        };
-
-        return api.searchSong(opts)
-            .then(data => {
-                this.setState({ songs: data })
-            }, error => {
-                this.pushToast('Cound not get songs');
-                console.error(error);
-            });
-    }
-
      getTags() {
         const api = new DevelopersApi();
 
@@ -168,8 +147,7 @@ export class Musiq extends React.Component {
             return el;
         });
         this.setState(
-            { tags: newTags, skip: 0, limit: 20 },
-            () => this.getSongs()
+            { tags: newTags }
         );
     }
 

@@ -19,7 +19,14 @@ export class SongList extends React.Component {
             shouldShowSongs: false,
             shouldShowLoader: true
         }
-        this.getSongsDebounced = debounce(2000, () => this.getSongs())
+        this.getSongsDeb = debounce(1000, () => this.songsLoader.then(() => this.getSongs()));
+        this.getSongsDebounced = () => {
+            this.setState({
+                shouldShowSongs: false,
+                shouldShowLoader: true
+            });
+            this.getSongsDeb();
+        }
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.songListRef = React.createRef();
     }
@@ -29,6 +36,12 @@ export class SongList extends React.Component {
         M.FormSelect.init(elems, {});
         this.songsLoader = this.getSongs();
         this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.tags !== prevProps.tags) {
+            this.getSongsDebounced();
+        }
     }
 
     componentWillUnmount() {
@@ -44,10 +57,6 @@ export class SongList extends React.Component {
             tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
-        this.setState({
-            shouldShowSongs: false,
-            shouldShowLoader: true
-        });
         return api.searchSong(opts)
             .then(data => {
                 this.setState({
