@@ -10,7 +10,7 @@ export class WSConnection {
         this.reconnectId = null;
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
-        this.initAutoReconnectDebounced = debounce(1000, this.initAutoReconnect);
+        this.initAutoReconnectDebounced = debounce(1000, (l) => this.initAutoReconnect(l));
     }
 
     open(listeners = {}) {
@@ -19,15 +19,11 @@ export class WSConnection {
         this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
-            this.clearAutoReconnect();
             console.log('WebSocket Client Connected', this.ws.readyState);
-            const data = {
-                type: dataTypes.JOIN,
-            }
-            this.ws.send(JSON.stringify(data));
-            this.pingerId = setInterval(() => {
-                this.sendData(dataTypes.PING);
-            }, 10000);
+            this.clearAutoReconnect();
+
+            this.sendData(dataTypes.JOIN);
+            this.initHeartbeat();
         };
         this.ws.onclose = (message) => {
             console.warn('OnClose: ', message);
@@ -45,9 +41,21 @@ export class WSConnection {
         this.assignListeners(listeners);
     }
 
-    close() {
+    initHeartbeat() {
+        this.sendData(dataTypes.PING);
+        this.pingerId = setInterval(() => {
+            this.sendData(dataTypes.PING);
+        }, 20000);
+    }
+
+    stopHeartbeat() {
         clearInterval(this.pingerId);
         this.pingerId = null;
+    }
+
+    close() {
+        this.stopHeartbeat();
+        this.ws.close()
         console.log('Websocket connection has been closed');
     }
 
@@ -63,17 +71,8 @@ export class WSConnection {
         }
     }
 
-    sendData(type, data = {}) {
-        const wsData = {
-            type,
-            ...data
-        }
-        console.log('WS <sendData>', wsData);
-        this.ws.send(JSON.stringify(wsData))
-    }
-
     initAutoReconnect(listeners) {
-        console.log('WebSocket autoreconnect has been initialized');
+        console.log('%cWebSocket autoreconnect has been initialized', 'color: green');
         this.reconnectId = setInterval(() => {
             console.log('WebSocket Auto reconnecting...');
             this.open(listeners);
@@ -83,6 +82,15 @@ export class WSConnection {
     clearAutoReconnect() {
         clearInterval(this.reconnectId);
         this.reconnectId = null;
-        console.log('WebSocket autoreconnect has been disabled');
+        console.log('%cWebSocket autoreconnect has been disabled', 'color: green');
+    }
+
+    sendData(type, data = {}) {
+        const wsData = {
+            type,
+            ...data
+        }
+        console.log('WS <sendData>', wsData);
+        this.ws.send(JSON.stringify(wsData))
     }
 }

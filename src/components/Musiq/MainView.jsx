@@ -31,6 +31,7 @@ export class MainView extends React.Component {
             limit: 10
         }
 
+        console.log('Fetching yt items...');
         api.getYtItems(title, opts)
             .then(ytItems => {
                 this.setState({ ytItems });

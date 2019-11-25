@@ -57,6 +57,7 @@ export class SongList extends React.Component {
             tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
+        console.log('Fetching songs...');
         return api.searchSong(opts)
             .then(data => {
                 this.setState({
