@@ -14,7 +14,8 @@ export class MainView extends React.Component {
         super(props);
 
         this.state = {
-            ytItems: []
+            ytItems: [],
+            isFetchingYtItems: false
         };
         this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
@@ -32,12 +33,18 @@ export class MainView extends React.Component {
         }
 
         console.log('Fetching yt items...');
+        this.setState({
+            isFetchingYtItems: true
+        });
+        this.mainViewRef.current.classList.add('transform-left-50');
         api.getYtItems(title, opts)
             .then(ytItems => {
-                this.setState({ ytItems });
+                this.setState({
+                    ytItems,
+                    isFetchingYtItems: false
+                });
             })
     }
-
 
     loadVideo(videoId) {
         this.props.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
@@ -58,6 +65,7 @@ export class MainView extends React.Component {
                         loadVideo={(id) => this.loadVideo(id)}
                         playVideo={(id) => this.props.playVideo(id)}
                         getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
+                        isFetchingYtItems={this.state.isFetchingYtItems}
                     />
                 </div>
                 <ViewSwitch mainViewRef={this.mainViewRef} />
