@@ -34,6 +34,7 @@ export class SongList extends React.Component {
     componentDidMount() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
+        M.updateTextFields();
         this.songsLoader = this.getSongs();
         this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
     }
