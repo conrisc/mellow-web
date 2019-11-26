@@ -28,6 +28,7 @@ export class MainView extends React.Component {
         }
         const api = new DevelopersApi();
 
+        const encodedTitle = encodeURIComponent(title);
         const opts = {
             limit: 10
         }
@@ -37,7 +38,7 @@ export class MainView extends React.Component {
             isFetchingYtItems: true
         });
         this.mainViewRef.current.classList.add('transform-left-50');
-        api.getYtItems(title, opts)
+        api.getYtItems(encodedTitle, opts)
             .then(ytItems => {
                 this.setState({
                     ytItems,

@@ -4,11 +4,12 @@ export function SongActionButtons(props) {
     const songItem = props.songItem;
     const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
     const videoId = videoIdMatch ? videoIdMatch[1] : '';
+    const encodedTitle = encodeURIComponent(songItem.title);
 
     return (
         <div className="col s5 right right-text">
             <a
-            href={"https://www.youtube.com/results?search_query="+songItem.title}
+            href={"https://www.youtube.com/results?search_query=" + encodedTitle}
             className="btn btn-small"
             target="_blank" rel="noopener noreferrer"
             title="Search song in youtube">
