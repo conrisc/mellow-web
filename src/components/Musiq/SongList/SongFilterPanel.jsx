@@ -2,7 +2,19 @@ import React from 'react';
 
 export function SongFilterPanel(props) {
     return (
-        <div className="row">
+        <div className="row mt-1">
+            <div className="input-field col">
+                <a href="#" data-target="slide-out" className="mt-1 sidenav-trigger btn btn-small">
+                    <i className="fas fa-tags"></i>
+                </a>
+            </div>
+            <div className="input-field col s6">
+                <input
+                    id="searchBar"
+                    type="text"
+                />
+                <label htmlFor="searchBar">Search song</label>
+            </div>
             <div className="input-field col s2">
                 <input
                     id="skip"

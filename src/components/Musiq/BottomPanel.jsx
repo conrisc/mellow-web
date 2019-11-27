@@ -1,12 +1,16 @@
 import React, { useRef } from 'react';
 
+const hideClass = 'transform-right-100';
+
 export function BottomPanel(props) {
-    const panelRef = useRef();
+    const playerContainerRef = useRef();
 
     return (
-        <div ref={panelRef} className="bottom-panel smooth-transform transform-bottom-360px">
-            <button className="player-btn btn btn-small pos-absolute z-depth-3" onClick={() => { panelRef.current.classList.toggle('transform-bottom-360px')} }>PLAYER</button>
-            <div id="player"></div>
+        <div className="">
+            <button className="player-btn btn btn-small pos-fixed z-depth-3" onClick={() => { playerContainerRef.current.classList.toggle(hideClass)} }>PLAYER</button>
+            <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
+                <div id="yt-player"></div>
+            </div>
         </div>
     );
 }

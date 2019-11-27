@@ -5,17 +5,20 @@ import { Spinner } from 'CommonComponents/Spinner';
 export function YtList(props) {
     return (
         <div className="single-view col s6 grey darken-3 white-text">
-            <input type="text" className="white-text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
+            <div className="input-field">
+                <input id="ytSearchBar" type="text" className="white-text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
+                <label htmlFor="ytSearchBar">Search youtube</label>
+            </div>
             {
                 props.isFetchingYtItems ?
                     <div className="center-align">
                         <Spinner />
                     </div>
                 :
-                    <ul className="collection">
+                    <ul className="">
                         {
                             props.ytItems.map((el, index) => {
-                                return <li key={index}>
+                                return <li className="bb-1 mt-1" key={index}>
                                         <div className="row">
                                             <div className="col s8">
                                                 <a href={`https://youtube.com/watch?v=${el.videoId}`}
@@ -24,10 +27,12 @@ export function YtList(props) {
                                                 >
                                                     <span>{el.title}</span>
                                                 </a><br />
-                                                <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Remote play</button>
-                                                <button className="btn red" onClick={() => props.playVideo(el.videoId)}>Play video</button>
+                                                <div className="mt-1">
+                                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Remote play</button>
+                                                    <button className="btn red" onClick={() => props.playVideo(el.videoId)}>Play video</button>
+                                                </div>
                                             </div>
-                                            <div className="col">
+                                            <div className="col right">
                                                 <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
                                                 {/* <img src={el.thumbnailUrl}></img> */}
                                             </div>

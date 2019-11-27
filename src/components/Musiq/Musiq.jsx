@@ -38,7 +38,7 @@ export class Musiq extends React.Component {
         this.connect();
 
         loadYT.then((YT) => {
-            this.player = new YT.Player('player', {
+            this.player = new YT.Player('yt-player', {
                 height: 360,
                 width: 640
             });

@@ -7,17 +7,17 @@ export function SongActionButtons(props) {
     const encodedTitle = encodeURIComponent(songItem.title);
 
     return (
-        <div className="col s5 right right-text">
+        <div className="col right right-text">
             <a
             href={"https://www.youtube.com/results?search_query=" + encodedTitle}
-            className="btn btn-small"
+            className="btn btn-small hide-on-small-only"
             target="_blank" rel="noopener noreferrer"
             title="Search song in youtube">
                 <i className="fas fa-link"></i>
             </a>
             <a
             href={songItem.url}
-            className={"btn btn-small" + (songItem.url ? '' : ' disabled')}
+            className={"btn btn-small hide-on-small-only" + (songItem.url ? '' : ' disabled')}
             target="_blank" rel="noopener noreferrer"
             title="Open song in youtube">
                 <i className="fas fa-link"></i>

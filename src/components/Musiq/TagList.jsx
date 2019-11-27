@@ -32,9 +32,6 @@ export function TagList(props) {
 
     return (
         <div>
-            <a href="#" data-target="slide-out" className="sidenav-trigger">
-                Tags
-            </a>
             <div id="slide-out" className="sidenav">
                 <h5>Tags</h5>
                 <ul className="collection">

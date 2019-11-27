@@ -25,16 +25,16 @@ export function TopPanel(props) {
                 <Link to='/' className="btn">Go back</Link>
             </div> */}
             <div className="row">
-                <div className="col m2">
-                    <button className={"btn green" + (props.isConnected ? ' disabled' : '')} onClick={props.connect}>Connect</button>
+                <div className="col">
+                    <button className={"btn btn-small green" + (props.isConnected ? ' disabled' : '')} onClick={props.connect}>Connect</button>
                 </div>
-                <div className="col m2">
-                    <button className="btn" onClick={play}>play</button>
+                <div className="col">
+                    <button className="btn btn-small" onClick={play}>play</button>
                 </div>
-                <div className="col m2">
-                    <button className="btn" onClick={pause}>pause</button>
+                <div className="col">
+                    <button className="btn btn-small" onClick={pause}>pause</button>
                 </div>
-                <div className="col s12 m6 l6">
+                <div className="col s12 m5 l3">
                         <form action="#">
                         <p className="range-field">
                             <input type="range" min="0" max="100" value={props.volume}
