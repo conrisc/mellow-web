@@ -28,8 +28,12 @@ export function YtList(props) {
                                                     <span>{el.title}</span>
                                                 </a><br />
                                                 <div className="mt-1">
-                                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>Remote play</button>
-                                                    <button className="btn red" onClick={() => props.playVideo(el.videoId)}>Play video</button>
+                                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>
+                                                        <i className="fas fa-tv"></i>
+                                                    </button>
+                                                    <button className="btn red" onClick={() => props.playVideo(el.videoId)}>
+                                                        <i className="fas fa-play"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div className="col right">

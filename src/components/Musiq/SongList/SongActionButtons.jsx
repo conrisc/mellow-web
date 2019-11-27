@@ -2,8 +2,6 @@ import React from 'react';
 
 export function SongActionButtons(props) {
     const songItem = props.songItem;
-    const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-    const videoId = videoIdMatch ? videoIdMatch[1] : '';
     const encodedTitle = encodeURIComponent(songItem.title);
 
     return (
@@ -13,7 +11,7 @@ export function SongActionButtons(props) {
             className="btn btn-small hide-on-small-only"
             target="_blank" rel="noopener noreferrer"
             title="Search song in youtube">
-                <i className="fas fa-link"></i>
+                <i className="fas fa-search"></i>
             </a>
             <a
             href={songItem.url}
@@ -29,16 +27,16 @@ export function SongActionButtons(props) {
                 <i className="fab fa-youtube"></i>
             </button>
             <button
-            className={"btn btn-small" + (videoId ? '' : ' disabled')}
-            onClick={() => props.loadVideo(videoId)}
+            className={"btn btn-small" + (props.videoId ? '' : ' disabled')}
+            onClick={() => props.loadVideo(props.videoId)}
             title="Play song on other devices">
-                <i className="fas fa-play"></i>
+                <i className="fas fa-tv"></i>
             </button>
             <button
-            className={"btn btn-small" + (videoId ? '' : ' disabled')}
-            onClick={() => props.playVideo(videoId, props.index)}
+            className={"btn btn-small" + (props.videoId ? '' : ' disabled')}
+            onClick={() => props.playVideo(props.videoId, props.index)}
             title="Play song on this device">
-                PY
+                <i className="fas fa-play"></i>
             </button>
         </div>
     );

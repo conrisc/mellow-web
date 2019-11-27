@@ -58,7 +58,7 @@ export class MainView extends React.Component {
                     <SongList
                         tags={this.props.tags}
                         loadVideo={(id) => this.loadVideo(id)}
-                        playVideo={(id, i) => this.props.playVideo(id, i)}
+                        player={this.props.player}
                         getYtItems={(t) => this.getYtItems(t)}
                     />
                     <YtList

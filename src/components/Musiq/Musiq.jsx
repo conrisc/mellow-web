@@ -12,7 +12,6 @@ import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
 import { TagList } from './TagList';
 
-
 export class Musiq extends React.Component {
 
     constructor(props) {
@@ -25,32 +24,23 @@ export class Musiq extends React.Component {
             isConnected: false,
             tags: []
         }
-        this.player = null;
         this.getTags();
         this.ws = new WSConnection(true, 10000);
-        this.nextSongsIndex = 0;
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
-    }
-
-    componentDidMount() {
-
-        this.connect();
-
-        loadYT.then((YT) => {
+        this.player = null;
+        loadYT = loadYT.then((YT) => {
             this.player = new YT.Player('yt-player', {
                 height: 360,
                 width: 640
             });
-            this.player.addEventListener('onStateChange', state => {
-                const songItem = this.state.songs[this.nextSongIndex];
-                if (state.data === 0 && songItem) {
-                    const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-                    const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                    this.playVideo(videoId, this.nextSongIndex);
-                }
-            })
+            window.pl = this.player;
+            return this.player;
         })
+    }
+
+    componentDidMount() {
+        this.connect();
         this.heightResizer();
         window.addEventListener('resize', this.heightResizer);
     }
@@ -103,10 +93,8 @@ export class Musiq extends React.Component {
         this.ws.open(listeners);
     }
 
-    playVideo(videoId, index) {
+    playVideo(videoId) {
         this.player.loadVideoById(videoId)
-        this.player.playVideo();
-        this.nextSongIndex = index + 1;
     }
 
      getTags() {
@@ -166,7 +154,9 @@ export class Musiq extends React.Component {
                 <MainView 
                     ws={this.ws}
                     tags={this.state.tags}
-                    playVideo={(id, i) => this.playVideo(id, i)}/>
+                    playVideo={id => this.playVideo(id)}
+                    player={this.player}
+                />
                 <BottomPanel />
             </div>
         );

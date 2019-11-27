@@ -17,7 +17,8 @@ export class SongList extends React.Component {
             limit: 30,
             songs: [],
             shouldShowSongs: false,
-            shouldShowLoader: true
+            shouldShowLoader: true,
+            currentlyPlaying: null
         }
         this.getSongsDeb = debounce(1000, () => this.songsLoader.then(() => this.getSongs()));
         this.getSongsDebounced = () => {
@@ -37,6 +38,7 @@ export class SongList extends React.Component {
         M.updateTextFields();
         this.songsLoader = this.getSongs();
         this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
+        this.initAutoplay();
     }
 
     componentDidUpdate(prevProps) {
@@ -64,7 +66,8 @@ export class SongList extends React.Component {
                 this.setState({
                     songs: data,
                     shouldShowSongs: true,
-                    shouldShowLoader: false
+                    shouldShowLoader: false,
+                    currentlyPlaying: null
                 });
             }, error => {
                 // this.pushToast('Cound not get songs');
@@ -104,6 +107,25 @@ export class SongList extends React.Component {
         }
     }
 
+    initAutoplay() {
+        loadYT
+            .then((player) => {
+                player.addEventListener('onStateChange', state => {
+                    const nextVideoIndex = this.state.currentlyPlaying + 1;
+                    const songItem = this.state.songs[nextVideoIndex];
+                    if (state.data === 0 && songItem) {
+                        const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+                        const videoId = videoIdMatch ? videoIdMatch[1] : '';
+                        this.playVideo(videoId, nextVideoIndex);
+                    }
+                })
+            })
+    }
+
+    playVideo(videoId, index) {
+        this.props.player.loadVideoById(videoId);
+        this.setState({ currentlyPlaying: index });
+    }
 
     render() {
         return (
@@ -118,8 +140,10 @@ export class SongList extends React.Component {
                 <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
                     {
                         this.state.songs.map((songItem, index) => {
+                            const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+                            const videoId = videoIdMatch ? videoIdMatch[1] : '';
                             return (
-                                <li className="collection-item row" key={index}>
+                                <li className={"collection-item row" + (index === this.state.currentlyPlaying ? ' blue-grey lighten-4' : '')} key={songItem.id}>
                                     <SongInfoContainer
                                         songItem={songItem}
                                         tags={this.props.tags}
@@ -127,9 +151,10 @@ export class SongList extends React.Component {
                                     <SongActionButtons 
                                         index={index}
                                         songItem={songItem}
+                                        videoId={videoId}
                                         getYtItems={this.props.getYtItems}
                                         loadVideo={this.props.loadVideo}
-                                        playVideo={this.props.playVideo}
+                                        playVideo={(id, i) => this.playVideo(id, i)}
                                     />
                                 </li>
                             );
