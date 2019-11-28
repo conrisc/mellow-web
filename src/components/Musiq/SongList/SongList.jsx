@@ -83,6 +83,7 @@ export class SongList extends React.Component {
         const opts = {
             skip: this.state.skip + this.state.limit,
             limit: this.state.limit,
+            title: this.state.titleFilter,
             tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
