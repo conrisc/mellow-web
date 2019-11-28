@@ -13,6 +13,7 @@ export class SongList extends React.Component {
         super(props);
 
         this.state = {
+            titleFilter: '',
             skip: 0,
             limit: 30,
             songs: [],
@@ -51,13 +52,13 @@ export class SongList extends React.Component {
         this.songListRef.current.removeEventListener('scroll', this.onScrollDebounced);
     }
 
-    getSongs(titleFilter) {
+    getSongs() {
         const api = new DevelopersApi();
 
         const opts = {
             skip: this.state.skip,
             limit: this.state.limit,
-            title: titleFilter,
+            title: this.state.titleFilter,
             tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
@@ -132,12 +133,14 @@ export class SongList extends React.Component {
         return (
             <div ref={this.songListRef} className="single-view col s6">
                 <SongFilterPanel
+                    titleFilter={this.state.titleFilter}
+                    setTitleFilter={titleFilter => this.setState({ titleFilter })}
                     skip={this.state.skip}
                     setSkip={skip => this.setState({skip})}
                     limit={this.state.limit}
                     setLimit={limit => this.setState({limit})}
                     getSongsDebounced={this.getSongsDebounced}
-                    filterSongsByTitle={(f) => this.getSongs(f)} //songsLoader
+
                 />
                 <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
                     {

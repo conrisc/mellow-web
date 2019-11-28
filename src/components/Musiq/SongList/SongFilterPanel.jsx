@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 export function SongFilterPanel(props) {
-    const [titleFilter, setTitleFilter] = useState('');
 
     function handleTitleFilterChange(event) {
-        setTitleFilter(event.target.value)
-    }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Enter')
-            props.filterSongsByTitle(titleFilter);
+        props.setTitleFilter(event.target.value)
+        props.getSongsDebounced();
     }
 
     return (
@@ -23,9 +18,8 @@ export function SongFilterPanel(props) {
                 <input
                     id="searchBar"
                     type="text"
-                    value={titleFilter}
+                    value={props.titleFilter}
                     onChange={handleTitleFilterChange}
-                    onKeyDown={handleKeyDown}
                 />
                 <label htmlFor="searchBar">Search song</label>
             </div>
