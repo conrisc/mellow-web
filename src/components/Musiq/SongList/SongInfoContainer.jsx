@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DevelopersApi, SongItem } from 'what_api';
 
 export function SongInfoContainer(props) {
     const [titleEditMode, setTitleEditMode] = useState(false);
@@ -18,14 +19,36 @@ export function SongInfoContainer(props) {
 
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
-            setTitleEditMode(false);
+            updateTitle();
         }
+    }
+
+    function updateTitle() {
+        setTitleEditMode(false);
+
+        if (songTitle === '' || songTitle === songItem.title) return;
+
+        const opts = {
+            songItem: new SongItem(songTitle, songItem.url, songItem.dateAdded, songItem.tags)
+        }
+        opts.songItem.id = songItem.id;
+
+        const api = new DevelopersApi();
+        api.updateSong(opts)
+            .then(() => {
+                console.log('Song updated');
+                // TODO - update state.songs in SongList component
+            })
+            .catch((err) => {
+                console.warn('Error while updating song: ', err);
+            })
+
     }
 
     return (
         <div className="col">
             { titleEditMode ?
-                <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleKeyDown} onBlur={() => setTitleEditMode(false)} /> :
+                <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleKeyDown} onBlur={updateTitle} /> :
                 <h6 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h6>
             }
             {

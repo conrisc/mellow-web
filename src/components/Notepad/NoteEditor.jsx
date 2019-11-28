@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
 import { DevelopersApi, NoteItem } from 'what_api';
 
-const api = new DevelopersApi();
 
 function saveNote(noteId, text) {
-	var opts = { 
+	const opts = { 
 		noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
 	};
-
 	opts.noteItem.id = noteId;
 
+	const api = new DevelopersApi();
 	api.updateNote(opts)
 		.then(() => {
 			console.log('Note updated');
 		 }, error => {
-			console.log('Error while saving note: ', error);
+			console.warn('Error while saving note: ', error);
 		 });
 }
 

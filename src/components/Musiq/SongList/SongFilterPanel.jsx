@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export function SongFilterPanel(props) {
+    const [titleFilter, setTitleFilter] = useState('');
+
+    function handleTitleFilterChange(event) {
+        setTitleFilter(event.target.value)
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter')
+            props.filterSongsByTitle(titleFilter);
+    }
+
     return (
         <div className="row mt-1">
             <div className="input-field col">
@@ -12,6 +23,9 @@ export function SongFilterPanel(props) {
                 <input
                     id="searchBar"
                     type="text"
+                    value={titleFilter}
+                    onChange={handleTitleFilterChange}
+                    onKeyDown={handleKeyDown}
                 />
                 <label htmlFor="searchBar">Search song</label>
             </div>

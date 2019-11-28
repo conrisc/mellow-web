@@ -51,12 +51,13 @@ export class SongList extends React.Component {
         this.songListRef.current.removeEventListener('scroll', this.onScrollDebounced);
     }
 
-    getSongs() {
+    getSongs(titleFilter) {
         const api = new DevelopersApi();
 
         const opts = {
             skip: this.state.skip,
             limit: this.state.limit,
+            title: titleFilter,
             tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
         };
 
@@ -136,6 +137,7 @@ export class SongList extends React.Component {
                     limit={this.state.limit}
                     setLimit={limit => this.setState({limit})}
                     getSongsDebounced={this.getSongsDebounced}
+                    filterSongsByTitle={(f) => this.getSongs(f)} //songsLoader
                 />
                 <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
                     {
