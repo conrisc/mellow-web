@@ -40,6 +40,7 @@ export class Musiq extends React.Component {
     }
 
     componentDidMount() {
+        document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
         this.connect();
         this.heightResizer();
         window.addEventListener('resize', this.heightResizer);

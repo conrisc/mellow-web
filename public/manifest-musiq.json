@@ -1,0 +1,15 @@
+{
+  "short_name": "Musiq",
+  "name": "What Musiq",
+  "icons": [
+    {
+      "src":"images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/musiq?utm_source=homescreen",
+  "background_color": "#D2FFE6",
+  "theme_color": "#D2FFE6",
+  "display": "standalone"
+}

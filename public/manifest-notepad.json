@@ -1,6 +1,6 @@
 {
-  "short_name": "What note",
-  "name": "What note",
+  "short_name": "Notepad",
+  "name": "What notepad",
   "icons": [
     {
       "src":"images/logo.png",
@@ -9,7 +9,7 @@
     }
   ],
   "start_url": "/notepad?utm_source=homescreen",
-  "background_color": "#FF00B3",
-  "theme_color": "#458fc0",
+  "background_color": "#94D0F7",
+  "theme_color": "#94D0F7",
   "display": "standalone"
 }
