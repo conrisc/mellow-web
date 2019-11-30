@@ -118,8 +118,14 @@ export class SongList extends React.Component {
                     const songItem = this.state.songs[nextVideoIndex];
                     if (state.data === 0 && songItem) {
                         const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-                        const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                        this.playVideo(videoId, nextVideoIndex);
+
+                        if (videoIdMatch)
+                            this.playVideo(videoIdMatch[1], nextVideoIndex);
+                        else
+                            this.props.getYtItems(songItem.title)
+                                .then(ytItems => {
+                                    this.playVideo(ytItems[0].videoId, nextVideoIndex);
+                                })
                     }
                 })
             })

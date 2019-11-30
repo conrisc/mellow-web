@@ -38,12 +38,13 @@ export class MainView extends React.Component {
             isFetchingYtItems: true
         });
         this.mainViewRef.current.classList.add('transform-left-50');
-        api.getYtItems(encodedTitle, opts)
+        return api.getYtItems(encodedTitle, opts)
             .then(ytItems => {
                 this.setState({
                     ytItems,
                     isFetchingYtItems: false
                 });
+                return ytItems;
             })
     }
 
