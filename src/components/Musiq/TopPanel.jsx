@@ -21,10 +21,8 @@ export function TopPanel(props) {
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white pos-fixed-sm z-depth-1 z-depth-2-sm center-align">
-            {/* <div className="col s2">
-                <Link to='/' className="btn">Go back</Link>
-            </div> */}
             <div className="row">
+                <Link to='/' className="btn">Go back</Link>
                 <div className="col">
                     <button className={"btn btn-small green" + (props.isConnected ? ' disabled' : '')} onClick={props.connect}>Connect</button>
                 </div>

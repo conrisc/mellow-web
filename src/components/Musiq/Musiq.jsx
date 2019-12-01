@@ -34,9 +34,8 @@ export class Musiq extends React.Component {
                 height: 360,
                 width: 640
             });
-            window.pl = this.player;
             return this.player;
-        })
+        });
     }
 
     componentDidMount() {
@@ -48,6 +47,7 @@ export class Musiq extends React.Component {
 
     componentWillUnmount() {
         this.ws.close();
+        // TODO - remove listeners from wsConnection;
         window.removeEventListener('resize', this.heightResizer);
     }
 
@@ -158,7 +158,9 @@ export class Musiq extends React.Component {
                     playVideo={id => this.playVideo(id)}
                     player={this.player}
                 />
-                <BottomPanel />
+                <BottomPanel 
+                    player={this.player}
+                />
             </div>
         );
     }

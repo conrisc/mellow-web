@@ -88,10 +88,24 @@ body, p {
     z-index: 50;
     max-width: 100%;
     width: 640px;
+    font-size: 0;
+    height: 45px;
+    overflow: hidden;
+}
+
+.control-panel {
+    position: fixed;
+    bottom: -6px;
+    z-index: 50;
+    background: green;
+    width: 50%;
+    right: 0;
 }
 
 #yt-player {
     width: 100%;
+    position: absolute;
+    bottom: 0;
 }
 
 .player-btn {
@@ -160,8 +174,12 @@ body, p {
         width: 200%;
     }
 
-    .yt-player-container {
-        bottom: 39px;
+    .yt-player-container, .control-panel {
+        bottom: 45px;
+    }
+
+    .control-panel {
+        width: 100%;
     }
 
     .transform-left-50 {
