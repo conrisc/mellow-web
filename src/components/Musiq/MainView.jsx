@@ -65,7 +65,7 @@ export class MainView extends React.Component {
                     <YtList
                         ytItems={this.state.ytItems}
                         loadVideo={id => this.loadVideo(id)}
-                        loadVideoById={id => this.props.loadVideoById(id)}
+                        playerLoader={this.props.playerLoader}
                         getYtItemsDebounced={t => this.getYtItemsDebounced(t)}
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />

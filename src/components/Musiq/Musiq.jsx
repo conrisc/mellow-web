@@ -58,13 +58,15 @@ export class Musiq extends React.Component {
                         break;
                     case dataTypes.SET_VOLUME:
                         this.setState({ volume: dataFromServer.volume });
-                        this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         this.playerLoader.then(player => {
                             player.setVolume(dataFromServer.volume);
                         });
+                        this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         break;
                     case dataTypes.LOAD_VIDEO:
-                        this.loadVideoById(dataFromServer.videoId)
+                        this.playerLoader.then(player => {
+                            player.loadVideoById(videoId)
+                        });
                         this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
@@ -95,12 +97,6 @@ export class Musiq extends React.Component {
 
     connect() {
         this.ws.open();
-    }
-
-    loadVideoById(videoId) {
-        this.playerLoader.then(player => {
-            player.loadVideoById(videoId)
-        });
     }
 
      getTags() {
@@ -160,7 +156,6 @@ export class Musiq extends React.Component {
                 <MainView 
                     ws={this.ws}
                     tags={this.state.tags}
-                    loadVideoById={id => this.loadVideoById(id)}
                     playerLoader={this.playerLoader}
                 />
                 <BottomPanel 

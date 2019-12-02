@@ -3,6 +3,12 @@ import React from 'react';
 import { Spinner } from 'CommonComponents/Spinner';
 
 export function YtList(props) {
+
+    function loadVideoById(videoId) {
+        props.playerLoader.then(player => {
+            player.loadVideoById(videoId)
+        });
+    }
     return (
         <div className="single-view col s6 grey darken-3 white-text">
             <div className="input-field">
@@ -31,7 +37,7 @@ export function YtList(props) {
                                                     <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>
                                                         <i className="fas fa-tv"></i>
                                                     </button>
-                                                    <button className="btn red" onClick={() => props.loadVideoById(el.videoId)}>
+                                                    <button className="btn red" onClick={() => loadVideoById(el.videoId)}>
                                                         <i className="fas fa-play"></i>
                                                     </button>
                                                 </div>
