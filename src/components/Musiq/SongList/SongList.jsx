@@ -115,11 +115,11 @@ export class SongList extends React.Component {
                     const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
                     if (videoIdMatch)
-                        this.playVideo(videoIdMatch[1], nextVideoIndex);
+                        this.loadVideoById(videoIdMatch[1], nextVideoIndex);
                     else
                         this.props.getYtItems(songItem.title)
                             .then(ytItems => {
-                                this.playVideo(ytItems[0].videoId, nextVideoIndex);
+                                this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
                             })
                 }
             })
