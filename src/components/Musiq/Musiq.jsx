@@ -25,7 +25,6 @@ export class Musiq extends React.Component {
             tags: []
         }
         this.getTags();
-        this.ws = new WSConnection(true, 10000);
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
         this.playerLoader = loadYT.then(YT => {
@@ -34,8 +33,7 @@ export class Musiq extends React.Component {
                 width: 640
             });
         });
-
-        this.wsListeners = {
+        const wsListeners = {
             open: () => {
                 this.setState({ isConnected: true });
             },
@@ -79,7 +77,8 @@ export class Musiq extends React.Component {
                 this.setState({ isConnected: false })
                 this.pushToast(`WS<onerror>: ${message.type}`);
             }
-        }
+        };
+        this.ws = new WSConnection(wsListeners, true, 10000);
     }
 
     componentDidMount() {
@@ -91,11 +90,11 @@ export class Musiq extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.heightResizer);
-        this.ws.close(this.wsListeners);
+        this.ws.close();
     }
 
     connect() {
-        this.ws.open(this.wsListeners);
+        this.ws.open();
     }
 
     playVideo(videoId) {

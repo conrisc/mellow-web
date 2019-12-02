@@ -5,17 +5,17 @@ const url = 'wss://what-appy-server.herokuapp.com';
 const interval = 1000;
 
 export class WSConnection {
-    constructor(autoReconnect = false, reconnectInterval = 30000) {
+    constructor(listeners = {}, autoReconnect = false, reconnectInterval = 30000) {
         this.sendDataDebounced = debounce(interval, this.sendData);
         this.reconnectId = null;
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
-        this.initAutoReconnectDebounced = debounce(1000, (l) => this.initAutoReconnect(l));
+        this.initAutoReconnectDebounced = debounce(1000, () => this.initAutoReconnect());
+        this.listeners = listeners;
     }
 
-    open(listeners = {}) {
+    open() {
         this.ws = new WebSocket(url);
-
         this.ws.addEventListener('open', () => {
             console.log('WebSocket Client Connected', this.ws.readyState);
             this.clearAutoReconnect();
@@ -25,18 +25,37 @@ export class WSConnection {
         });
         this.ws.addEventListener('close', (message) => {
             console.warn('OnClose: ', message);
-            if (this.autoReconnect && this.reconnectId === null)
-                this.initAutoReconnectDebounced(listeners);
+            this.initAutoReconnectDebounced();
             this.stopHeartbeat();
         });
         this.ws.addEventListener('error', (message) => {
             console.error('OnError: ', message);
-            if (this.autoReconnect && this.reconnectId === null)
-                this.initAutoReconnectDebounced(listeners);
+            this.initAutoReconnectDebounced();
             this.stopHeartbeat();
         });
 
-        this.assignListeners(listeners);
+        this.assignListeners();
+    }
+
+    close() {
+        this.clearListeners();
+        this.listeners = {};
+        this.autoReconnect = false;
+        this.clearAutoReconnect();
+        this.ws.close()
+        console.log('Websocket connection has been closed');
+    }
+
+    assignListeners() {
+        for (let listenerName in this.listeners) {
+            this.ws.addEventListener(listenerName, this.listeners[listenerName]);
+        }
+    }
+
+    clearListeners() {
+        for(const listenerName in this.listeners) {
+            this.ws.removeEventListener(listenerName, this.listeners[listenerName]);
+        }
     }
 
     initHeartbeat() {
@@ -51,30 +70,14 @@ export class WSConnection {
         this.pingerId = null;
     }
 
-    close(listeners = {}) {
-        this.clearListeners(listeners);
-        this.ws.close()
-        console.log('Websocket connection has been closed');
-    }
-
-    assignListeners(listeners) {
-        for (let listenerName in listeners) {
-            this.ws.addEventListener(listenerName, listeners[listenerName]);
+    initAutoReconnect() {
+        if (this.autoReconnect && this.reconnectId === null) {
+            console.log('%cWebSocket autoreconnect has been initialized', 'color: green');
+            this.reconnectId = setInterval(() => {
+                console.log('WebSocket Auto reconnecting...');
+                this.open();
+            }, this.reconnectInterval);
         }
-    }
-
-    clearListeners(listeners) {
-        for(const listenerName in listeners) {
-            this.ws.removeEventListener(listenerName, listeners[listenerName]);
-        }
-    }
-
-    initAutoReconnect(listeners) {
-        console.log('%cWebSocket autoreconnect has been initialized', 'color: green');
-        this.reconnectId = setInterval(() => {
-            console.log('WebSocket Auto reconnecting...');
-            this.open(listeners);
-        }, this.reconnectInterval);
     }
 
     clearAutoReconnect() {
