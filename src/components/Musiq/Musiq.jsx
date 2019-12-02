@@ -28,13 +28,11 @@ export class Musiq extends React.Component {
         this.ws = new WSConnection(true, 10000);
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
-        this.player = null;
-        loadYT = loadYT.then((YT) => {
-            this.player = new YT.Player('yt-player', {
+        this.playerLoader = loadYT.then(YT => {
+            return new YT.Player('yt-player', {
                 height: 360,
                 width: 640
             });
-            return this.player;
         });
     }
 
@@ -64,17 +62,23 @@ export class Musiq extends React.Component {
                         console.log('WS <NEW_MESSAGE>: ', dataFromServer);
                         break;
                     case dataTypes.PLAY:
-                        this.player.playVideo();
+                        this.playerLoader.then(player => {
+                            player.playVideo();
+                        });
                         this.pushToast('Playing video');
                         break;
                     case dataTypes.PAUSE:
-                        this.player.pauseVideo();
+                        this.playerLoader.then(player => {
+                            player.pauseVideo();
+                        });
                         this.pushToast('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
                         this.setState({ volume: dataFromServer.volume });
                         this.pushToast(`Setting volume to ${dataFromServer.volume}`);
-                        this.player.setVolume(dataFromServer.volume);
+                        this.playerLoader.then(player => {
+                            player.setVolume(dataFromServer.volume);
+                        });
                         break;
                     case dataTypes.LOAD_VIDEO:
                         this.playVideo(dataFromServer.videoId)
@@ -95,7 +99,9 @@ export class Musiq extends React.Component {
     }
 
     playVideo(videoId) {
-        this.player.loadVideoById(videoId)
+        this.playerLoader.then(player => {
+            player.loadVideoById(videoId)
+        });
     }
 
      getTags() {
@@ -156,10 +162,10 @@ export class Musiq extends React.Component {
                     ws={this.ws}
                     tags={this.state.tags}
                     playVideo={id => this.playVideo(id)}
-                    player={this.player}
+                    playerLoader={this.playerLoader}
                 />
                 <BottomPanel 
-                    player={this.player}
+                    playerLoader={this.playerLoader}
                 />
             </div>
         );

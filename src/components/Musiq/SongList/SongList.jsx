@@ -111,28 +111,29 @@ export class SongList extends React.Component {
     }
 
     initAutoplay() {
-        loadYT
-            .then((player) => {
-                player.addEventListener('onStateChange', state => {
-                    const nextVideoIndex = this.state.currentlyPlaying + 1;
-                    const songItem = this.state.songs[nextVideoIndex];
-                    if (state.data === 0 && songItem) {
-                        const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+        this.props.playerLoader.then(player => {
+            player.addEventListener('onStateChange', state => {
+                const nextVideoIndex = this.state.currentlyPlaying + 1;
+                const songItem = this.state.songs[nextVideoIndex];
+                if (state.data === 0 && songItem) {
+                    const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
-                        if (videoIdMatch)
-                            this.playVideo(videoIdMatch[1], nextVideoIndex);
-                        else
-                            this.props.getYtItems(songItem.title)
-                                .then(ytItems => {
-                                    this.playVideo(ytItems[0].videoId, nextVideoIndex);
-                                })
-                    }
-                })
+                    if (videoIdMatch)
+                        this.playVideo(videoIdMatch[1], nextVideoIndex);
+                    else
+                        this.props.getYtItems(songItem.title)
+                            .then(ytItems => {
+                                this.playVideo(ytItems[0].videoId, nextVideoIndex);
+                            })
+                }
             })
+        })
     }
 
     playVideo(videoId, index) {
-        this.props.player.loadVideoById(videoId);
+        this.props.playerLoader.then(player => {
+            player.loadVideoById(videoId)
+        });
         this.setState({ currentlyPlaying: index });
     }
 

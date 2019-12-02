@@ -89,8 +89,6 @@ body, p {
     max-width: 100%;
     width: 640px;
     font-size: 0;
-    height: 45px;
-    overflow: hidden;
 }
 
 .control-panel {
@@ -104,8 +102,6 @@ body, p {
 
 #yt-player {
     width: 100%;
-    position: absolute;
-    bottom: 0;
 }
 
 .player-btn {

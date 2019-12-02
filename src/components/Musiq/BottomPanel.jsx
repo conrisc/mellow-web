@@ -7,23 +7,23 @@ let w = 0;
 export function BottomPanel(props) {
     const [time, setTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [isPaused, setIsPaused] = useState(true);
     const playerContainerRef = useRef();
     const controlPanelRef = useRef();
+    const playerLoader = props.playerLoader;
 
     useEffect(() => {
         const timeUpdater = setInterval(() => {
-            loadYT
-                .then(player => {
-                    const currentTime = player.getCurrentTime && player.getCurrentTime() || 0;
-                    const floorTime = Math.floor(currentTime);
-                    setTime(floorTime);
-                })
+            playerLoader.then(player => {
+                const currentTime = player.getCurrentTime && player.getCurrentTime() || 0;
+                const floorTime = Math.floor(currentTime);
+                setTime(floorTime);
+            })
         }, 200);
 
-        loadYT
-            .then((player) => {
-                player.addEventListener('onStateChange', updateVideoDuration);
-            })
+        playerLoader.then((player) => {
+            player.addEventListener('onStateChange', updateVideoDuration);
+        })
 
         return () => {
             clearInterval(timeUpdater);
@@ -37,20 +37,33 @@ export function BottomPanel(props) {
 
     function updateVideoDuration(state) {
         if (state.data === 1) {
-            loadYT
-                .then(player => {
-                    const floorDuration = Math.floor(player.getDuration() || 0)
-                    setDuration(floorDuration);
-                });
+            playerLoader.then(player => {
+                const floorDuration = Math.floor(player.getDuration() || 0)
+                setDuration(floorDuration);
+                setIsPaused(false);
+            });
+        } else {
+            setIsPaused(true);
         }
     }
 
     function handleTimeChange(event) {
         const value = event.target.value;
-        loadYT
-            .then(player => {
-                player.seekTo(value);
-            })
+        playerLoader.then(player => {
+            player.seekTo(value);
+        })
+    }
+
+    function playVideo() {
+        playerLoader.then(player => {
+            player.playVideo();
+        })
+    }
+
+    function pauseVideo() {
+        playerLoader.then(player => {
+            player.pauseVideo();
+        })
     }
 
     return (
@@ -61,6 +74,14 @@ export function BottomPanel(props) {
             </div>
             <div ref={controlPanelRef} className="control-panel row">
                 <div className="col s2">
+                    <button className="btn btn-flat" onClick={playVideo}>
+                        <i className="fas fa-play"></i>
+                    </button>
+                    <button className="btn btn-flat" onClick={pauseVideo}>
+                        <i className="fas fa-pause"></i>
+                    </button>
+                </div>
+                <div className="col s1">
                     {time}
                 </div>
                 <div className="col s8">
@@ -70,7 +91,7 @@ export function BottomPanel(props) {
                         </p>
                     </form>
                 </div>
-                <div className="col s2">
+                <div className="col s1">
                     {duration}
                 </div>
             </div>
