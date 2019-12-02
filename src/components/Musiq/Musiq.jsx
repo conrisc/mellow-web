@@ -34,27 +34,12 @@ export class Musiq extends React.Component {
                 width: 640
             });
         });
-    }
 
-    componentDidMount() {
-        document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
-        this.connect();
-        this.heightResizer();
-        window.addEventListener('resize', this.heightResizer);
-    }
-
-    componentWillUnmount() {
-        this.ws.close();
-        // TODO - remove listeners from wsConnection;
-        window.removeEventListener('resize', this.heightResizer);
-    }
-
-    connect() {
-        const listeners = {
-            onopen: () => {
+        this.wsListeners = {
+            open: () => {
                 this.setState({ isConnected: true });
             },
-            onmessage: (message) => {
+            message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
                 console.log('WS <onmessage>: ', dataFromServer);
                 switch (dataFromServer.type) {
@@ -86,16 +71,31 @@ export class Musiq extends React.Component {
                         break;
                 }
             },
-            onclose: (message) => {
+            close: (message) => {
                 this.setState({ isConnected: false })
                 this.pushToast(`WS<onclose>: ${message.type}`);
             },
-            onerror: (message) => {
+            error: (message) => {
                 this.setState({ isConnected: false })
                 this.pushToast(`WS<onerror>: ${message.type}`);
             }
         }
-        this.ws.open(listeners);
+    }
+
+    componentDidMount() {
+        document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
+        this.heightResizer();
+        window.addEventListener('resize', this.heightResizer);
+        this.connect();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.heightResizer);
+        this.ws.close(this.wsListeners);
+    }
+
+    connect() {
+        this.ws.open(this.wsListeners);
     }
 
     playVideo(videoId) {

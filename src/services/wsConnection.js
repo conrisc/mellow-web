@@ -14,29 +14,27 @@ export class WSConnection {
     }
 
     open(listeners = {}) {
-        if (this.pingerId) this.close();
-
         this.ws = new WebSocket(url);
 
-        this.ws.onopen = () => {
+        this.ws.addEventListener('open', () => {
             console.log('WebSocket Client Connected', this.ws.readyState);
             this.clearAutoReconnect();
 
             this.sendData(dataTypes.JOIN);
             this.initHeartbeat();
-        };
-        this.ws.onclose = (message) => {
+        });
+        this.ws.addEventListener('close', (message) => {
             console.warn('OnClose: ', message);
             if (this.autoReconnect && this.reconnectId === null)
                 this.initAutoReconnectDebounced(listeners);
-            this.close();
-        };
-        this.ws.onerror = (message) => {
+            this.stopHeartbeat();
+        });
+        this.ws.addEventListener('error', (message) => {
             console.error('OnError: ', message);
             if (this.autoReconnect && this.reconnectId === null)
                 this.initAutoReconnectDebounced(listeners);
-            this.close();
-        };
+            this.stopHeartbeat();
+        });
 
         this.assignListeners(listeners);
     }
@@ -53,21 +51,21 @@ export class WSConnection {
         this.pingerId = null;
     }
 
-    close() {
-        this.stopHeartbeat();
+    close(listeners = {}) {
+        this.clearListeners(listeners);
         this.ws.close()
         console.log('Websocket connection has been closed');
     }
 
     assignListeners(listeners) {
         for (let listenerName in listeners) {
-            const callback = this.ws[listenerName];
-            this.ws[listenerName] = callback ?
-                (msg) => {
-                    callback(msg);
-                    listeners[listenerName](msg);
-                }
-                : listeners[listenerName];
+            this.ws.addEventListener(listenerName, listeners[listenerName]);
+        }
+    }
+
+    clearListeners(listeners) {
+        for(const listenerName in listeners) {
+            this.ws.removeEventListener(listenerName, listeners[listenerName]);
         }
     }
 
