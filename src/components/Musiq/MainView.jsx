@@ -17,7 +17,7 @@ export class MainView extends React.Component {
             ytItems: [],
             isFetchingYtItems: false
         };
-        this.getYtItemsDebounced = debounce(1000, (t) => this.getYtItems(t));
+        this.getYtItemsDebounced = debounce(800, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
     }
 
@@ -37,7 +37,6 @@ export class MainView extends React.Component {
         this.setState({
             isFetchingYtItems: true
         });
-        this.mainViewRef.current.classList.add('transform-left-50');
         return api.getYtItems(encodedTitle, opts)
             .then(ytItems => {
                 this.setState({
@@ -46,6 +45,10 @@ export class MainView extends React.Component {
                 });
                 return ytItems;
             })
+    }
+
+    showYtTab() {
+        this.mainViewRef.current.classList.add('transform-left-50');
     }
 
     loadVideo(videoId) {
@@ -61,6 +64,7 @@ export class MainView extends React.Component {
                         loadVideo={id => this.loadVideo(id)}
                         playerLoader={this.props.playerLoader}
                         getYtItems={t => this.getYtItems(t)}
+                        showYtTab={() => this.showYtTab()}
                     />
                     <YtList
                         ytItems={this.state.ytItems}

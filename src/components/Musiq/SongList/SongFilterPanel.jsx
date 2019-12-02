@@ -32,6 +32,7 @@ export function SongFilterPanel(props) {
                     min="0"
                 />
                 <label htmlFor="skip">Skip</label>
+                <i className="fas fa-times" onClick={() => console.log('lo')}></i>
             </div>
             <div className="input-field col s2">
                 <select

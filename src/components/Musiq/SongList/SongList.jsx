@@ -21,8 +21,8 @@ export class SongList extends React.Component {
             shouldShowLoader: true,
             currentlyPlaying: null
         }
-        this.getSongsDebounced = debounce(1000, () => this.songsLoader.then(() => this.getSongs()));
-        this.onScrollDebounced = debounce(1000, () => this.onScroll())
+        this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
+        this.onScrollDebounced = debounce(800, () => this.onScroll())
         this.songListRef = React.createRef();
     }
 
@@ -162,6 +162,7 @@ export class SongList extends React.Component {
                                         songItem={songItem}
                                         videoId={videoId}
                                         getYtItems={this.props.getYtItems}
+                                        showYtTab={this.props.showYtTab}
                                         loadVideo={this.props.loadVideo}
                                         loadVideoById={(id, i) => this.loadVideoById(id, i)}
                                     />

@@ -18,6 +18,11 @@ export function SongActionButtons(props) {
             })
     }
 
+    function searchOnYoutube() {
+        props.getYtItems(songItem.title);
+        props.showYtTab();
+    }
+
     return (
         <div className="col right right-text">
             <a
@@ -36,7 +41,7 @@ export function SongActionButtons(props) {
             </a>
             <button
                 className="btn btn-small"
-                onClick={() => props.getYtItems(songItem.title)}
+                onClick={searchOnYoutube}
                 title="Find this song using youtube">
                     <i className="fab fa-youtube"></i>
             </button>
