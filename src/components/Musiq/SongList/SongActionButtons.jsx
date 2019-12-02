@@ -14,7 +14,7 @@ export function SongActionButtons(props) {
     function findAndPlayVideo() {
         props.getYtItems(songItem.title)
             .then(ytItems => {
-                props.playVideo(ytItems[0].videoId, props.index);
+                props.loadVideoById(ytItems[0].videoId, props.index);
             })
     }
 
@@ -48,7 +48,7 @@ export function SongActionButtons(props) {
             </button>
             <button
                 className="btn btn-small"
-                onClick={props.videoId ? () => props.playVideo(props.videoId, props.index) : findAndPlayVideo}
+                onClick={props.videoId ? () => props.loadVideoById(props.videoId, props.index) : findAndPlayVideo}
                 title="Play song on this device">
                     <i className="fas fa-play"></i>
             </button>

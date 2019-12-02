@@ -31,7 +31,7 @@ export function YtList(props) {
                                                     <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>
                                                         <i className="fas fa-tv"></i>
                                                     </button>
-                                                    <button className="btn red" onClick={() => props.playVideo(el.videoId)}>
+                                                    <button className="btn red" onClick={() => props.loadVideoById(el.videoId)}>
                                                         <i className="fas fa-play"></i>
                                                     </button>
                                                 </div>

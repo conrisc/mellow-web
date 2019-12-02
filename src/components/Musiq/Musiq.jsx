@@ -64,7 +64,7 @@ export class Musiq extends React.Component {
                         });
                         break;
                     case dataTypes.LOAD_VIDEO:
-                        this.playVideo(dataFromServer.videoId)
+                        this.loadVideoById(dataFromServer.videoId)
                         this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
@@ -97,7 +97,7 @@ export class Musiq extends React.Component {
         this.ws.open();
     }
 
-    playVideo(videoId) {
+    loadVideoById(videoId) {
         this.playerLoader.then(player => {
             player.loadVideoById(videoId)
         });
@@ -160,7 +160,7 @@ export class Musiq extends React.Component {
                 <MainView 
                     ws={this.ws}
                     tags={this.state.tags}
-                    playVideo={id => this.playVideo(id)}
+                    loadVideoById={id => this.loadVideoById(id)}
                     playerLoader={this.playerLoader}
                 />
                 <BottomPanel 

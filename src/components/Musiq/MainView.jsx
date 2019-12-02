@@ -58,15 +58,15 @@ export class MainView extends React.Component {
                 <div className="view-items">
                     <SongList
                         tags={this.props.tags}
-                        loadVideo={(id) => this.loadVideo(id)}
+                        loadVideo={id => this.loadVideo(id)}
                         playerLoader={this.props.playerLoader}
-                        getYtItems={(t) => this.getYtItems(t)}
+                        getYtItems={t => this.getYtItems(t)}
                     />
                     <YtList
                         ytItems={this.state.ytItems}
-                        loadVideo={(id) => this.loadVideo(id)}
-                        playVideo={(id) => this.props.playVideo(id)}
-                        getYtItemsDebounced={(t) => this.getYtItemsDebounced(t)}
+                        loadVideo={id => this.loadVideo(id)}
+                        loadVideoById={id => this.props.loadVideoById(id)}
+                        getYtItemsDebounced={t => this.getYtItemsDebounced(t)}
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />
                 </div>

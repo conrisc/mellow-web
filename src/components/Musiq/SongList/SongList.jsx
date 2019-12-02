@@ -130,7 +130,7 @@ export class SongList extends React.Component {
         })
     }
 
-    playVideo(videoId, index) {
+    loadVideoById(videoId, index) {
         this.props.playerLoader.then(player => {
             player.loadVideoById(videoId)
         });
@@ -167,7 +167,7 @@ export class SongList extends React.Component {
                                         videoId={videoId}
                                         getYtItems={this.props.getYtItems}
                                         loadVideo={this.props.loadVideo}
-                                        playVideo={(id, i) => this.playVideo(id, i)}
+                                        loadVideoById={(id, i) => this.loadVideoById(id, i)}
                                     />
                                 </li>
                             );
