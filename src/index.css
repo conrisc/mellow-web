@@ -83,7 +83,7 @@ body, p {
 
 .yt-player-container {
     position: fixed;
-    bottom: -6px;
+    bottom: 0;
     right: 0;
     z-index: 50;
     max-width: 100%;
@@ -93,11 +93,11 @@ body, p {
 
 .control-panel {
     position: fixed;
-    bottom: -6px;
+    bottom: 0;
+    right: 0;
     z-index: 50;
     background: green;
     width: 50%;
-    right: 0;
 }
 
 #yt-player {
@@ -180,6 +180,11 @@ body, p {
 
 .clear-input:hover {
     opacity: 0.6;
+}
+
+.btn-simple {
+    background: none;
+    box-shadow: none;
 }
 
 @media only screen and (max-width: 992px) {

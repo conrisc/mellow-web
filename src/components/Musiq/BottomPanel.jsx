@@ -66,25 +66,31 @@ export function BottomPanel(props) {
         })
     }
 
+    function formatSeconds(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = ('0' + seconds % 60).slice(-2);
+        return `${min}:${sec}`;
+    }
+
     return (
         <div className="">
             <button className="player-btn btn btn-small pos-fixed z-depth-3" onClick={togglePanel}>PLAYER</button>
             <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
                 <div id="yt-player"></div>
             </div>
-            <div ref={controlPanelRef} className="control-panel row">
-                <div className="col s2">
-                    <button className="btn btn-flat" onClick={playVideo}>
+            <div ref={controlPanelRef} className="control-panel row blue-grey darken-3 white-text">
+                <div className="col">
+                    <button className="btn btn-simple" onClick={playVideo}>
                         <i className="fas fa-play"></i>
                     </button>
-                    <button className="btn btn-flat" onClick={pauseVideo}>
+                    <button className="btn btn-simple" onClick={pauseVideo}>
                         <i className="fas fa-pause"></i>
                     </button>
                 </div>
                 <div className="col s1">
-                    {time}
+                    <h6>{formatSeconds(time)}</h6>
                 </div>
-                <div className="col s8">
+                <div className="col s7">
                     <form action="#">
                         <p className="range-field">
                             <input type="range" min="0" max={duration} value={time} onChange={handleTimeChange}/>
@@ -92,7 +98,7 @@ export function BottomPanel(props) {
                     </form>
                 </div>
                 <div className="col s1">
-                    {duration}
+                    <h6>{formatSeconds(duration)}</h6>
                 </div>
             </div>
         </div>
