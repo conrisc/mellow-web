@@ -21,14 +21,7 @@ export class SongList extends React.Component {
             shouldShowLoader: true,
             currentlyPlaying: null
         }
-        this.getSongsDeb = debounce(1000, () => this.songsLoader.then(() => this.getSongs()));
-        this.getSongsDebounced = () => {
-            this.setState({
-                shouldShowSongs: false,
-                shouldShowLoader: true
-            });
-            this.getSongsDeb();
-        }
+        this.getSongsDebounced = debounce(1000, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(1000, () => this.onScroll())
         this.songListRef = React.createRef();
     }
@@ -53,8 +46,10 @@ export class SongList extends React.Component {
     }
 
     getSongs() {
-        const api = new DevelopersApi();
-
+        this.setState({
+            shouldShowSongs: false,
+            shouldShowLoader: true
+        });
         const opts = {
             skip: this.state.skip,
             limit: this.state.limit,
@@ -63,6 +58,7 @@ export class SongList extends React.Component {
         };
 
         console.log('Fetching songs...');
+        const api = new DevelopersApi();
         return api.searchSong(opts)
             .then(data => {
                 this.setState({

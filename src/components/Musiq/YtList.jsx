@@ -9,10 +9,16 @@ export function YtList(props) {
             player.loadVideoById(videoId)
         });
     }
+
+    function handleSearchChange(event) {
+        const title = event.target.value;
+        props.getYtItemsDebounced(title);
+    }
+
     return (
         <div className="single-view col s6 grey darken-3 white-text">
             <div className="input-field">
-                <input id="ytSearchBar" type="text" className="white-text" onChange={e => {const t = e.target.value; props.getYtItemsDebounced(t)}}></input>
+                <input id="ytSearchBar" type="text" className="white-text" onChange={handleSearchChange}></input>
                 <label htmlFor="ytSearchBar">Search youtube</label>
             </div>
             {
