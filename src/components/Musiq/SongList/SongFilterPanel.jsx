@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useRef }from 'react';
 
 export function SongFilterPanel(props) {
+    const serachSongsInputRef = useRef();
 
     function handleTitleFilterChange(event) {
-        props.setTitleFilter(event.target.value)
+        handleTitleChange(event.target.value)
+    }
+
+    function clearSearchSongsInput() {
+        handleTitleChange('');
+        serachSongsInputRef.current.focus();
+    }
+
+    function handleTitleChange(title) {
+        props.setSkip(0);
+        props.setTitleFilter(title);
+        props.getSongsDebounced();
+    }
+
+    function updateSkip(event) {
+        props.setSkip(Number(event.target.value));
         props.getSongsDebounced();
     }
 
@@ -16,11 +32,15 @@ export function SongFilterPanel(props) {
             </div>
             <div className="input-field col s6">
                 <input
+                    ref={serachSongsInputRef}
                     id="searchBar"
                     type="text"
                     value={props.titleFilter}
                     onChange={handleTitleFilterChange}
                 />
+                <button className="clear-input" onClick={clearSearchSongsInput}>
+                    <i className="fas fa-times"></i>
+                </button>
                 <label htmlFor="searchBar">Search song</label>
             </div>
             <div className="input-field col s2">
@@ -28,11 +48,10 @@ export function SongFilterPanel(props) {
                     id="skip"
                     type="number"
                     value={props.skip}
-                    onChange={e => { props.setSkip(Number(e.target.value)); props.getSongsDebounced(); }}
+                    onChange={updateSkip}
                     min="0"
                 />
                 <label htmlFor="skip">Skip</label>
-                <i className="fas fa-times" onClick={() => console.log('lo')}></i>
             </div>
             <div className="input-field col s2">
                 <select

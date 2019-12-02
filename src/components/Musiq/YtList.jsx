@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import { Spinner } from 'CommonComponents/Spinner';
 
 export function YtList(props) {
+    const searchYtInputRef = useRef();
 
     function loadVideoById(videoId) {
         props.playerLoader.then(player => {
@@ -15,10 +16,18 @@ export function YtList(props) {
         props.getYtItemsDebounced(title);
     }
 
+    function clearSearchYtInput() {
+        searchYtInputRef.current.value = "";
+        searchYtInputRef.current.focus();
+    }
+
     return (
         <div className="single-view col s6 grey darken-3 white-text">
             <div className="input-field">
-                <input id="ytSearchBar" type="text" className="white-text" onChange={handleSearchChange}></input>
+                <input ref={searchYtInputRef} id="ytSearchBar" type="text" className="white-text" onChange={handleSearchChange}></input>
+                <button className="clear-input white-text" onClick={clearSearchYtInput}>
+                    <i className="fas fa-times"></i>
+                </button>
                 <label htmlFor="ytSearchBar">Search youtube</label>
             </div>
             {
