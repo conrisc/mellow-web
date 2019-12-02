@@ -21,14 +21,14 @@ export function BottomPanel(props) {
             })
         }, 200);
 
-        playerLoader.then((player) => {
+        playerLoader.then(player => {
             player.addEventListener('onStateChange', updateVideoDuration);
         })
 
         return () => {
             clearInterval(timeUpdater);
         }
-    })
+    }, [])
 
     function togglePanel() {
         playerContainerRef.current.classList.toggle(hideClass);
@@ -42,7 +42,11 @@ export function BottomPanel(props) {
                 setDuration(floorDuration);
                 setIsPaused(false);
             });
-        } else {
+        } else if (state.data === -1 || state.data === 5) {
+            setDuration(0);
+            setIsPaused(true);
+        }
+        else {
             setIsPaused(true);
         }
     }
