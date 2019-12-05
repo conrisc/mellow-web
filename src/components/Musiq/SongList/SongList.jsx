@@ -133,6 +133,16 @@ export class SongList extends React.Component {
         this.setState({ currentlyPlaying: index });
     }
 
+    updateSingleSong(updatedSongItem) {
+        this.setState({
+            songs: this.state.songs.map(songItem => {
+                return songItem.id === updatedSongItem.id ?
+                    updatedSongItem :
+                    songItem;
+            })
+        });
+    }
+
     render() {
         return (
             <div ref={this.songListRef} className="single-view col s6">
@@ -156,6 +166,7 @@ export class SongList extends React.Component {
                                     <SongInfoContainer
                                         songItem={songItem}
                                         tags={this.props.tags}
+                                        updateSingleSong={s => this.updateSingleSong(s)}
                                     />
                                     <SongActionButtons 
                                         index={index}

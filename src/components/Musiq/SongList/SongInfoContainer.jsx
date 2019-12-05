@@ -5,6 +5,9 @@ export function SongInfoContainer(props) {
     const songItem = props.songItem;
     const [titleEditMode, setTitleEditMode] = useState(false);
     const [songTitle, setSongTitle] = useState(songItem.title);
+    const [tagsEditMode, setTagsEditMode] = useState(false);
+    const [songTags, setTags] = useState([]);
+    const [editedTag, setEditedTag] = useState('');
     const date = new Date(songItem.dateAdded).toGMTString();
 
     const tagsIdToNameMap = props.tags.reduce(
@@ -19,15 +22,18 @@ export function SongInfoContainer(props) {
             return acc;
         },
     {});
-    const [tagsEditMode, setTagsEditMode] = useState(false);
-    const [tags, setTags] = useState(songItem.tags.map(tagId => tagsIdToNameMap[tagId])); // updateTags when props.tags changes
-    const [editedTag, setEditedTag] = useState('');
+
+    useEffect(() => {
+        setTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
+        setSongTitle(songItem.title);
+    }, [props.songItem]);
 
     function handleSongTitleChange(event) {
         setSongTitle(event.target.value);
+
     }
 
-    function handleKeyDown(event) {
+    function handleTitleInputKeyDown(event) {
         if (event.key === 'Enter') {
             updateTitle();
         }
@@ -35,40 +41,26 @@ export function SongInfoContainer(props) {
 
     function updateTitle() {
         setTitleEditMode(false);
-
-        if (songTitle === '' || songTitle === songItem.title) return;
-
-        const opts = {
-            songItem: new SongItem(songTitle, songItem.url, songItem.dateAdded, songItem.tags) // updateTags
-        }
-        opts.songItem.id = songItem.id;
-
-        const api = new DevelopersApi();
-        api.updateSong(opts)
-            .then(() => {
-                console.log('Song updated');
-                // TODO - update state.songs in SongList component
-            })
-            .catch((err) => {
-                console.warn('Error while updating song: ', err);
-            })
+        if (!songTitle) setSongTitle(songItem.title);
+        else updateSong();
     }
 
-    function updateTags() {
-        if (songTitle === '') return;
-        const tagsIds = tags.map(tagName => tagsNameToIdMap[tagName])
+    function updateSong() {
+        const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
         const opts = {
-            songItem: new SongItem(songTitle, songItem.url, songItem.dateAdded, tagsIds)
+            songItem: new SongItem(songTitle.trim(), songItem.url, songItem.dateAdded, songTagsIds)
         }
         opts.songItem.id = songItem.id;
 
         const api = new DevelopersApi();
         api.updateSong(opts)
-            .then(() => {
+            .then(result => {
                 console.log('Song updated');
+                props.updateSingleSong(result);
             })
-            .catch((err) => {
+            .catch(err => {
+                setSongTitle(songItem.title);
                 console.warn('Error while updating song: ', err);
             })
     }
@@ -80,16 +72,18 @@ export function SongInfoContainer(props) {
 
     function handleTagAction(event) {
         switch(event.key) {
+            case ' ':
             case 'Enter':
-                if (editedTag !== '') {
-                    setTags([...tags, editedTag]);
+                if (editedTag.trim() !== '') {
+                    setTags([...songTags, editedTag.trim()]);
                     setEditedTag('');
+                    event.preventDefault();
                 }
                 break;
             case 'Backspace':
                 if (editedTag === '') {
-                    setEditedTag(tags[tags.length-1]);
-                    setTags(tags.slice(0,-1));
+                    setEditedTag(songTags[songTags.length-1]);
+                    setTags(songTags.slice(0,-1));
                     event.preventDefault();
                 }
                 break;
@@ -99,7 +93,7 @@ export function SongInfoContainer(props) {
     function toggleTagsEditMode() {
         if (tagsEditMode) {
             setTagsEditMode(false);
-            updateTags();
+            updateSong();
         } else {
             setTagsEditMode(true);
         }
@@ -108,11 +102,11 @@ export function SongInfoContainer(props) {
     return (
         <div className="col">
             { titleEditMode ?
-                <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleKeyDown} onBlur={updateTitle} /> :
+                <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleTitleInputKeyDown} onBlur={updateTitle} /> :
                 <h6 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h6>
             }
             {
-                tags.map((tagName, index) => <div key={index} className="tag-item">
+                songTags.map((tagName, index) => <div key={index} className="tag-item">
                     {tagName}
                     {/* <i className="fas fa-times"></i> */}
                 </div>)
