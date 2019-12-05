@@ -618,7 +618,7 @@ export class DevelopersApi {
      * Updates an item in the database
      * @param {Object} opts Optional parameters
      * @param {module:model/SongItem} opts.songItem Note item to update
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/SongItem} and HTTP response
      */
     updateSongWithHttpInfo(opts) {
       opts = opts || {};
@@ -637,7 +637,7 @@ export class DevelopersApi {
       let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = [];
-      let returnType = null;
+      let returnType = SongItem;
 
       return this.apiClient.callApi(
         '/song', 'PUT',
@@ -651,7 +651,7 @@ export class DevelopersApi {
      * Updates an item in the database
      * @param {Object} opts Optional parameters
      * @param {module:model/SongItem} opts.songItem Note item to update
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/SongItem}
      */
     updateSong(opts) {
       return this.updateSongWithHttpInfo(opts)
