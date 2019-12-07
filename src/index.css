@@ -114,7 +114,8 @@ body, p {
 .tag-item {
     color: #FEFEFE;
     background: #3BF;
-    padding: 4px 6px;
+    padding: 3px 6px;
+    line-height: 22px;
     border-radius: 2px;
     display: inline-block;
     margin-right: 4px;
@@ -184,9 +185,26 @@ body, p {
     opacity: 0.6;
 }
 
-.btn-simple {
-    background: none;
-    box-shadow: none;
+.btn-simple, .btn-simple:hover, .btn-simple:focus {
+     background: none;
+     box-shadow: none;
+ }
+
+.btn-simple:hover {
+    opacity: 0.6;
+}
+
+input.input-small[type=text] {
+    font-size: 16px;
+    height: 28px;
+    width: 100px;
+    margin: 0;
+}
+
+.btn-mini {
+    height: 28px;
+    line-height: 28px;
+    padding: 0 8px;
 }
 
 @media only screen and (max-width: 992px) {

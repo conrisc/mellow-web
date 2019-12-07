@@ -105,19 +105,27 @@ export function SongInfoContainer(props) {
                 <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleTitleInputKeyDown} onBlur={updateTitle} /> :
                 <h6 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h6>
             }
-            {
-                songTags.map((tagName, index) => <div key={index} className="tag-item">
-                    {tagName}
-                    {/* <i className="fas fa-times"></i> */}
-                </div>)
-            }
-            {
-                tagsEditMode &&
-                <input type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
-            }
-            <button className="btn btn-small" onClick={toggleTagsEditMode}>
-                <i className="far fa-edit"></i>
-            </button>
+            <div className="row">
+                <div className="col">
+                    {
+                        songTags.map((tagName, index) => <div key={index} className="tag-item">
+                            {tagName}
+                            {/* <i className="fas fa-times"></i> */}
+                        </div>)
+                    }
+                </div>
+                {
+                    tagsEditMode &&
+                    <div className="col">
+                            <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
+                    </div>
+                }
+                <div className="col">
+                    <button className="btn btn-small btn-simple btn-mini black-text" onClick={toggleTagsEditMode}>
+                        <i className="far fa-edit"></i>
+                    </button>
+                </div>
+            </div>
             <p>
                 <span className="small-text grey-text">{date}</span>
             </p>
