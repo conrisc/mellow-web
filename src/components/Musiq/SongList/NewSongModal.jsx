@@ -4,7 +4,7 @@ import {DevelopersApi, SongItem} from 'what_api';
 export function NewSongModal(props) {
     const [title, setTitle] = useState('');
     const [url, setUrl] = useState('');
-    const [songTags, setTags] = useState(['new-song']);
+    const [songTags, setTags] = useState(['new']);
     const [editedTag, setEditedTag] = useState('');
 
     const tagsNameToIdMap = props.tags.reduce(
@@ -59,10 +59,21 @@ export function NewSongModal(props) {
         const api = new DevelopersApi();
         api.addSong(opts)
             .then(data => {
+                setTitle('');
+                setUrl('');
                 console.log('API called successfully.', data);
             }, error => {
                 console.error(error);
             });
+    }
+
+    function handleUrlChange(event) {
+        const url = event.target.value;
+        const videoIdMatch = url.match(/[\\?&]v=([^&]*)/);
+        if (videoIdMatch && videoIdMatch[1])
+            setUrl('https://www.youtube.com/watch?v='+videoIdMatch[1]);
+        else
+            setUrl(url);
     }
 
     return (
@@ -77,7 +88,7 @@ export function NewSongModal(props) {
                     </div>
                     <div className="col s6 input-field">
                         <i className="fas fa-link prefix"></i>
-                        <input id="addSongUrl" type="text" className="validate" value={url} onChange={e => setUrl(e.target.value)} />
+                        <input id="addSongUrl" type="text" className="validate" value={url} onChange={handleUrlChange} />
                         <label htmlFor="addSongUrl">Song url</label>
                     </div>
                 </div>

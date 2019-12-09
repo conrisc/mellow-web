@@ -48,7 +48,6 @@ export function SongInfoContainer(props) {
     function updateSong() {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
-        console.warn('UPDATE', songTags, songTagsIds);
         const opts = {
             songItem: new SongItem(songTitle.trim(), songItem.url, songItem.dateAdded, songTagsIds)
         }
