@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {DevelopersApi, SongItem} from 'what_api';
 
 export function NewSongModal(props) {
     const [title, setTitle] = useState('');
@@ -10,7 +11,21 @@ export function NewSongModal(props) {
     }, []);
 
     function addSong() {
+        if (title.trim() === '') {
+            console.warn('Title does not match criteria!');
+            return;
+        }
+        const opts = {
+            songItem: new SongItem(title.trim(), url.trim(), new Date().toISOString(), ['5dee1f9e23b7760023ca1c4e'])
+        }
 
+        const api = new DevelopersApi();
+        api.addSong(opts)
+            .then(data => {
+                console.log('API called successfully.', data);
+            }, error => {
+                console.error(error);
+            });
     }
 
     return (
