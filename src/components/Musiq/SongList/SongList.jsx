@@ -101,6 +101,20 @@ export class SongList extends React.Component {
             });
     }
 
+    removeSong(songId) {
+        const api = new DevelopersApi();
+        api.removeSong(songId)
+            .then(() => {
+                this.setState({
+                    songs: this.state.songs.filter(songItem => songItem.id !== songId)
+                })
+                console.log('Song successfuly removed');
+            }, error => {
+                console.error(error);
+            });
+    }
+
+
     onScroll() {
         if (this.songListRef.current.clientHeight + this.songListRef.current.scrollTop > this.songListRef.current.scrollHeight - 100) {
             this.songsLoader = this.songsLoader
@@ -148,7 +162,9 @@ export class SongList extends React.Component {
     render() {
         return (
             <div ref={this.songListRef} className="single-view col s6">
-                <NewSongModal />
+                <NewSongModal 
+                    tags={this.props.tags}
+                />
                 <SongFilterPanel
                     titleFilter={this.state.titleFilter}
                     setTitleFilter={titleFilter => this.setState({ titleFilter })}
@@ -179,6 +195,7 @@ export class SongList extends React.Component {
                                         showYtTab={this.props.showYtTab}
                                         loadVideo={this.props.loadVideo}
                                         loadVideoById={(id, i) => this.loadVideoById(id, i)}
+                                        removeSong={(id) => this.removeSong(id)}
                                     />
                                 </li>
                             );

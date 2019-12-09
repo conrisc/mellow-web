@@ -25,6 +25,9 @@ export function SongActionButtons(props) {
 
     return (
         <div className="col right right-text">
+            <button className="btn red btn-small" onClick={() => props.removeSong(songItem.id)}>
+                <i className="fas fa-times"></i>
+            </button>
             <a
                 href={"https://www.youtube.com/results?search_query=" + encodedTitle}
                 className="btn btn-small hide-on-small-only"

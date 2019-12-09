@@ -48,6 +48,7 @@ export function SongInfoContainer(props) {
     function updateSong() {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
+        console.warn('UPDATE', songTags, songTagsIds);
         const opts = {
             songItem: new SongItem(songTitle.trim(), songItem.url, songItem.dateAdded, songTagsIds)
         }
@@ -107,8 +108,8 @@ export function SongInfoContainer(props) {
             }
             <div className="row">
                 <div className="col">
-                    {
-                        songTags.map((tagName, index) => <div key={index} className="tag-item">
+                    {songTags.map((tagName, index) =>
+                        <div key={index} className="tag-item">
                             {tagName}
                             {/* <i className="fas fa-times"></i> */}
                         </div>)
