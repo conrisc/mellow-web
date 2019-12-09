@@ -12,11 +12,12 @@ export function Toast(props) {
         return () => {
             clearInterval(timerId);
         }
-    });
+    }, []);
 
     function updateToasts() {
         const newToasts = toasts.filter(isNew);
-        props.setToasts(newToasts);
+        if (newToasts.length !== toasts.length)
+            props.setToasts(newToasts);
     }
 
     return (

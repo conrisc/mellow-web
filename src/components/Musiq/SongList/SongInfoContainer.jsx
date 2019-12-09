@@ -117,7 +117,7 @@ export function SongInfoContainer(props) {
                 {
                     tagsEditMode &&
                     <div className="col">
-                            <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
+                        <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
                     </div>
                 }
                 <div className="col">

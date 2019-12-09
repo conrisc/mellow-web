@@ -1,7 +1,8 @@
-import React, { useRef }from 'react';
+import React, {useRef} from 'react';
 
 export function SongFilterPanel(props) {
     const serachSongsInputRef = useRef();
+
 
     function handleTitleFilterChange(event) {
         handleTitleChange(event.target.value)
@@ -62,6 +63,11 @@ export function SongFilterPanel(props) {
                     <option value={50}>50</option>
                 </select>
                 <label>Limit</label>
+            </div>
+            <div className="input-field col">
+                <button data-target="add-song-modal" className="btn btn-small mt-1 modal-trigger">
+                    <i className="fas fa-plus"></i>
+                </button>
             </div>
         </div>
     );

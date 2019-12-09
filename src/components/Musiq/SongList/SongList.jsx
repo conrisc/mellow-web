@@ -6,6 +6,8 @@ import { Spinner } from 'CommonComponents/Spinner';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
+import { NewSongModal } from './NewSongModal';
+
 
 export class SongList extends React.Component {
 
@@ -146,6 +148,7 @@ export class SongList extends React.Component {
     render() {
         return (
             <div ref={this.songListRef} className="single-view col s6">
+                <NewSongModal />
                 <SongFilterPanel
                     titleFilter={this.state.titleFilter}
                     setTitleFilter={titleFilter => this.setState({ titleFilter })}
