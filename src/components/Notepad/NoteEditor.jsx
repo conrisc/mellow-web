@@ -39,7 +39,7 @@ export function NoteEditor(props) {
 					<textarea autoFocus
 						ref={textRef}
 						id="textarea1"
-						className="materialize-textarea white-text"
+						className="materialize-textarea"
 						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }>
 					</textarea>
                     <label htmlFor="textarea1">Your note</label>
