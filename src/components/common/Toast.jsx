@@ -1,44 +1,27 @@
 import React, { useEffect } from 'react';
 
 export function Toast(props) {
-    const toasts = props.data;
-
-    function isNew(toast) {
-        return (new Date() - toast.date) < 15000;
-    }
+    const { toast, dismissToast } = props;
 
     useEffect(() => {
-        const timerId = setInterval(updateToasts, 5000);
-        return () => {
-            clearInterval(timerId);
-        }
+        setTimeout(() => {
+            console.log('Removing toast with id:', toast.id)
+            dismissToast(toast.id);
+        }, 15000);
     }, []);
 
-    function updateToasts() {
-        const newToasts = toasts.filter(isNew);
-        if (newToasts.length !== toasts.length)
-            props.setToasts(newToasts);
-    }
 
-    return (
-        <div className="toast-container">
-            {
-                toasts.map((el, index)=> {
-                    const timeItems = [
-                        el.date.getHours(),
-                        el.date.getMinutes(),
-                        el.date.getSeconds()
-                    ]
-                    
-                    const date = timeItems.map(ti => ('0' + ti).slice(-2)).join(':');
-                    return <div key={index} className="toast-item z-depth-3">
-                        <span className="small-text grey-text">
-                            <i className="far fa-clock"></i> {date}
-                        </span><br />
-                        <span>{el.text}</span>
-                    </div>;
-                })
-            }
-        </div>
-    );
+    const timeItems = [
+        toast.date.getHours(),
+        toast.date.getMinutes(),
+        toast.date.getSeconds()
+    ];
+    const date = timeItems.map(ti => ('0' + ti).slice(-2)).join(':');
+
+    return <div className="toast-item z-depth-3">
+        <span className="small-text grey-text">
+            <i className="far fa-clock"></i> {date}
+        </span><br />
+        <span>{toast.text}</span>
+    </div>;
 }

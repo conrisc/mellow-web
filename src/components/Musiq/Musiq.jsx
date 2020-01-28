@@ -1,26 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
-
 import { WSConnection } from 'Services/wsConnection';
 import { dataTypes } from 'Constants/wsConstants';
 
-import { Toast } from 'CommonComponents/Toast';
+import { ToastList } from 'CommonComponents/ToastList';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
 import { TagList } from './TagList';
 
-export class Musiq extends React.Component {
+class MusiqX extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            songs: [],
             volume: 100,
-            toasts: [],
             isConnected: false,
             tags: []
         }
@@ -119,11 +116,12 @@ export class Musiq extends React.Component {
     }
 
     pushToast(text) {
-        this.setState({ toasts:
-            [{
+        this.props.dispatch({
+            type: 'PUSH_TOAST',
+            toast: {
                 date: new Date(),
                 text
-            }, ...this.state.toasts]
+            }
         });
     }
 
@@ -144,7 +142,7 @@ export class Musiq extends React.Component {
     render() {
         return (
             <div ref={this.musiqRef} className="musiq">
-                <Toast data={this.state.toasts} setToasts={(v) => this.setState({ toasts: v })}></Toast>
+                <ToastList />
                 <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 
                     ws={this.ws}
@@ -165,3 +163,9 @@ export class Musiq extends React.Component {
         );
     }
 };
+
+const Musiq = connect()(MusiqX);
+
+export {
+    Musiq
+}
