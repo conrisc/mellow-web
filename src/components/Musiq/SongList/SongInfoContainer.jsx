@@ -41,7 +41,7 @@ export function SongInfoContainer(props) {
 
     function updateTitle() {
         setTitleEditMode(false);
-        if (!songTitle) setSongTitle(songItem.title);
+        if (!songTitle.trim() || songTitle.trim() === songItem.title) setSongTitle(songItem.title);
         else updateSong();
     }
 
