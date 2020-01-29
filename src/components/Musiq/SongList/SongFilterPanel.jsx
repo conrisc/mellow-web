@@ -24,6 +24,12 @@ export function SongFilterPanel(props) {
         props.getSongsDebounced();
     }
 
+    function updateSort(event) {
+        props.setSkip(0);
+        props.setSort(event.target.value);
+        props.getSongsDebounced();
+    }
+
     return (
         <div className="row mt-1">
             <div className="input-field col">
@@ -31,7 +37,7 @@ export function SongFilterPanel(props) {
                     <i className="fas fa-tags"></i>
                 </a>
             </div>
-            <div className="input-field col s6">
+            <div className="input-field col s4">
                 <input
                     ref={serachSongsInputRef}
                     id="searchBar"
@@ -63,6 +69,17 @@ export function SongFilterPanel(props) {
                     <option value={50}>50</option>
                 </select>
                 <label>Limit</label>
+            </div>
+            <div className="input-field col s2">
+                <select
+                    value={props.sort}
+                    onChange={updateSort}>
+                    <option value={'none'}>None</option>
+                    <option value={'title_asc'}>Title Asc</option>
+                    <option value={'title_desc'}>Title Desc</option>
+                    <option value={'random'}>Random</option>
+                </select>
+                <label>Sort</label>
             </div>
             <div className="input-field col">
                 <button data-target="add-song-modal" className="btn btn-small mt-1 modal-trigger">

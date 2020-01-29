@@ -19,6 +19,7 @@ export class SongList extends React.Component {
             skip: 0,
             limit: 30,
             songs: [],
+            sort: 'none',
             shouldShowSongs: false,
             shouldShowLoader: true,
             currentlyPlaying: null
@@ -56,7 +57,8 @@ export class SongList extends React.Component {
             skip: this.state.skip,
             limit: this.state.limit,
             title: this.state.titleFilter,
-            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
+            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
+            sort: this.state.sort
         };
 
         console.log('Fetching songs...');
@@ -82,7 +84,8 @@ export class SongList extends React.Component {
             skip: this.state.skip + this.state.limit,
             limit: this.state.limit,
             title: this.state.titleFilter,
-            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id)
+            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
+            sort: this.state.sort
         };
 
         this.setState({
@@ -172,6 +175,8 @@ export class SongList extends React.Component {
                     setSkip={skip => this.setState({skip})}
                     limit={this.state.limit}
                     setLimit={limit => this.setState({limit})}
+                    sort={this.state.sort}
+                    setSort={sort => this.setState({sort})}
                     getSongsDebounced={this.getSongsDebounced}
 
                 />

@@ -458,6 +458,7 @@ export class DevelopersApi {
      * @param {Number} opts.limit maximum number of records to return
      * @param {String} opts.title a phrase song's title must contain
      * @param {Array.<String>} opts.tags tags which song must contain
+     * @param {String} opts.sort type of sort to use
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/SongItem>} and HTTP response
      */
     searchSongWithHttpInfo(opts) {
@@ -472,7 +473,8 @@ export class DevelopersApi {
         'skip': opts['skip'],
         'limit': opts['limit'],
         'title': opts['title'],
-        'tags': this.apiClient.buildCollectionParam(opts['tags'], 'multi')
+        'tags': this.apiClient.buildCollectionParam(opts['tags'], 'multi'),
+        'sort': opts['sort']
       };
       let headerParams = {
       };
@@ -500,6 +502,7 @@ export class DevelopersApi {
      * @param {Number} opts.limit maximum number of records to return
      * @param {String} opts.title a phrase song's title must contain
      * @param {Array.<String>} opts.tags tags which song must contain
+     * @param {String} opts.sort type of sort to use
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/SongItem>}
      */
     searchSong(opts) {
