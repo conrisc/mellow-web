@@ -6,11 +6,10 @@ const interval = 1000;
 
 export class WSConnection {
     constructor(listeners = {}, autoReconnect = false, reconnectInterval = 30000) {
-        this.sendDataDebounced = debounce(interval, this.sendData);
         this.reconnectId = null;
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
-        this.initAutoReconnectDebounced = debounce(1000, () => this.initAutoReconnect());
+        this.sendDataDebounced = debounce(interval, this.sendData);
         this.listeners = listeners;
     }
 
@@ -25,12 +24,12 @@ export class WSConnection {
         });
         this.ws.addEventListener('close', (message) => {
             console.warn('OnClose: ', message);
-            this.initAutoReconnectDebounced();
+            this.initAutoReconnect();
             this.stopHeartbeat();
         });
         this.ws.addEventListener('error', (message) => {
             console.error('OnError: ', message);
-            this.initAutoReconnectDebounced();
+            this.initAutoReconnect();
             this.stopHeartbeat();
         });
 
