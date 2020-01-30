@@ -10,7 +10,7 @@ function ToastListX(props) {
         <div className="toast-container">
             {
                 toasts.map(
-                    (toast) => <Toast key={toast.id} toast={toast} dismissToast={dismissToast}></Toast>
+                    (toast) => <Toast key={toast.id} toast={toast} dismissToast={dismissToast} />
                 )
             }
         </div>
