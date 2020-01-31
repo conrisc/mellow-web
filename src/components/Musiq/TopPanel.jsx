@@ -8,7 +8,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 
 function TopPanelX(props) {
     const webSocket = musiqWebsocket.getInstance();
-    const sendDataDebounced = debounce(800, (t, d) => websocket.sendData(t, d));
+    const sendDataDebounced = debounce(800, (t, d) => webSocket.sendData(t, d));
     const panelRef = useRef();
 
     function play() {
@@ -19,7 +19,8 @@ function TopPanelX(props) {
         webSocket.sendData(dataTypes.PAUSE);
     }
 
-    function setVolume(volume) {
+    function setVolume(event) {
+        const volume = event.target.value;
         sendDataDebounced(dataTypes.SET_VOLUME, { volume });
     }
 
@@ -39,12 +40,8 @@ function TopPanelX(props) {
                 <div className="col s12 m5 l3">
                         <form action="#">
                         <p className="range-field">
-                            <input type="range" min="0" max="100" value={props.volume}
-                                onChange={e => {
-                                    const v = e.target.value;
-                                    props.setVolume(v);
-                                    setVolume(v);
-                                }}
+                            <input type="range" min="0" max="100" defaultValue={100}
+                                onChange={setVolume}
                             />
                         </p>
                     </form>

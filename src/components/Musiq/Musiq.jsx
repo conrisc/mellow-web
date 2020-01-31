@@ -18,7 +18,6 @@ class MusiqX extends React.Component {
         super(props);
 
         this.state = {
-            volume: 100,
             tags: []
         }
         this.getTags();
@@ -41,7 +40,6 @@ class MusiqX extends React.Component {
                         this.pushToast('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
-                        this.setState({ volume: dataFromServer.volume });
                         this.props.ytPlayer.setVolume(dataFromServer.volume);
                         this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         break;
@@ -87,12 +85,9 @@ class MusiqX extends React.Component {
     }
 
     pushToast(text) {
-        this.props.dispatch({
-            type: 'PUSH_TOAST',
-            toast: {
-                date: new Date(),
-                text
-            }
+        this.props.pushToast({
+            date: new Date(),
+            text
         });
     }
 
@@ -117,10 +112,7 @@ class MusiqX extends React.Component {
                 {this.props.ytPlayer &&
                     <div>
                         <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
-                        <TopPanel
-                            volume={this.state.volume}
-                            setVolume={(v) => this.setState({ volume: v })}
-                        />
+                        <TopPanel />
                         <MainView
                             tags={this.state.tags}
                         />
@@ -141,6 +133,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        pushToast: (toast) => dispatch({ type: 'PUSH_TOAST', toast }),
         setOnline: () => dispatch({ type: 'SET_ONLINE' }),
         setOffline: () => dispatch({ type: 'SET_OFFLINE' })
     };
