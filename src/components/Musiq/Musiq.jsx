@@ -29,17 +29,8 @@ class MusiqX extends React.Component {
                 width: 640
             });
         });
-        this.webSocket = musiqWebsocket.getInstance();
+        this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
         const wsListeners = {
-            open: () => {
-                this.props.setOnline();
-            },
-            close: (message) => {
-                this.props.setOffline();
-            },
-            error: (message) => {
-                this.props.setOffline();
-            },
             message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
                 switch (dataFromServer.type) {

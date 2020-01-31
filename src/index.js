@@ -41,30 +41,12 @@ function reducer(state = initialState, action) {
 	}
 }
 
-// function webSocket(state = initialState, action) {
-// 	switch (action.type) {
-// 		case 'SET_ONLINE':
-// 			return  { ...state, isOnline: true }
-// 		case 'SET_OFFLINE':
-// 			return  { ...state, isOnline: false }
-// 		case 'SEND_DATA':
-// 			state.wsConnection.sendData(action.msg.type, action.msg.data);
-// 			return state;
-// 		case 'OPEN_CONNECTION':
-// 			state.wsConnection.open();
-// 			return state;
-// 		case 'CLOSE_CLONNECTION':
-// 			state.wsConnection.close();
-// 			return state;
-// 	}
-// }
-
 const store = createStore(reducer)
 
 const appContainer = document.querySelector('#app');
 ReactDOM.render(
     <Provider store={store}>
-      <App />
+		<App />
     </Provider>,
     appContainer
 );

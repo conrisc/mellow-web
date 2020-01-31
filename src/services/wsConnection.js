@@ -1,7 +1,6 @@
 import { dataTypes } from 'Constants/wsConstants';
 
 const url = 'wss://what-appy-server.herokuapp.com';
-const interval = 1000;
 
 export class WsConnection {
     constructor(autoReconnect = false, reconnectInterval = 30000) {
