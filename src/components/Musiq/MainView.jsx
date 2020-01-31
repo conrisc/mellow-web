@@ -3,6 +3,7 @@ import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
 import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
 
 import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
@@ -19,6 +20,7 @@ export class MainView extends React.Component {
         };
         this.getYtItemsDebounced = debounce(800, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
+        this.webSocket = musiqWebsocket.getInstance();
     }
 
     getYtItems(title) {
@@ -52,7 +54,7 @@ export class MainView extends React.Component {
     }
 
     loadVideo(videoId) {
-        this.props.ws.sendData(dataTypes.LOAD_VIDEO, { videoId })
+        this.webSocket.sendData(dataTypes.LOAD_VIDEO, { videoId })
     }
 
     render() {

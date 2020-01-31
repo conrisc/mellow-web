@@ -1,22 +1,26 @@
 import React, { useRef } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
 
-export function TopPanel(props) {
+function TopPanelX(props) {
+    const webSocket = musiqWebsocket.getInstance();
+    const sendDataDebounced = debounce(800, (t, d) => websocket.sendData(t, d));
     const panelRef = useRef();
-    const ws = props.ws;
 
     function play() {
-        ws.sendData(dataTypes.PLAY);
+        webSocket.sendData(dataTypes.PLAY);
     }
 
     function pause() {
-        ws.sendData(dataTypes.PAUSE);
+        webSocket.sendData(dataTypes.PAUSE);
     }
 
     function setVolume(volume) {
-        ws.sendDataDebounced(dataTypes.SET_VOLUME, { volume });
+        sendDataDebounced(dataTypes.SET_VOLUME, { volume });
     }
 
     return (
@@ -24,7 +28,7 @@ export function TopPanel(props) {
             <div className="row">
                 <Link to='/' className="btn">Go back</Link>
                 <div className="col">
-                    <button className={"btn btn-small green" + (props.isConnected ? ' disabled' : '')} onClick={props.connect}>Connect</button>
+                    <button className={"btn btn-small green" + (props.isOnline ? ' disabled' : '')} onClick={() => webSocket.open()}>Connect</button>
                 </div>
                 <div className="col">
                     <button className="btn btn-small" onClick={play}>play</button>
@@ -50,3 +54,17 @@ export function TopPanel(props) {
         </div>
     );
 }
+
+const mapStateToProps = state => {
+    return {
+        isOnline: state.isOnline
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+
+    }
+}
+
+export const TopPanel = connect(mapStateToProps, mapDispatchToProps)(TopPanelX);

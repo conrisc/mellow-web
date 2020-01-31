@@ -23,14 +23,10 @@ const mapStateToProps = state => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return {
         dismissToast: (id) => dispatch({ type: 'DISMISS_TOAST', id })
     };
 };
 
-const ToastList = connect(mapStateToProps, mapDispatchToProps)(ToastListX);
-
-export {
-    ToastList
-}
+export const ToastList = connect(mapStateToProps, mapDispatchToProps)(ToastListX);

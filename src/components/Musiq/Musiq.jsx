@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
-import { WSConnection } from 'Services/wsConnection';
 import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
 
 import { ToastList } from 'CommonComponents/ToastList';
 import { TopPanel } from './TopPanel';
@@ -18,7 +18,6 @@ class MusiqX extends React.Component {
 
         this.state = {
             volume: 100,
-            isConnected: false,
             tags: []
         }
         this.getTags();
@@ -30,13 +29,19 @@ class MusiqX extends React.Component {
                 width: 640
             });
         });
+        this.webSocket = musiqWebsocket.getInstance();
         const wsListeners = {
             open: () => {
-                this.setState({ isConnected: true });
+                this.props.setOnline();
+            },
+            close: (message) => {
+                this.props.setOffline();
+            },
+            error: (message) => {
+                this.props.setOffline();
             },
             message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
-                console.log('WS <onmessage>: ', dataFromServer);
                 switch (dataFromServer.type) {
                     case dataTypes.NEW_MESSAGE:
                         console.log('WS <NEW_MESSAGE>: ', dataFromServer);
@@ -67,33 +72,21 @@ class MusiqX extends React.Component {
                         this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
-            },
-            close: (message) => {
-                this.setState({ isConnected: false })
-                this.pushToast(`WS<onclose>: ${message.type}`);
-            },
-            error: (message) => {
-                this.setState({ isConnected: false })
-                this.pushToast(`WS<onerror>: ${message.type}`);
             }
         };
-        this.ws = new WSConnection(wsListeners, true, 10000);
+        this.webSocket.addListeners(wsListeners);
     }
 
     componentDidMount() {
         document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
         this.heightResizer();
         window.addEventListener('resize', this.heightResizer);
-        this.connect();
+        this.webSocket.open();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.heightResizer);
-        this.ws.close();
-    }
-
-    connect() {
-        this.ws.open();
+        this.webSocket.close();
     }
 
      getTags() {
@@ -145,14 +138,10 @@ class MusiqX extends React.Component {
                 <ToastList />
                 <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
                 <TopPanel 
-                    ws={this.ws}
-                    connect={() => this.connect()}
-                    isConnected={this.state.isConnected}
                     volume={this.state.volume}
                     setVolume={(v) => this.setState({ volume: v })}
                 />
                 <MainView 
-                    ws={this.ws}
                     tags={this.state.tags}
                     playerLoader={this.playerLoader}
                 />
@@ -164,8 +153,15 @@ class MusiqX extends React.Component {
     }
 };
 
-const Musiq = connect()(MusiqX);
-
-export {
-    Musiq
+const mapStateToProps = state => {
+    return {};
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setOnline: () => dispatch({ type: 'SET_ONLINE' }),
+        setOffline: () => dispatch({ type: 'SET_OFFLINE' })
+    };
+}
+
+export const Musiq = connect(mapStateToProps, mapDispatchToProps)(MusiqX);

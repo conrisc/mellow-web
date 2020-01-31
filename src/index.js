@@ -14,12 +14,14 @@ import { App } from './components/App';
 
 console.log('index.js has been loaded');
 
+
 const initialState = {
+	isOnline: false,
 	toastId: 0,
 	toasts: [],
 };
 
-function toasts(state = initialState, action) {
+function reducer(state = initialState, action) {
 	let toasts = [];
 	switch (action.type) {
 		case 'PUSH_TOAST':
@@ -30,12 +32,34 @@ function toasts(state = initialState, action) {
 		case 'DISMISS_TOAST':
 			toasts = state.toasts.filter(toast => toast.id !== action.id);
 			return { ...state, toasts };
+		case 'SET_ONLINE':
+			return  { ...state, isOnline: true }
+		case 'SET_OFFLINE':
+			return  { ...state, isOnline: false }
 		default:
 			return state
 	}
 }
 
-const store = createStore(toasts)
+// function webSocket(state = initialState, action) {
+// 	switch (action.type) {
+// 		case 'SET_ONLINE':
+// 			return  { ...state, isOnline: true }
+// 		case 'SET_OFFLINE':
+// 			return  { ...state, isOnline: false }
+// 		case 'SEND_DATA':
+// 			state.wsConnection.sendData(action.msg.type, action.msg.data);
+// 			return state;
+// 		case 'OPEN_CONNECTION':
+// 			state.wsConnection.open();
+// 			return state;
+// 		case 'CLOSE_CLONNECTION':
+// 			state.wsConnection.close();
+// 			return state;
+// 	}
+// }
+
+const store = createStore(reducer)
 
 const appContainer = document.querySelector('#app');
 ReactDOM.render(

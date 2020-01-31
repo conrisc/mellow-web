@@ -1,75 +1,99 @@
-import { debounce } from 'throttle-debounce';
 import { dataTypes } from 'Constants/wsConstants';
 
 const url = 'wss://what-appy-server.herokuapp.com';
 const interval = 1000;
 
-export class WSConnection {
-    constructor(listeners = {}, autoReconnect = false, reconnectInterval = 30000) {
+export class WsConnection {
+    constructor(autoReconnect = false, reconnectInterval = 30000) {
         this.reconnectId = null;
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
-        this.sendDataDebounced = debounce(interval, this.sendData);
-        this.listeners = listeners;
+        this.listenersCollection = [];
     }
 
     open() {
         this.ws = new WebSocket(url);
         this.ws.addEventListener('open', () => {
             console.log('WebSocket Client Connected', this.ws.readyState);
-            this.clearAutoReconnect();
+            if (this.reconnectId) this._clearAutoReconnect();
 
             this.sendData(dataTypes.JOIN);
-            this.initHeartbeat();
+            this._initHeartbeat();
         });
         this.ws.addEventListener('close', (message) => {
             console.warn('OnClose: ', message);
-            this.initAutoReconnect();
-            this.stopHeartbeat();
+            this._initAutoReconnect();
+            this._stopHeartbeat();
         });
         this.ws.addEventListener('error', (message) => {
             console.error('OnError: ', message);
-            this.initAutoReconnect();
-            this.stopHeartbeat();
+            this._initAutoReconnect();
+            this._stopHeartbeat();
         });
+        this.ws.addEventListener('message', (message) => {
+            const dataFromServer = JSON.parse(message.data);
+            console.log('WS <onmessage>: ', dataFromServer);
+        })
 
-        this.assignListeners();
+        this._assignListenersCollection();
     }
 
     close() {
-        this.clearListeners();
-        this.listeners = {};
+        this._clearListenersCollection();
+        this.listenersCollection = [];
         this.autoReconnect = false;
-        this.clearAutoReconnect();
+        this._clearAutoReconnect();
         this.ws.close()
         console.log('Websocket connection has been closed');
     }
 
-    assignListeners() {
-        for (let listenerName in this.listeners) {
-            this.ws.addEventListener(listenerName, this.listeners[listenerName]);
+    _assignListeners(listeners) {
+        for (const listenerName in listeners) {
+            this.ws.addEventListener(listenerName, listeners[listenerName]);
         }
     }
 
-    clearListeners() {
-        for(const listenerName in this.listeners) {
-            this.ws.removeEventListener(listenerName, this.listeners[listenerName]);
+    _clearListeners(listeners) {
+        for (const listenerName in listeners) {
+            this.ws.removeEventListener(listenerName, listeners[listenerName]);
         }
     }
 
-    initHeartbeat() {
+    _assignListenersCollection() {
+        for (const listeners of this.listenersCollection) {
+            this._assignListeners(listeners);
+        }
+    }
+
+    _clearListenersCollection() {
+        for (const listeners of this.listenersCollection) {
+            this._clearListeners(listeners);
+        }
+    }
+
+    addListeners(customListeners) {
+        this.listenersCollection.push(customListeners);
+        if (this.ws) this._assignListeners(customListeners);
+    }
+
+    removeListeners(customListeners) {
+        this.listenersCollection = this.listenersCollection.filter(listeners => listeners !== customListeners);
+        if (this.ws) this._clearListeners(customListeners);
+    }
+
+    _initHeartbeat() {
         this.sendData(dataTypes.PING);
         this.pingerId = setInterval(() => {
             this.sendData(dataTypes.PING);
         }, 20000);
     }
 
-    stopHeartbeat() {
+    _stopHeartbeat() {
         clearInterval(this.pingerId);
         this.pingerId = null;
     }
 
-    initAutoReconnect() {
+    _initAutoReconnect() {
         if (this.autoReconnect && this.reconnectId === null) {
             console.log('%cWebSocket autoreconnect has been initialized', 'color: green');
             this.reconnectId = setInterval(() => {
@@ -79,7 +103,7 @@ export class WSConnection {
         }
     }
 
-    clearAutoReconnect() {
+    _clearAutoReconnect() {
         clearInterval(this.reconnectId);
         this.reconnectId = null;
         console.log('%cWebSocket autoreconnect has been disabled', 'color: green');
