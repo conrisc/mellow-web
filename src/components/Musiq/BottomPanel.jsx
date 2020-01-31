@@ -1,30 +1,22 @@
 import React, { useRef, useEffect, useState } from 'react';
-
-import { ytPlayer } from 'Services/ytPlayer';
+import { connect } from 'react-redux';
 
 const hideClass = 'transform-right-100';
-let w = 0;
 
-export function BottomPanel(props) {
+function BottomPanelX(props) {
     const [time, setTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
-    const playerContainerRef = useRef();
     const controlPanelRef = useRef();
-    const playerLoader = ytPlayer.getInstance();
 
     useEffect(() => {
         const timeUpdater = setInterval(() => {
-            playerLoader.then(player => {
-                const currentTime = player.getCurrentTime && player.getCurrentTime() || 0;
-                const floorTime = Math.floor(currentTime);
-                setTime(floorTime);
-            })
+            const currentTime = props.ytPlayer.getCurrentTime && props.ytPlayer.getCurrentTime() || 0;
+            const floorTime = Math.floor(currentTime);
+            setTime(floorTime);
         }, 200);
 
-        playerLoader.then(player => {
-            player.addEventListener('onStateChange', updateVideoDuration);
-        })
+        props.ytPlayer.addEventListener('onStateChange', updateVideoDuration);
 
         return () => {
             clearInterval(timeUpdater);
@@ -32,17 +24,14 @@ export function BottomPanel(props) {
     }, [])
 
     function togglePanel() {
-        playerContainerRef.current.classList.toggle(hideClass);
         controlPanelRef.current.classList.toggle(hideClass);
     }
 
     function updateVideoDuration(state) {
         if (state.data === 1) {
-            playerLoader.then(player => {
-                const floorDuration = Math.floor(player.getDuration() || 0)
-                setDuration(floorDuration);
-                setIsPaused(false);
-            });
+            const floorDuration = Math.floor(props.ytPlayer.getDuration() || 0)
+            setDuration(floorDuration);
+            setIsPaused(false);
         } else if (state.data === -1 || state.data === 5) {
             setDuration(0);
             setIsPaused(true);
@@ -54,21 +43,15 @@ export function BottomPanel(props) {
 
     function handleTimeChange(event) {
         const value = event.target.value;
-        playerLoader.then(player => {
-            player.seekTo(value);
-        })
+        props.ytPlayer.seekTo(value);
     }
 
     function playVideo() {
-        playerLoader.then(player => {
-            player.playVideo();
-        })
+        props.ytPlayer.playVideo();
     }
 
     function pauseVideo() {
-        playerLoader.then(player => {
-            player.pauseVideo();
-        })
+        props.ytPlayer.pauseVideo();
     }
 
     function formatSeconds(seconds) {
@@ -80,9 +63,6 @@ export function BottomPanel(props) {
     return (
         <div className="">
             <button className="player-btn btn btn-small pos-fixed z-depth-3" onClick={togglePanel}>PLAYER</button>
-            <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
-                <div id="yt-player"></div>
-            </div>
             <div ref={controlPanelRef} className="control-panel row blue-grey darken-3 white-text">
                 <div className="col">
                     <button className="btn btn-simple" onClick={playVideo}>
@@ -109,3 +89,15 @@ export function BottomPanel(props) {
         </div>
     );
 }
+
+const mapStateToProps = state => {
+    return {
+        ytPlayer: state.ytPlayer
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {};
+}
+
+export const BottomPanel = connect(mapStateToProps, mapDispatchToProps)(BottomPanelX);

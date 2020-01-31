@@ -1,16 +1,13 @@
 import React, { useRef } from 'react';
+import { connect } from 'react-redux';
 
-import { ytPlayer } from 'Services/ytPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 
-export function YtList(props) {
+function YtListX(props) {
     const searchYtInputRef = useRef();
-    const playerLoader = ytPlayer.getInstance();
 
     function loadVideoById(videoId) {
-        playerLoader.then(player => {
-            player.loadVideoById(videoId)
-        });
+        props.ytPlayer.loadVideoById(videoId)
     }
 
     function handleSearchChange(event) {
@@ -72,3 +69,14 @@ export function YtList(props) {
         </div>
     );
 }
+const mapStateToProps = state => {
+    return {
+        ytPlayer: state.ytPlayer
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {};
+}
+
+export const YtList = connect(mapStateToProps, mapDispatchToProps)(YtListX);

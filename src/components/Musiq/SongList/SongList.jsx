@@ -1,8 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
-import { ytPlayer } from 'Services/ytPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
@@ -10,7 +10,7 @@ import { SongFilterPanel } from './SongFilterPanel';
 import { NewSongModal } from './NewSongModal';
 
 
-export class SongList extends React.Component {
+class SongListX extends React.Component {
 
     constructor(props) {
         super(props);
@@ -28,7 +28,6 @@ export class SongList extends React.Component {
         this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(800, () => this.onScroll())
         this.songListRef = React.createRef();
-        this.playerLoader = ytPlayer.getInstance();
     }
 
     componentDidMount() {
@@ -128,29 +127,25 @@ export class SongList extends React.Component {
     }
 
     initAutoplay() {
-        this.playerLoader.then(player => {
-            player.addEventListener('onStateChange', state => {
-                const nextVideoIndex = this.state.currentlyPlaying + 1;
-                const songItem = this.state.songs[nextVideoIndex];
-                if (state.data === 0 && songItem) {
-                    const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+        this.props.ytPlayer.addEventListener('onStateChange', state => {
+            const nextVideoIndex = this.state.currentlyPlaying + 1;
+            const songItem = this.state.songs[nextVideoIndex];
+            if (state.data === 0 && songItem) {
+                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
-                    if (videoIdMatch)
-                        this.loadVideoById(videoIdMatch[1], nextVideoIndex);
-                    else
-                        this.props.getYtItems(songItem.title)
-                            .then(ytItems => {
-                                this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
-                            })
-                }
-            })
-        })
+                if (videoIdMatch)
+                    this.loadVideoById(videoIdMatch[1], nextVideoIndex);
+                else
+                    this.props.getYtItems(songItem.title)
+                        .then(ytItems => {
+                            this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
+                        })
+            }
+        });
     }
 
     loadVideoById(videoId, index) {
-        this.playerLoader.then(player => {
-            player.loadVideoById(videoId)
-        });
+        this.props.ytPlayer.loadVideoById(videoId)
         this.setState({ currentlyPlaying: index });
     }
 
@@ -216,3 +211,15 @@ export class SongList extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        ytPlayer: state.ytPlayer
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {};
+}
+
+export const SongList = connect(mapStateToProps, mapDispatchToProps)(SongListX);

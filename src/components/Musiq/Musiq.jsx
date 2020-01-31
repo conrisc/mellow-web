@@ -4,8 +4,8 @@ import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
-import { ytPlayer } from 'Services/ytPlayer';
 
+import { YtPlayer } from './YtPlayer';
 import { ToastList } from 'CommonComponents/ToastList';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
@@ -24,7 +24,6 @@ class MusiqX extends React.Component {
         this.getTags();
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
-        this.playerLoader = ytPlayer.getInstance('yt-player');
         this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
         const wsListeners = {
             message: (message) => {
@@ -34,28 +33,20 @@ class MusiqX extends React.Component {
                         console.log('WS <NEW_MESSAGE>: ', dataFromServer);
                         break;
                     case dataTypes.PLAY:
-                        this.playerLoader.then(player => {
-                            player.playVideo();
-                        });
+                        this.props.ytPlayer.playVideo();
                         this.pushToast('Playing video');
                         break;
                     case dataTypes.PAUSE:
-                        this.playerLoader.then(player => {
-                            player.pauseVideo();
-                        });
+                        this.props.ytPlayer.pauseVideo();
                         this.pushToast('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
                         this.setState({ volume: dataFromServer.volume });
-                        this.playerLoader.then(player => {
-                            player.setVolume(dataFromServer.volume);
-                        });
+                        this.props.ytPlayer.setVolume(dataFromServer.volume);
                         this.pushToast(`Setting volume to ${dataFromServer.volume}`);
                         break;
                     case dataTypes.LOAD_VIDEO:
-                        this.playerLoader.then(player => {
-                            player.loadVideoById(dataFromServer.videoId)
-                        });
+                        this.props.ytPlayer.loadVideoById(dataFromServer.videoId)
                         this.pushToast(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
@@ -123,22 +114,29 @@ class MusiqX extends React.Component {
         return (
             <div ref={this.musiqRef} className="musiq">
                 <ToastList />
-                <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
-                <TopPanel 
-                    volume={this.state.volume}
-                    setVolume={(v) => this.setState({ volume: v })}
-                />
-                <MainView 
-                    tags={this.state.tags}
-                />
-                <BottomPanel />
+                {this.props.ytPlayer &&
+                    <div>
+                        <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
+                        <TopPanel
+                            volume={this.state.volume}
+                            setVolume={(v) => this.setState({ volume: v })}
+                        />
+                        <MainView
+                            tags={this.state.tags}
+                        />
+                        <BottomPanel />
+                    </div>
+                }
+                <YtPlayer />
             </div>
         );
     }
 };
 
 const mapStateToProps = state => {
-    return {};
+    return {
+        ytPlayer: state.ytPlayer
+    };
 }
 
 const mapDispatchToProps = dispatch => {

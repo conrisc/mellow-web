@@ -16,9 +16,10 @@ console.log('index.js has been loaded');
 
 
 const initialState = {
+	ytPlayer: null,
 	isOnline: false,
 	toastId: 0,
-	toasts: [],
+	toasts: []
 };
 
 function reducer(state = initialState, action) {
@@ -33,11 +34,13 @@ function reducer(state = initialState, action) {
 			toasts = state.toasts.filter(toast => toast.id !== action.id);
 			return { ...state, toasts };
 		case 'SET_ONLINE':
-			return  { ...state, isOnline: true }
+			return  { ...state, isOnline: true };
 		case 'SET_OFFLINE':
-			return  { ...state, isOnline: false }
+			return  { ...state, isOnline: false };
+		case 'SET_YT_PLAYER':
+			return { ...state, ytPlayer: action.ytPlayer };
 		default:
-			return state
+			return state;
 	}
 }
 
