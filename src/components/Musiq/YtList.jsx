@@ -1,12 +1,14 @@
 import React, { useRef } from 'react';
 
+import { ytPlayer } from 'Services/ytPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 
 export function YtList(props) {
     const searchYtInputRef = useRef();
+    const playerLoader = ytPlayer.getInstance();
 
     function loadVideoById(videoId) {
-        props.playerLoader.then(player => {
+        playerLoader.then(player => {
             player.loadVideoById(videoId)
         });
     }

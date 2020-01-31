@@ -64,14 +64,12 @@ export class MainView extends React.Component {
                     <SongList
                         tags={this.props.tags}
                         loadVideo={id => this.loadVideo(id)}
-                        playerLoader={this.props.playerLoader}
                         getYtItems={t => this.getYtItems(t)}
                         showYtTab={() => this.showYtTab()}
                     />
                     <YtList
                         ytItems={this.state.ytItems}
                         loadVideo={id => this.loadVideo(id)}
-                        playerLoader={this.props.playerLoader}
                         getYtItemsDebounced={t => this.getYtItemsDebounced(t)}
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />

@@ -2,6 +2,7 @@ import React from 'react';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
+import { ytPlayer } from 'Services/ytPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
@@ -27,6 +28,7 @@ export class SongList extends React.Component {
         this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(800, () => this.onScroll())
         this.songListRef = React.createRef();
+        this.playerLoader = ytPlayer.getInstance();
     }
 
     componentDidMount() {
@@ -126,7 +128,7 @@ export class SongList extends React.Component {
     }
 
     initAutoplay() {
-        this.props.playerLoader.then(player => {
+        this.playerLoader.then(player => {
             player.addEventListener('onStateChange', state => {
                 const nextVideoIndex = this.state.currentlyPlaying + 1;
                 const songItem = this.state.songs[nextVideoIndex];
@@ -146,7 +148,7 @@ export class SongList extends React.Component {
     }
 
     loadVideoById(videoId, index) {
-        this.props.playerLoader.then(player => {
+        this.playerLoader.then(player => {
             player.loadVideoById(videoId)
         });
         this.setState({ currentlyPlaying: index });

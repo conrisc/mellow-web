@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-const hideClass = 'transform-right-100';
+import { ytPlayer } from 'Services/ytPlayer';
 
+const hideClass = 'transform-right-100';
 let w = 0;
 
 export function BottomPanel(props) {
@@ -10,7 +11,7 @@ export function BottomPanel(props) {
     const [isPaused, setIsPaused] = useState(true);
     const playerContainerRef = useRef();
     const controlPanelRef = useRef();
-    const playerLoader = props.playerLoader;
+    const playerLoader = ytPlayer.getInstance();
 
     useEffect(() => {
         const timeUpdater = setInterval(() => {

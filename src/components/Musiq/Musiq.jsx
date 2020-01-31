@@ -4,6 +4,7 @@ import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
+import { ytPlayer } from 'Services/ytPlayer';
 
 import { ToastList } from 'CommonComponents/ToastList';
 import { TopPanel } from './TopPanel';
@@ -23,12 +24,7 @@ class MusiqX extends React.Component {
         this.getTags();
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
-        this.playerLoader = loadYT.then(YT => {
-            return new YT.Player('yt-player', {
-                height: 360,
-                width: 640
-            });
-        });
+        this.playerLoader = ytPlayer.getInstance('yt-player');
         this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
         const wsListeners = {
             message: (message) => {
@@ -134,11 +130,8 @@ class MusiqX extends React.Component {
                 />
                 <MainView 
                     tags={this.state.tags}
-                    playerLoader={this.playerLoader}
                 />
-                <BottomPanel 
-                    playerLoader={this.playerLoader}
-                />
+                <BottomPanel />
             </div>
         );
     }
