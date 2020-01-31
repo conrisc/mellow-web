@@ -26,7 +26,7 @@ function reducer(state = initialState, action) {
 	let toasts = [];
 	switch (action.type) {
 		case 'PUSH_TOAST':
-			const newToast = { ...action.toast, id: state.toastId };
+			const newToast = { text: action.toast, date: new Date(), id: state.toastId };
 			const toastId = state.toastId + 1;
 			toasts = [ ...state.toasts, newToast];
 			return { ...state, toasts, toastId };

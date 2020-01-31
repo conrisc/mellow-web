@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
-import { dataTypes } from 'Constants/wsConstants';
-import { musiqWebsocket } from 'Services/musiqWebsocket';
 
-import { YtPlayer } from './YtPlayer';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { ToastList } from 'CommonComponents/ToastList';
+import { YtPlayer } from './YtPlayer';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
@@ -24,33 +23,6 @@ class MusiqX extends React.Component {
         this.musiqRef = React.createRef();
         this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
         this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
-        const wsListeners = {
-            message: (message) => {
-                const dataFromServer = JSON.parse(message.data);
-                switch (dataFromServer.type) {
-                    case dataTypes.NEW_MESSAGE:
-                        console.log('WS <NEW_MESSAGE>: ', dataFromServer);
-                        break;
-                    case dataTypes.PLAY:
-                        this.props.ytPlayer.playVideo();
-                        this.pushToast('Playing video');
-                        break;
-                    case dataTypes.PAUSE:
-                        this.props.ytPlayer.pauseVideo();
-                        this.pushToast('Pausing video');
-                        break;
-                    case dataTypes.SET_VOLUME:
-                        this.props.ytPlayer.setVolume(dataFromServer.volume);
-                        this.pushToast(`Setting volume to ${dataFromServer.volume}`);
-                        break;
-                    case dataTypes.LOAD_VIDEO:
-                        this.props.ytPlayer.loadVideoById(dataFromServer.videoId)
-                        this.pushToast(`Loading video: ${dataFromServer.videoId}`);
-                        break;
-                }
-            }
-        };
-        this.webSocket.addListeners(wsListeners);
     }
 
     componentDidMount() {
@@ -79,16 +51,8 @@ class MusiqX extends React.Component {
                     tags: data.map(tagItem => ({ tagItem, selected: false }))
                 })
             }, error => {
-                // this.pushToast('Cound not get songs');
                 console.error(error);
             });
-    }
-
-    pushToast(text) {
-        this.props.pushToast({
-            date: new Date(),
-            text
-        });
     }
 
     toggleTag(tagElement) {
@@ -133,7 +97,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        pushToast: (toast) => dispatch({ type: 'PUSH_TOAST', toast }),
         setOnline: () => dispatch({ type: 'SET_ONLINE' }),
         setOffline: () => dispatch({ type: 'SET_OFFLINE' })
     };

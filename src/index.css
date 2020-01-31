@@ -98,10 +98,6 @@ body, p {
     width: 50%;
 }
 
-#yt-player {
-    width: 100%;
-}
-
 .player-btn {
     bottom: 0;
     left: 0;
@@ -156,6 +152,10 @@ body, p {
 
 .w-50 {
     width: 50%;
+}
+
+.w-100 {
+    width: 100%;
 }
 
 .h-100 {
