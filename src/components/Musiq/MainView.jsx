@@ -16,7 +16,8 @@ export class MainView extends React.Component {
 
         this.state = {
             ytItems: [],
-            isFetchingYtItems: false
+            isFetchingYtItems: false,
+            visibleView: 0
         };
         this.getYtItemsDebounced = debounce(800, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
@@ -49,32 +50,66 @@ export class MainView extends React.Component {
             })
     }
 
-    showYtTab() {
-        this.mainViewRef.current.classList.add('transform-left-50');
-    }
-
     loadVideo(videoId) {
         this.webSocket.sendData(dataTypes.LOAD_VIDEO, { videoId })
     }
 
-    render() {
-        return (
-            <div ref={this.mainViewRef} className="main-view row pos-relative smooth-transform">
-                <div className="view-items">
+    setView(viewIndex) {
+        this.setState({...this.state,
+            visibleView: viewIndex
+        });
+    }
+
+    showYtTab() {
+        this.setState({...this.state,
+            visibleView: 1
+        });
+    }
+
+    getViews() {
+        return [
+            {
+                item:
                     <SongList
                         tags={this.props.tags}
                         loadVideo={id => this.loadVideo(id)}
                         getYtItems={t => this.getYtItems(t)}
                         showYtTab={() => this.showYtTab()}
-                    />
+                    />,
+                name: 'SONG LIST',
+                customClasses: ''
+            },
+            {
+                item:
                     <YtList
                         ytItems={this.state.ytItems}
                         loadVideo={id => this.loadVideo(id)}
                         getYtItemsDebounced={t => this.getYtItemsDebounced(t)}
                         isFetchingYtItems={this.state.isFetchingYtItems}
-                    />
-                </div>
-                <ViewSwitch mainViewRef={this.mainViewRef} />
+                    />,
+                name: 'YT LIST',
+                customClasses: 'red'
+            }
+        ];
+    }
+
+    render() {
+        const views = this.getViews();
+        const nextViewIndex = (this.state.visibleView + 1) % views.length;
+        return (
+            <div ref={this.mainViewRef} className="main-view row pos-relative">
+                {this.getViews()
+                    .map((view, index)=> (
+                        <div key={index} className={index === this.state.visibleView ? '' : 'd-none-sm'}>
+                            {view.item}
+                        </div>
+                    ))
+                }
+                <ViewSwitch
+                    switchView={() => this.setView(nextViewIndex)}
+                    nextViewName={views[nextViewIndex].name}
+                    customClasses={views[nextViewIndex].customClasses}
+                />
             </div>
         );
     }

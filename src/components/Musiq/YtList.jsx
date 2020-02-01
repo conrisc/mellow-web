@@ -21,7 +21,7 @@ function YtListX(props) {
     }
 
     return (
-        <div className="single-view col s6 grey darken-3 white-text">
+        <div className="col s12 l6 grey darken-3 white-text">
             <div className="input-field">
                 <input ref={searchYtInputRef} id="ytSearchBar" type="text" className="white-text" onChange={handleSearchChange}></input>
                 <button className="clear-input white-text" onClick={clearSearchYtInput}>

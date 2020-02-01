@@ -9,7 +9,6 @@ import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
 import { NewSongModal } from './NewSongModal';
 
-
 class SongListX extends React.Component {
 
     constructor(props) {
@@ -161,7 +160,7 @@ class SongListX extends React.Component {
 
     render() {
         return (
-            <div ref={this.songListRef} className="single-view col s6">
+            <div ref={this.songListRef} className="col s12 l6">
                 <NewSongModal 
                     tags={this.props.tags}
                 />

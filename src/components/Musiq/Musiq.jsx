@@ -20,20 +20,15 @@ class MusiqX extends React.Component {
             tags: []
         }
         this.getTags();
-        this.musiqRef = React.createRef();
-        this.heightResizer = debounce(100, () => this.musiqRef.current.style.height = window.innerHeight + 'px');
         this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
     }
 
     componentDidMount() {
         document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
-        this.heightResizer();
-        window.addEventListener('resize', this.heightResizer);
         this.webSocket.open();
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.heightResizer);
         this.webSocket.close();
     }
 
@@ -71,7 +66,7 @@ class MusiqX extends React.Component {
 
     render() {
         return (
-            <div ref={this.musiqRef} className="musiq">
+            <div>
                 <ToastList />
                 {this.props.ytPlayer &&
                     <div>

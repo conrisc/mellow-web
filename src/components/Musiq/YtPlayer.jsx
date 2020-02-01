@@ -59,7 +59,7 @@ function YtPlayerX(props) {
     }, [props.ytPlayer]);
 
     return (
-        <div ref={playerContainerRef} className={"yt-player-container smooth-transform "} >
+        <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
             <div ref={playerRef} className="w-100" />
         </div>
     );
