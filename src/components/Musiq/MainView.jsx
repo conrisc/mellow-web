@@ -22,21 +22,6 @@ export class MainView extends React.Component {
         this.getYtItemsDebounced = debounce(800, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
         this.webSocket = musiqWebsocket.getInstance();
-        this.scrollPosition = [0, 0];
-        this.onScrollDebounced = debounce(300, () => this.onScroll())
-    }
-
-    componentDidMount() {
-        document.addEventListener('scroll', this.onScrollDebounced);
-    }
-
-    onScroll() {
-        this.scrollPosition[this.state.visibleView] = document.firstElementChild.scrollTop;
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.state.visibleView !== prevState.visibleView)
-            document.firstElementChild.scrollTo(0, this.scrollPosition[this.state.visibleView]);
     }
 
     getYtItems(title) {
@@ -76,9 +61,7 @@ export class MainView extends React.Component {
     }
 
     showYtTab() {
-        this.setState({...this.state,
-            visibleView: 1
-        });
+        this.setView(1);
     }
 
     getViews() {
@@ -86,7 +69,6 @@ export class MainView extends React.Component {
             {
                 item:
                     <SongList
-                        isActive={this.state.visibleView === 0}
                         tags={this.props.tags}
                         loadVideo={id => this.loadVideo(id)}
                         getYtItems={t => this.getYtItems(t)}
