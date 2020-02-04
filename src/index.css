@@ -108,6 +108,13 @@ body, p {
 .main-view {
     width: 100%;
     margin: 0;
+    height: calc(100vh - 56px);
+    overflow: hidden;
+}
+
+.item-view {
+    height: 100%;
+    overflow-y: scroll;
 }
 
 .view-switch {
@@ -187,6 +194,12 @@ input.input-small[type=text] {
 @media only screen and (max-width: 992px) {
     .main-view {
         margin-bottom: 50px !important;
+        height: auto;
+    }
+
+    .item-view {
+        height: 100%;
+        overflow-y: auto;
     }
 
     .yt-player-container, .control-panel {
@@ -222,13 +235,13 @@ input.input-small[type=text] {
         box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3) 
     }
 
-    .transform-right-100 {
-        transform: translateX(100%);
-    }
-
     .d-none-sm {
         display: none;
     }
+}
+
+.transform-right-100 {
+    transform: translateX(100%);
 }
 
 .pos-relative {

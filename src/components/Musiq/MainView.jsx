@@ -93,6 +93,7 @@ export class MainView extends React.Component {
                         showYtTab={() => this.showYtTab()}
                     />,
                 name: 'SONG LIST',
+                customStyles: '',
                 customClasses: ''
             },
             {
@@ -104,6 +105,7 @@ export class MainView extends React.Component {
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />,
                 name: 'YT LIST',
+                customStyles: 'grey darken-3 white-text',
                 customClasses: 'red'
             }
         ];
@@ -116,7 +118,7 @@ export class MainView extends React.Component {
             <div ref={this.mainViewRef} className="main-view row pos-relative">
                 {this.getViews()
                     .map((view, index)=> (
-                        <div key={index} className={index === this.state.visibleView ? '' : 'd-none-sm'}>
+                        <div key={index} className={"item-view col s12 l6 " + view.customStyles + (index === this.state.visibleView ? '' : ' d-none-sm')}>
                             {view.item}
                         </div>
                     ))

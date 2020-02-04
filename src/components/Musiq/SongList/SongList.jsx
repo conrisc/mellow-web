@@ -162,7 +162,7 @@ class SongListX extends React.Component {
 
     render() {
         return (
-            <div ref={this.songListRef} className="col s12 l6">
+            <div ref={this.songListRef}>
                 <NewSongModal 
                     tags={this.props.tags}
                 />
