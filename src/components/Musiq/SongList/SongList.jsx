@@ -34,7 +34,7 @@ class SongListX extends React.Component {
         M.FormSelect.init(elems, {});
         M.updateTextFields();
         this.songsLoader = this.getSongs();
-        this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
+        document.addEventListener('scroll', this.onScrollDebounced);
         this.initAutoplay();
     }
 
@@ -45,7 +45,7 @@ class SongListX extends React.Component {
     }
 
     componentWillUnmount() {
-        this.songListRef.current.removeEventListener('scroll', this.onScrollDebounced);
+        document.removeEventListener('scroll', this.onScrollDebounced);
     }
 
     getSongs() {
@@ -119,7 +119,9 @@ class SongListX extends React.Component {
 
 
     onScroll() {
-        if (this.songListRef.current.clientHeight + this.songListRef.current.scrollTop > this.songListRef.current.scrollHeight - 100) {
+        if (!this.props.isActive) return;
+        const element = document.firstElementChild;
+        if (element.clientHeight + element.scrollTop > element.scrollHeight - 100) {
             this.songsLoader = this.songsLoader
                 .then(() => this.updateSongs());
         }
