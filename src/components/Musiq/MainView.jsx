@@ -21,7 +21,14 @@ export class MainView extends React.Component {
         };
         this.getYtItemsDebounced = debounce(800, (t) => this.getYtItems(t));
         this.mainViewRef = React.createRef();
+        this.scrollPositions = [0, 0];
         this.webSocket = musiqWebsocket.getInstance();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.visibleView !== this.state.visibleView) {
+            document.documentElement.scrollTo(0, this.scrollPositions[this.state.visibleView]);
+        }
     }
 
     getYtItems(title) {
@@ -55,6 +62,7 @@ export class MainView extends React.Component {
     }
 
     setView(viewIndex) {
+        this.scrollPositions[this.state.visibleView] = document.documentElement.scrollTop;
         this.setState({...this.state,
             visibleView: viewIndex
         });
@@ -69,6 +77,7 @@ export class MainView extends React.Component {
             {
                 item:
                     <SongList
+                        isActive={this.state.visibleView === 0}
                         tags={this.props.tags}
                         loadVideo={id => this.loadVideo(id)}
                         getYtItems={t => this.getYtItems(t)}
@@ -87,7 +96,7 @@ export class MainView extends React.Component {
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />,
                 name: 'YT LIST',
-                customStyles: 'grey darken-3 white-text',
+                customStyles: 'grey darken-3 white-text yt-list',
                 customClasses: 'red'
             }
         ];
@@ -100,7 +109,10 @@ export class MainView extends React.Component {
             <div ref={this.mainViewRef} className="main-view row pos-relative">
                 {this.getViews()
                     .map((view, index)=> (
-                        <div key={index} className={"item-view col s12 l6 " + view.customStyles + (index === this.state.visibleView ? '' : ' d-none-sm')}>
+                        <div key={index}
+                            className={"item-view col s12 l6 " +
+                                view.customStyles +
+                                (index === this.state.visibleView ? '' : ' d-none-sm')}>
                             {view.item}
                         </div>
                     ))

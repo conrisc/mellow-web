@@ -26,7 +26,6 @@ class SongListX extends React.Component {
         }
         this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(800, () => this.onScroll())
-        this.songListRef = React.createRef();
     }
 
     componentDidMount() {
@@ -34,7 +33,7 @@ class SongListX extends React.Component {
         M.FormSelect.init(elems, {});
         M.updateTextFields();
         this.songsLoader = this.getSongs();
-        this.songListRef.current.addEventListener('scroll', this.onScrollDebounced);
+        document.addEventListener('scroll', this.onScrollDebounced);
         this.initAutoplay();
     }
 
@@ -45,7 +44,7 @@ class SongListX extends React.Component {
     }
 
     componentWillUnmount() {
-        this.songListRef.current.removeEventListener('scroll', this.onScrollDebounced);
+        document.removeEventListener('scroll', this.onScrollDebounced);
     }
 
     getSongs() {
@@ -119,7 +118,9 @@ class SongListX extends React.Component {
 
 
     onScroll() {
-        const element = this.songListRef.current;
+        if (!this.props.isActive) return;
+
+        const element = document.documentElement;
         if (element.clientHeight + element.scrollTop > element.scrollHeight - 100) {
             this.songsLoader = this.songsLoader
                 .then(() => this.updateSongs());
@@ -161,7 +162,7 @@ class SongListX extends React.Component {
 
     render() {
         return (
-            <div ref={this.songListRef}>
+            <div>
                 <NewSongModal 
                     tags={this.props.tags}
                 />
