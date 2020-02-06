@@ -23,7 +23,8 @@ class SongListX extends React.Component {
             shouldShowSongs: false,
             shouldShowLoader: true,
             currentlyPlaying: null
-        }
+        };
+        this.loadingVideo = false;
         this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(800, () => this.onScroll())
     }
@@ -129,24 +130,55 @@ class SongListX extends React.Component {
 
     initAutoplay() {
         this.props.ytPlayer.addEventListener('onStateChange', state => {
-            const nextVideoIndex = this.state.currentlyPlaying + 1;
-            const songItem = this.state.songs[nextVideoIndex];
-            if (state.data === 0 && songItem) {
-                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+            console.log('state', state.data);
+            if (state.data === 1) {
+                this.loadingVideo = false;
+                console.log('PLAYING');
+            }
+            if (state.data === 3) {
+                this.loadingVideo = true;
+                console.log('LOADING');
+            }
+            if (state.data === -1 && this.loadingVideo) {
+                console.log('USE YT');
+                this.loadingVideo = false;
+                const songItem = this.state.songs[this.state.currentlyPlaying];
+                this.props.getYtItems(songItem.title)
+                    .then(ytItems => {
+                        this.loadVideoById(ytItems[0].videoId, this.state.currentlyPlaying);
+                    });
+            }
 
-                if (videoIdMatch)
-                    this.loadVideoById(videoIdMatch[1], nextVideoIndex);
-                else
-                    this.props.getYtItems(songItem.title)
-                        .then(ytItems => {
-                            this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
-                        })
+            if (state.data === 0) {
+                const nextVideoIndex = this.state.currentlyPlaying + 1;
+                const playNextSong = () => {
+                    const songItem = this.state.songs[nextVideoIndex];
+                    if (songItem) {
+                        const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+
+                        if (videoIdMatch)
+                            this.loadVideoById(videoIdMatch[1], nextVideoIndex);
+                        else
+                            this.props.getYtItems(songItem.title)
+                                .then(ytItems => {
+                                    this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
+                                })
+                    }
+                }
+
+                if (nextVideoIndex >= this.state.songs.length) {
+                    this.songsLoader = this.songsLoader
+                        .then(() => this.updateSongs())
+                        .then(playNextSong);
+                } else {
+                    playNextSong();
+                }
             }
         });
     }
 
     loadVideoById(videoId, index) {
-        this.props.ytPlayer.loadVideoById(videoId)
+        this.props.ytPlayer.loadVideoById(videoId);
         this.setState({ currentlyPlaying: index });
     }
 
