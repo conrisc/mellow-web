@@ -1,13 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-const hideClass = 'transform-right-100';
-
 function BottomPanelX(props) {
     const [time, setTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
-    const controlPanelRef = useRef();
 
     useEffect(() => {
         const timeUpdater = setInterval(() => {
@@ -22,10 +19,6 @@ function BottomPanelX(props) {
             clearInterval(timeUpdater);
         }
     }, [])
-
-    function togglePanel() {
-        controlPanelRef.current.classList.toggle(hideClass);
-    }
 
     function updateVideoDuration(state) {
         if (state.data === 1) {
@@ -62,8 +55,7 @@ function BottomPanelX(props) {
 
     return (
         <div className="">
-            <button className="player-btn btn btn-small pos-fixed z-depth-3" onClick={togglePanel}>PLAYER</button>
-            <div ref={controlPanelRef} className="control-panel row blue-grey darken-3 white-text">
+            <div className="control-panel row blue-grey darken-3 white-text">
                 <div className="col">
                     <button className="btn btn-simple" onClick={playVideo}>
                         <i className="fas fa-play"></i>

@@ -246,11 +246,12 @@ input.input-small[type=text] {
     .d-none-sm {
         display: none;
     }
+
+    .transform-right-100 {
+        transform: translateX(100%);
+    }
 }
 
-.transform-right-100 {
-    transform: translateX(100%);
-}
 
 .pos-relative {
     position: relative;
