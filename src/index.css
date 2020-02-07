@@ -114,11 +114,8 @@ body, p {
     margin: 0;
 }
 
-.item-view {
-    overflow-y: auto;
-}
-
 .yt-list {
+    overflow-y: auto;
     position: sticky;
     top: 0;
     height: calc(100vh - 86px);
@@ -214,6 +211,7 @@ input.input-small[type=text] {
         position: fixed;
         top: 0;
     }
+
     .yt-list {
         height: auto;
         position: relative;
@@ -251,7 +249,6 @@ input.input-small[type=text] {
         transform: translateX(100%);
     }
 }
-
 
 .pos-relative {
     position: relative;

@@ -17,10 +17,15 @@ class MusiqX extends React.Component {
         super(props);
 
         this.state = {
-            tags: []
+            tags: [],
+            devices: []
         }
         this.getTags();
-        this.webSocket = musiqWebsocket.getInstance({ setOnline: this.props.setOnline, setOffline: this.props.setOffline });
+        this.webSocket = musiqWebsocket.getInstance({
+            setOnline: this.props.setOnline,
+            setOffline: this.props.setOffline,
+            handleDevicesInfo: (devices) => this.setState({...this.state, devices})
+        });
     }
 
     componentDidMount() {
@@ -70,8 +75,13 @@ class MusiqX extends React.Component {
                 <ToastList />
                 {this.props.ytPlayer &&
                     <div>
-                        <TagList toggleTag={(tagElement) => this.toggleTag(tagElement)} tags={this.state.tags} />
-                        <TopPanel />
+                        <TagList
+                            toggleTag={(tagElement) => this.toggleTag(tagElement)}
+                            tags={this.state.tags}
+                        />
+                        <TopPanel
+                            devices={this.state.devices}
+                        />
                         <MainView
                             tags={this.state.tags}
                         />

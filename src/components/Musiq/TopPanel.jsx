@@ -5,6 +5,7 @@ import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
+import { DeviceListModal } from './DeviceListModal.jsx';
 
 function TopPanelX(props) {
     const webSocket = musiqWebsocket.getInstance();
@@ -26,8 +27,8 @@ function TopPanelX(props) {
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white z-depth-1 z-depth-2-sm center-align">
+            <DeviceListModal devices={props.devices} />
             <div className="row">
-                <Link to='/' className="btn">Go back</Link>
                 <div className="col">
                     <button className={"btn btn-small green" + (props.isOnline ? ' disabled' : '')} onClick={() => webSocket.open()}>Connect</button>
                 </div>
@@ -46,6 +47,10 @@ function TopPanelX(props) {
                         </p>
                     </form>
                 </div>
+                <button data-target="device-list-modal" className="btn btn-small modal-trigger">
+                    Devices
+                </button>
+                <Link to='/' className="btn btn-small">Go back</Link>
             </div>
             <button className="remote-btn btn btn-small hide-on-large-only pos-absolute cyan lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</button>
         </div>
