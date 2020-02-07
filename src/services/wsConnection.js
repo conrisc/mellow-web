@@ -11,6 +11,10 @@ export class WsConnection {
     }
 
     open() {
+        if (this.ws && this.ws.readyState < 2) {
+            console.warn('WebSocket connection is already established');
+            return;
+        }
         this.ws = new WebSocket(url);
         this.ws.addEventListener('open', () => {
             console.log('WebSocket Client Connected', this.ws.readyState);
@@ -81,7 +85,6 @@ export class WsConnection {
     }
 
     _initHeartbeat() {
-        this.sendData(dataTypes.PING);
         this.pingerId = setInterval(() => {
             this.sendData(dataTypes.PING);
         }, 20000);

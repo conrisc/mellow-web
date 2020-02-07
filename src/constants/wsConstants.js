@@ -5,7 +5,8 @@ const dataTypes = {
     PAUSE: 'pause',
     SET_VOLUME: 'set_volume',
     LOAD_VIDEO: 'load_video',
-    PING: 'ping'
+    PING: 'ping',
+    CLIENTS_INFO: 'clients_info'
 }
 
 export {
