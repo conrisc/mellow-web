@@ -85,6 +85,11 @@ body, p {
     right: 0;
     z-index: 50;
     width: 50%;
+    height: 36px;
+}
+
+.control-panel .timer {
+    line-height: 36px;
 }
 
 .player-btn {
@@ -116,7 +121,7 @@ body, p {
 .yt-list {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: calc(100vh - 86px);
     padding-bottom: 10px;
     overscroll-behavior-y: contain;
 }
@@ -129,7 +134,8 @@ body, p {
 }
 
 .spinner {
-    padding: 20px;
+    height: 53px;
+    margin: 2px;
 }
 
 .smooth-bg {
@@ -197,7 +203,11 @@ input.input-small[type=text] {
 
 @media only screen and (max-width: 992px) {
     .yt-player-container, .control-panel {
-        bottom: 45px;
+        bottom: 50px;
+    }
+
+    .main-view {
+        margin-bottom: 86px !important;
     }
 
     .top-panel {

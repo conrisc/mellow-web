@@ -72,8 +72,8 @@ function BottomPanelX(props) {
                         <i className="fas fa-pause"></i>
                     </button>
                 </div>
-                <div className="col s1">
-                    <h6>{formatSeconds(time)}</h6>
+                <div className="col s1 timer">
+                    <span>{formatSeconds(time)}</span>
                 </div>
                 <div className="col s7">
                     <form action="#">
@@ -82,8 +82,8 @@ function BottomPanelX(props) {
                         </p>
                     </form>
                 </div>
-                <div className="col s1">
-                    <h6>{formatSeconds(duration)}</h6>
+                <div className="col s1 timer">
+                    <span>{formatSeconds(duration)}</span>
                 </div>
             </div>
         </div>
