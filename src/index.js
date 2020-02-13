@@ -19,7 +19,11 @@ const initialState = {
 	ytPlayer: null,
 	isOnline: false,
 	toastId: 0,
-	toasts: []
+	toasts: [],
+	devices: {
+		online: [],
+		selected: []  // online + .isChecked property
+	}
 };
 
 function reducer(state = initialState, action) {
@@ -39,6 +43,22 @@ function reducer(state = initialState, action) {
 			return  { ...state, isOnline: false };
 		case 'SET_YT_PLAYER':
 			return { ...state, ytPlayer: action.ytPlayer };
+		case 'SET_ONLINE_DEVICES':
+			return { 
+				...state,
+				devices: { 
+					...state.devices,
+					online: action.devices
+				}
+			};
+		case 'SET_SELECTED_DEVICES':
+			return { 
+				...state,
+				devices: { 
+					...state.devices,
+					selected: action.devices
+				}
+			};
 		default:
 			return state;
 	}

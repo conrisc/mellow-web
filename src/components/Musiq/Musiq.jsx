@@ -17,14 +17,13 @@ class MusiqX extends React.Component {
         super(props);
 
         this.state = {
-            tags: [],
-            devices: []
+            tags: []
         }
         this.getTags();
         this.webSocket = musiqWebsocket.getInstance({
             setOnline: this.props.setOnline,
             setOffline: this.props.setOffline,
-            handleDevicesInfo: (devices) => this.setState({...this.state, devices})
+            handleDevicesInfo: props.setOnlineDevices
         });
     }
 
@@ -79,9 +78,7 @@ class MusiqX extends React.Component {
                             toggleTag={(tagElement) => this.toggleTag(tagElement)}
                             tags={this.state.tags}
                         />
-                        <TopPanel
-                            devices={this.state.devices}
-                        />
+                        <TopPanel />
                         <MainView
                             tags={this.state.tags}
                         />
@@ -103,7 +100,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         setOnline: () => dispatch({ type: 'SET_ONLINE' }),
-        setOffline: () => dispatch({ type: 'SET_OFFLINE' })
+        setOffline: () => dispatch({ type: 'SET_OFFLINE' }),
+        setOnlineDevices: (devices) => dispatch({ type: 'SET_ONLINE_DEVICES', devices })
     };
 }
 

@@ -13,21 +13,29 @@ function TopPanelX(props) {
     const panelRef = useRef();
 
     function play() {
-        webSocket.sendData(dataTypes.PLAY);
+        webSocket.sendData(dataTypes.PLAY, { targets: getSelectedDevicesNames() });
     }
 
     function pause() {
-        webSocket.sendData(dataTypes.PAUSE);
+        webSocket.sendData(dataTypes.PAUSE, { targets: getSelectedDevicesNames() });
     }
 
     function setVolume(event) {
         const volume = event.target.value;
-        sendDataDebounced(dataTypes.SET_VOLUME, { volume });
+        const s = getSelectedDevicesNames();
+        console.log('sending to: ', s);
+        sendDataDebounced(dataTypes.SET_VOLUME, { volume, targets: s });
+    }
+
+    function getSelectedDevicesNames() {
+        return props.selectedDevices
+            .filter(device => device.isChecked)
+            .map(device => device.name);
     }
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white z-depth-1 z-depth-2-sm center-align">
-            <DeviceListModal devices={props.devices} />
+            <DeviceListModal />
             <div className="row">
                 <div className="col">
                     <button className={"btn btn-small green" + (props.isOnline ? ' disabled' : '')} onClick={() => webSocket.open()}>Connect</button>
@@ -59,7 +67,8 @@ function TopPanelX(props) {
 
 const mapStateToProps = state => {
     return {
-        isOnline: state.isOnline
+        isOnline: state.isOnline,
+        selectedDevices: state.devices.selected
     }
 };
 
