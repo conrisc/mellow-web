@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
+import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
+
 function DeviceListModalX(props) {
     const selectedDevices = props.devices.selected;
+    const [ playersStatus, setPlayersStatus ] = useState({});
+
 
     useEffect(() => {
         const newDevices = props.devices.online;
@@ -11,6 +16,34 @@ function DeviceListModalX(props) {
         });
         props.setSelectedDevices(newDevices);
     }, [props.devices.online]);
+
+    useEffect(() => {
+        const webSocket = musiqWebsocket.getInstance();
+        const playersStatusListener = {
+            message: (message) => {
+                const dataFromServer = JSON.parse(message.data);
+                if (dataFromServer.type === dataTypes.PLAYER_STATE) {
+                    handlePlayerState(dataFromServer);
+                }
+            }
+        }
+        webSocket.addListeners(playersStatusListener);
+
+        return () => {
+            webSocket.removeListeners(playersStatusListener);
+        };
+    });
+
+    function handlePlayerState(playerStatus) {
+        const playerState = {
+            state: playerStatus.state,
+            time: playerStatus.time,
+            title: playerStatus.title,
+            vidoeId: playerStatus.vidoeId
+        }
+        console.log(playersStatus);
+        setPlayersStatus({...playerStatus, [playerStatus.origin]: playerState });
+    }
 
     function selectDevice(event, device) {
         device.isChecked = event.target.checked;
@@ -32,6 +65,7 @@ function DeviceListModalX(props) {
                             />
                             <span>{device.name}</span>
                         </label>
+                        {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
                     </li>)}
                 </ul>
             </div>

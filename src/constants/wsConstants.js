@@ -7,6 +7,7 @@ const dataTypes = {
     PREV_SONG: 'prev_song',
     SET_VOLUME: 'set_volume',
     LOAD_VIDEO: 'load_video',
+    PLAYER_STATE: 'player_state',
     PING: 'ping',
     CLIENTS_INFO: 'clients_info'
 }

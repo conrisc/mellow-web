@@ -58,6 +58,21 @@ function YtPlayerX(props) {
         };
     }, [props.ytPlayer]);
 
+    useEffect(() => {
+        if (!props.ytPlayer) return;
+
+        const webSocket = musiqWebsocket.getInstance();
+        props.ytPlayer.addEventListener('onStateChange', state => {
+            const playerState = {
+                state: state.data,
+                videoId: props.ytPlayer.getVideoData().video_id || '',
+                title: props.ytPlayer.getVideoData().title || '',
+                time: Math.floor(props.ytPlayer.getCurrentTime()) || 0
+            };
+            webSocket.sendData(dataTypes.PLAYER_STATE, playerState);
+        });
+    }, [props.ytPlayer]);
+
     return (
         <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
             <div ref={playerRef} className="w-100" />
