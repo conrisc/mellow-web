@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { DevelopersApi } from 'what_api';
 
+import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { Spinner } from 'CommonComponents/Spinner';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
@@ -36,6 +38,23 @@ class SongListX extends React.Component {
         this.songsLoader = this.getSongs();
         document.addEventListener('scroll', this.onScrollDebounced);
         this.initAutoplay();
+        const webSocket = musiqWebsocket.getInstance();
+        const wsListeners = {
+            message: (message) => {
+                const dataFromServer = JSON.parse(message.data);
+                switch (dataFromServer.type) {
+                    case dataTypes.NEXT_SONG:
+                        this.playNextSong();
+                        this.props.pushToast('Play next song');
+                        break;
+                    case dataTypes.PREV_SONG:
+                        this.playPreviousSong();
+                        this.props.pushToast('Play previous song');
+                        break;
+                }
+            }
+        };
+        webSocket.addListeners(wsListeners);
     }
 
     componentDidUpdate(prevProps) {
@@ -128,19 +147,60 @@ class SongListX extends React.Component {
         }
     }
 
+    playPreviousSong() {
+        if (this.state.currentlyPlaying > 0) {
+            const previousVideoIndex = this.state.currentlyPlaying - 1;
+            const songItem = this.state.songs[previousVideoIndex];
+            if (songItem) {
+                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+
+                if (videoIdMatch)
+                    this.loadVideoById(videoIdMatch[1], previousVideoIndex);
+                else
+                    this.props.getYtItems(songItem.title)
+                        .then(ytItems => {
+                            this.loadVideoById(ytItems[0].videoId, previousVideoIndex);
+                        })
+            }
+        }
+    }
+
+    playNextSong() {
+        const nextVideoIndex = this.state.currentlyPlaying === null ? 0 : this.state.currentlyPlaying + 1;
+
+        const playNextSong = () => {
+            const songItem = this.state.songs[nextVideoIndex];
+            if (songItem) {
+                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+
+                if (videoIdMatch)
+                    this.loadVideoById(videoIdMatch[1], nextVideoIndex);
+                else
+                    this.props.getYtItems(songItem.title)
+                        .then(ytItems => {
+                            this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
+                        })
+            }
+        }
+
+        if (nextVideoIndex >= this.state.songs.length) {
+            this.songsLoader = this.songsLoader
+                .then(() => this.updateSongs())
+                .then(playNextSong);
+        } else {
+            playNextSong();
+        }
+    }
+
     initAutoplay() {
         this.props.ytPlayer.addEventListener('onStateChange', state => {
-            console.log('state', state.data);
             if (state.data === 1) {
                 this.loadingVideo = false;
-                console.log('PLAYING');
             }
             if (state.data === 3) {
                 this.loadingVideo = true;
-                console.log('LOADING');
             }
             if (state.data === -1 && this.loadingVideo) {
-                console.log('USE YT');
                 this.loadingVideo = false;
                 const songItem = this.state.songs[this.state.currentlyPlaying];
                 this.props.getYtItems(songItem.title)
@@ -148,31 +208,8 @@ class SongListX extends React.Component {
                         this.loadVideoById(ytItems[0].videoId, this.state.currentlyPlaying);
                     });
             }
-
             if (state.data === 0) {
-                const nextVideoIndex = this.state.currentlyPlaying + 1;
-                const playNextSong = () => {
-                    const songItem = this.state.songs[nextVideoIndex];
-                    if (songItem) {
-                        const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-
-                        if (videoIdMatch)
-                            this.loadVideoById(videoIdMatch[1], nextVideoIndex);
-                        else
-                            this.props.getYtItems(songItem.title)
-                                .then(ytItems => {
-                                    this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
-                                })
-                    }
-                }
-
-                if (nextVideoIndex >= this.state.songs.length) {
-                    this.songsLoader = this.songsLoader
-                        .then(() => this.updateSongs())
-                        .then(playNextSong);
-                } else {
-                    playNextSong();
-                }
+                this.playNextSong();
             }
         });
     }
@@ -252,7 +289,9 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-    return {};
+    return {
+        pushToast: (toast) => dispatch({ type: 'PUSH_TOAST', toast })
+    };
 }
 
 export const SongList = connect(mapStateToProps, mapDispatchToProps)(SongListX);

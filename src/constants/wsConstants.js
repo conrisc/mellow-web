@@ -3,6 +3,8 @@ const dataTypes = {
     JOIN: 'join',
     PLAY: 'play',
     PAUSE: 'pause',
+    NEXT_SONG: 'next_song',
+    PREV_SONG: 'prev_song',
     SET_VOLUME: 'set_volume',
     LOAD_VIDEO: 'load_video',
     PING: 'ping',

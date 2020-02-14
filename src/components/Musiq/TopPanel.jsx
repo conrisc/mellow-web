@@ -20,6 +20,14 @@ function TopPanelX(props) {
         webSocket.sendData(dataTypes.PAUSE, { targets: getSelectedDevicesNames() });
     }
 
+    function playPrevious() {
+        webSocket.sendData(dataTypes.PREV_SONG, { targets: getSelectedDevicesNames() });
+    }
+
+    function playNext() {
+        webSocket.sendData(dataTypes.NEXT_SONG, { targets: getSelectedDevicesNames() });
+    }
+
     function setVolume(event) {
         const volume = event.target.value;
         const s = getSelectedDevicesNames();
@@ -54,6 +62,12 @@ function TopPanelX(props) {
                             />
                         </p>
                     </form>
+                </div>
+                <div className="col">
+                    <button className="btn btn-small" onClick={playPrevious}>Previous</button>
+                </div>
+                <div className="col">
+                    <button className="btn btn-small" onClick={playNext}>Next</button>
                 </div>
                 <button data-target="device-list-modal" className="btn btn-small modal-trigger">
                     Devices
