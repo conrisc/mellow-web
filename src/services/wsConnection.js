@@ -8,6 +8,7 @@ export class WsConnection {
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
         this.listenersCollection = [];
+        this.name = '';
     }
 
     open() {
@@ -36,6 +37,9 @@ export class WsConnection {
         this.ws.addEventListener('message', (message) => {
             const dataFromServer = JSON.parse(message.data);
             console.log('WS <onmessage>: ', dataFromServer);
+            if (dataFromServer.type === dataTypes.JOIN) {
+                this.name = dataFromServer.name;
+            }
         })
 
         this._assignListenersCollection();

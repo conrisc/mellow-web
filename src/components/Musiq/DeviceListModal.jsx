@@ -7,6 +7,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 function DeviceListModalX(props) {
     const selectedDevices = props.devices.selected;
     const [ playersStatus, setPlayersStatus ] = useState({});
+    const [ name, setName ] = useState('');
 
 
     useEffect(() => {
@@ -19,6 +20,7 @@ function DeviceListModalX(props) {
 
     useEffect(() => {
         const webSocket = musiqWebsocket.getInstance();
+        setName(webSocket.name);
         const playersStatusListener = {
             message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
@@ -41,7 +43,6 @@ function DeviceListModalX(props) {
             title: playerStatus.title,
             vidoeId: playerStatus.vidoeId
         }
-        console.log(playersStatus);
         setPlayersStatus({...playerStatus, [playerStatus.origin]: playerState });
     }
 
@@ -63,9 +64,11 @@ function DeviceListModalX(props) {
                                 checked={device.isChecked}
                                 onChange={(e) => selectDevice(e, device)}
                             />
-                            <span>{device.name}</span>
+                            <span className={ device.name === name ? 'green-text' : ''}>{device.userAgent.parsed} [{device.name}]</span>
                         </label>
-                        {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
+                        <p>
+                            {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
+                        </p>
                     </li>)}
                 </ul>
             </div>
