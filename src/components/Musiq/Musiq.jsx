@@ -22,8 +22,7 @@ class MusiqX extends React.Component {
         this.getTags();
         this.webSocket = musiqWebsocket.getInstance({
             setOnline: this.props.setOnline,
-            setOffline: this.props.setOffline,
-            handleDevicesInfo: props.setOnlineDevices
+            setOffline: this.props.setOffline
         });
     }
 
@@ -100,8 +99,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         setOnline: () => dispatch({ type: 'SET_ONLINE' }),
-        setOffline: () => dispatch({ type: 'SET_OFFLINE' }),
-        setOnlineDevices: (devices) => dispatch({ type: 'SET_ONLINE_DEVICES', devices })
+        setOffline: () => dispatch({ type: 'SET_OFFLINE' })
     };
 }
 

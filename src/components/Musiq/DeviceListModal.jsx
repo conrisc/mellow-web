@@ -5,22 +5,12 @@ import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
 
 function DeviceListModalX(props) {
-    const selectedDevices = props.devices.selected;
+    const onlineDevices = props.onlineDevices;
     const [ playersStatus, setPlayersStatus ] = useState({});
-    const [ name, setName ] = useState('');
 
-
-    useEffect(() => {
-        const newDevices = props.devices.online;
-        newDevices.forEach(device => {
-            device.isChecked = !!(selectedDevices.find(dev => dev.name === device.name) || {}).isChecked;
-        });
-        props.setSelectedDevices(newDevices);
-    }, [props.devices.online]);
 
     useEffect(() => {
         const webSocket = musiqWebsocket.getInstance();
-        setName(webSocket.name);
         const playersStatusListener = {
             message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
@@ -46,25 +36,20 @@ function DeviceListModalX(props) {
         setPlayersStatus({...playerStatus, [playerStatus.origin]: playerState });
     }
 
-    function selectDevice(event, device) {
-        device.isChecked = event.target.checked;
-        props.setSelectedDevices([...selectedDevices]);
-    }
-
     return (
         <div id="device-list-modal" className="modal">
             <div className="modal-content">
                 <h4>Device list</h4>
                 <ul>
-                    {selectedDevices.map((device) => <li key={device.name}>
+                    {onlineDevices.map((device) => <li key={device.name}>
                         <label>
                             <input
                                 name=""
                                 type="checkbox"
                                 checked={device.isChecked}
-                                onChange={(e) => selectDevice(e, device)}
+                                onChange={(e) => props.toggleCheck(e, device)}
                             />
-                            <span className={ device.name === name ? 'green-text' : ''}>{device.userAgent.parsed} [{device.name}]</span>
+                            <span className={ device.isMe ? 'green-text' : ''}>{device.userAgent.parsed} [{device.name}]</span>
                         </label>
                         <p>
                             {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
@@ -81,13 +66,11 @@ function DeviceListModalX(props) {
 
 const mapStateToProps = (state) => {
     return {
-        devices: state.devices
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setSelectedDevices: (devices) => dispatch({ type: 'SET_SELECTED_DEVICES', devices })
     }
 };
 

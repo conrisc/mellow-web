@@ -3,14 +3,27 @@ import { dataTypes } from 'Constants/wsConstants';
 
 export const musiqWebsocket = function () {
     let wsConnection = null;
+    let selectedDevices = [];
 
     function getInstance({
         setOnline = () => {},
-        setOffline = () => {},
-        handleDevicesInfo = () => {}
+        setOffline = () => {}
     } = {}) {
         if (!wsConnection) {
             wsConnection = new WsConnection(true, 10000);
+
+            wsConnection.sendDataToTargets = (type, data) => {
+                const dataWithTargets = {
+                    ...data,
+                    targets: selectedDevices
+                };
+                wsConnection.sendData(type, dataWithTargets);
+            };
+
+            wsConnection.setSelectedDevices = (devices) => {
+                selectedDevices = devices;
+            };
+
             const onlineStatusListener = {
                 open: () => {
                     setOnline();
@@ -20,12 +33,6 @@ export const musiqWebsocket = function () {
                 },
                 error: (message) => {
                     setOffline();
-                },
-                message: (message) => {
-                    const dataFromServer = JSON.parse(message.data);
-                    if (dataFromServer.type === dataTypes.CLIENTS_INFO) {
-                        handleDevicesInfo(dataFromServer.clients);
-                    }
                 }
             }
             wsConnection.addListeners(onlineStatusListener);

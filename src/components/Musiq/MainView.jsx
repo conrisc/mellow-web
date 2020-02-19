@@ -58,7 +58,7 @@ export class MainView extends React.Component {
     }
 
     loadVideo(videoId) {
-        this.webSocket.sendData(dataTypes.LOAD_VIDEO, { videoId })
+        this.webSocket.sendDataToTargets(dataTypes.LOAD_VIDEO, { videoId })
     }
 
     setView(viewIndex) {

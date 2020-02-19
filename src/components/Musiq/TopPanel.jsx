@@ -5,45 +5,37 @@ import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
-import { DeviceListModal } from './DeviceListModal.jsx';
+import { DeviceListController } from './DeviceListController';
 
 function TopPanelX(props) {
     const webSocket = musiqWebsocket.getInstance();
-    const sendDataDebounced = debounce(800, (t, d) => webSocket.sendData(t, d));
+    const sendDataDebounced = debounce(800, (t, d) => webSocket.sendDataToTargets(t, d));
     const panelRef = useRef();
 
     function play() {
-        webSocket.sendData(dataTypes.PLAY, { targets: getSelectedDevicesNames() });
+        webSocket.sendDataToTargets(dataTypes.PLAY);
     }
 
     function pause() {
-        webSocket.sendData(dataTypes.PAUSE, { targets: getSelectedDevicesNames() });
+        webSocket.sendDataToTargets(dataTypes.PAUSE);
     }
 
     function playPrevious() {
-        webSocket.sendData(dataTypes.PREV_SONG, { targets: getSelectedDevicesNames() });
+        webSocket.sendDataToTargets(dataTypes.PREV_SONG);
     }
 
     function playNext() {
-        webSocket.sendData(dataTypes.NEXT_SONG, { targets: getSelectedDevicesNames() });
+        webSocket.sendDataToTargets(dataTypes.NEXT_SONG);
     }
 
     function setVolume(event) {
         const volume = event.target.value;
-        const s = getSelectedDevicesNames();
-        console.log('sending to: ', s);
-        sendDataDebounced(dataTypes.SET_VOLUME, { volume, targets: s });
-    }
-
-    function getSelectedDevicesNames() {
-        return props.selectedDevices
-            .filter(device => device.isChecked)
-            .map(device => device.name);
+        sendDataDebounced(dataTypes.SET_VOLUME, { volume });
     }
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white z-depth-1 z-depth-2-sm center-align">
-            <DeviceListModal />
+            <DeviceListController />
             <div className="row">
                 <div className="col">
                     <button className={"btn btn-small green" + (props.isOnline ? ' disabled' : '')} onClick={() => webSocket.open()}>Connect</button>
@@ -81,8 +73,7 @@ function TopPanelX(props) {
 
 const mapStateToProps = state => {
     return {
-        isOnline: state.isOnline,
-        selectedDevices: state.devices.selected
+        isOnline: state.isOnline
     }
 };
 
