@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
-import { DevelopersApi } from 'what_api';
+import { DevelopersApi, UsersApi } from 'what_api';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -81,7 +81,7 @@ class SongListX extends React.Component {
         };
 
         console.log('Fetching songs...');
-        const api = new DevelopersApi();
+        const api = new UsersApi();
         return api.searchSong(opts)
             .then(data => {
                 this.setState({
@@ -97,7 +97,7 @@ class SongListX extends React.Component {
     }
 
     updateSongs () {
-        const api = new DevelopersApi();
+        const api = new UsersApi();
 
         const opts = {
             skip: this.state.skip + this.state.limit,
