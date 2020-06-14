@@ -21,6 +21,7 @@ function LoginX(props) {
                 if (response.data && response.data.authToken) {
                     const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
                     AuthorizationHeader.apiKey = response.data.authToken;
+                    sessionStorage.setItem('what_auth_token', response.data.authToken)
                     props.setAuthenticated()
                     history.replace(from);
                 }
@@ -45,8 +46,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' }),
-        setUnauthenticated: () => dispatch({ type: 'SET_UNAUTHENTICATED' })
+        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' })
     };
 }
 

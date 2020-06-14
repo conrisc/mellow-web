@@ -11,6 +11,7 @@ import './index.css';
 
 import './exampleScript';
 import { App } from './components/App';
+import { ApiClient } from 'what_api';
 
 console.log('index.js has been loaded');
 
@@ -49,7 +50,13 @@ function reducer(state = initialState, action) {
 	}
 }
 
-const store = createStore(reducer)
+const store = createStore(reducer);
+
+if (sessionStorage.getItem('what_auth_token')) {
+    const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
+    AuthorizationHeader.apiKey = sessionStorage.getItem('what_auth_token');
+    store.dispatch({ type: 'SET_AUTHENTICATED' });
+}
 
 const appContainer = document.querySelector('#app');
 ReactDOM.render(
