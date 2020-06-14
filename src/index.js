@@ -16,6 +16,7 @@ console.log('index.js has been loaded');
 
 
 const initialState = {
+	isAuthenticated: false,
 	ytPlayer: null,
 	isOnline: false,
 	toastId: 0,
@@ -39,6 +40,10 @@ function reducer(state = initialState, action) {
 			return  { ...state, isOnline: false };
 		case 'SET_YT_PLAYER':
 			return { ...state, ytPlayer: action.ytPlayer };
+		case 'SET_AUTHENTICATED':
+			return { ...state, isAuthenticated: true };
+		case 'SET_UNAUTHENTICATED':
+			return { ...state, isAuthenticated: false };
 		default:
 			return state;
 	}

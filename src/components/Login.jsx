@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { ApiClient, UsersApi, UserPost } from 'what_api';
+import { connect } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { ApiClient, DevelopersApi, UserPost } from 'what_api';
 
-export function Login() {
+function LoginX(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const history = useHistory();
+    const location = useLocation();
+    const { from } = location.state || { from: { pathname: "/" } };
 
     function loginUser() {
         const opts = {
@@ -16,9 +21,12 @@ export function Login() {
                 if (response.data && response.data.authToken) {
                     const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
                     AuthorizationHeader.apiKey = response.data.authToken;
+                    props.setAuthenticated()
+                    history.replace(from);
                 }
             }, error => {
                 console.warn('Error while signing in', error);
+                props.setUnauthenticated()
             });
     }
 
@@ -30,3 +38,16 @@ export function Login() {
         </div>
     );
 }
+
+const mapStateToProps = state => {
+    return {};
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' }),
+        setUnauthenticated: () => dispatch({ type: 'SET_UNAUTHENTICATED' })
+    };
+}
+
+export const Login = connect(mapStateToProps, mapDispatchToProps)(LoginX);

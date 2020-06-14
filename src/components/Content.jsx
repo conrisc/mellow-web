@@ -1,5 +1,6 @@
 import React from 'react';
-import { Switch, Route, Link} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Switch, Route, Link, Redirect } from 'react-router-dom';
 
 import { Notepad } from './Notepad/Notepad';
 import { Musiq } from './Musiq/Musiq';
@@ -16,9 +17,6 @@ export function Content() {
                         <Link to="/login">Sign in</Link>
                     </li>
                     <li>
-                        <Link to="/register">Sign up</Link>
-                    </li>
-                    <li>
                         <Link to="/notepad">Notepad</Link>
                     </li>
                     <li>
@@ -26,12 +24,12 @@ export function Content() {
                     </li>
                 </ul>
             </Route>
-            <Route exact path="/notepad/:noteId?">
+            <PrivateRoute exact path="/notepad/:noteId?">
                 <Notepad />
-            </Route>
-            <Route exact path="/musiq">
+            </PrivateRoute>
+            <PrivateRoute exact path="/musiq">
                 <Musiq />
-            </Route>
+            </PrivateRoute>
             <Route exact path="/login">
                 <Login />
             </Route>
@@ -41,3 +39,35 @@ export function Content() {
         </Switch>
     );
 }
+
+function PrivateRouteX({ children, isAuthenticated, setAuthenticated, ...rest }) {
+    return (
+        <Route
+            {...rest}
+            render={({ location }) =>
+                isAuthenticated ? (
+                    children
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: { from: location }
+                        }}
+                    />
+                )
+            }
+        />
+    );
+}
+
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: state.isAuthenticated
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {};
+}
+
+const PrivateRoute = connect(mapStateToProps, mapDispatchToProps)(PrivateRouteX);
