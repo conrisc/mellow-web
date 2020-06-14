@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, withRouter, Link } from 'react-router-dom';
-import { DevelopersApi, NoteItem } from 'what_api';
+import { UsersApi, NoteItem } from 'what_api';
 
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
@@ -56,7 +56,7 @@ function NotepadN(props) {
     }
 
     // function getNote() {
-    //     const api = new DevelopersApi();
+    //     const api = new UsersApi();
     //     const opts = { 
     //         id: noteId
     //     };
@@ -78,7 +78,7 @@ function NotepadN(props) {
 
     function getNotes() {
         return new Promise((resolve, reject) => {
-            const api = new DevelopersApi();
+            const api = new UsersApi();
 
             api.searchNote({})
                 .then(data => {
@@ -97,7 +97,7 @@ function NotepadN(props) {
     }
 
     function removeNote(nId) {
-        const api = new DevelopersApi();
+        const api = new UsersApi();
         const opts = {
             id: nId
         };
@@ -113,7 +113,7 @@ function NotepadN(props) {
     }
 
     function createEmptyNote() {
-        const api = new DevelopersApi();
+        const api = new UsersApi();
 
         const opts = { 
             noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add

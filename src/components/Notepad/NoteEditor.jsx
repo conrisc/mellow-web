@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { DevelopersApi, NoteItem } from 'what_api';
+import { UsersApi, NoteItem } from 'what_api';
 
 
 function saveNote(noteId, text) {
@@ -9,7 +9,7 @@ function saveNote(noteId, text) {
 	};
 	opts.noteItem.id = noteId;
 
-	const api = new DevelopersApi();
+	const api = new UsersApi();
 	api.updateNote(opts)
 		.then(() => {
 			console.log('Note updated');

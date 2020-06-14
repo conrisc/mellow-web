@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
-import { DevelopersApi } from 'what_api';
+import { UsersApi } from 'what_api';
 
 import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { ToastList } from 'CommonComponents/ToastList';
@@ -36,7 +36,7 @@ class MusiqX extends React.Component {
     }
 
      getTags() {
-        const api = new DevelopersApi();
+        const api = new UsersApi();
 
         const opts = {
             skip: 0,

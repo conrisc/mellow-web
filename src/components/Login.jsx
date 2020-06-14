@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ApiClient, DevelopersApi, UserPost } from 'what_api';
+import { ApiClient, UsersApi, UserPost } from 'what_api';
 
 export function Login() {
     const [email, setEmail] = useState('');

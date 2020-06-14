@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {DevelopersApi, SongItem} from 'what_api';
+import {UsersApi, SongItem} from 'what_api';
 
 export function NewSongModal(props) {
     const [title, setTitle] = useState('');
@@ -56,7 +56,7 @@ export function NewSongModal(props) {
             songItem: new SongItem(title.trim(), url.trim(), new Date().toISOString(), songTagsIds)
         }
 
-        const api = new DevelopersApi();
+        const api = new UsersApi();
         api.addSong(opts)
             .then(data => {
                 setTitle('');

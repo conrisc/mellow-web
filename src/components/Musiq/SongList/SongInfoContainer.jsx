@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DevelopersApi, SongItem } from 'what_api';
+import { UsersApi, SongItem } from 'what_api';
 
 export function SongInfoContainer(props) {
     const songItem = props.songItem;
@@ -53,7 +53,7 @@ export function SongInfoContainer(props) {
         }
         opts.songItem.id = songItem.id;
 
-        const api = new DevelopersApi();
+        const api = new UsersApi();
         api.updateSong(opts)
             .then(result => {
                 console.log('Song updated');

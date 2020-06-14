@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { DevelopersApi, TagItem } from 'what_api';
+import { UsersApi, TagItem } from 'what_api';
 
 export function TagList(props) {
     const tagNameInputRef = useRef();
@@ -16,7 +16,7 @@ export function TagList(props) {
             return;
         }
 
-        const api = new DevelopersApi();
+        const api = new UsersApi();
 
         const opts = {
             tagItem: new TagItem(tagName)

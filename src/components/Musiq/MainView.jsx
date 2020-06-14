@@ -1,6 +1,6 @@
 import React from 'react';
 import { debounce } from 'throttle-debounce';
-import { DevelopersApi } from 'what_api';
+import { UsersApi } from 'what_api';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -36,7 +36,7 @@ export class MainView extends React.Component {
             console.log('getYtItems: title is empty');
             return;
         }
-        const api = new DevelopersApi();
+        const api = new UsersApi();
 
         const encodedTitle = encodeURIComponent(title);
         const opts = {

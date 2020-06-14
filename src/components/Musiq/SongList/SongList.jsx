@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
-import { DevelopersApi, UsersApi } from 'what_api';
+import { UsersApi } from 'what_api';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -124,7 +124,7 @@ class SongListX extends React.Component {
     }
 
     removeSong(songId) {
-        const api = new DevelopersApi();
+        const api = new UsersApi();
         api.removeSong(songId)
             .then(() => {
                 this.setState({
