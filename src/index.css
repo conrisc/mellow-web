@@ -58,6 +58,8 @@ body, p {
 }
 
 .top-panel {
+    position: sticky;
+    top: 0;
     width: 100%;
     padding: 10px;
     z-index: 100;
@@ -117,7 +119,7 @@ body, p {
 .yt-list {
     overflow-y: auto;
     position: sticky;
-    top: 0;
+    top: 56px;
     height: calc(100vh - 86px);
     padding-bottom: 10px;
     overscroll-behavior-y: contain;
@@ -215,6 +217,7 @@ input.input-small[type=text] {
     .yt-list {
         height: auto;
         position: relative;
+        top: 0;
     }
 
     .control-panel {
