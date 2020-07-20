@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Dropdown, Menu } from 'antd';
 
 export function SongActionButtons(props) {
     const songItem = props.songItem;
@@ -11,55 +12,51 @@ export function SongActionButtons(props) {
             })
     }
 
-    function findAndPlayVideo() {
-        props.getYtItems(songItem.title)
-            .then(ytItems => {
-                props.loadVideoById(ytItems[0].videoId, props.index);
-            })
-    }
-
     function searchOnYoutube() {
         props.getYtItems(songItem.title);
         props.showYtTab();
     }
 
+    const menu = (
+        <Menu>
+            <Menu.Item>
+                <a href="#" onClick={searchOnYoutube}>Find</a>
+            </Menu.Item>
+            <Menu.Item>
+                <a
+                    href={"https://www.youtube.com/results?search_query=" + encodedTitle}
+                    target="_blank" rel="noopener noreferrer"
+                    title="Search song in youtube">
+                    Search YT
+                </a>
+            </Menu.Item>
+            <Menu.Item>
+                <a
+                    href={songItem.url}
+                    className={songItem.url ? '' : ' disabled'}
+                    target="_blank" rel="noopener noreferrer"
+                    title="Open song in youtube">
+                    Open in YT
+                </a>
+            </Menu.Item>
+            <Menu.Item>
+                <a href="#" style={{color: 'red'}} onClick={() => props.removeSong(songItem.id)}>Remove</a>
+            </Menu.Item>
+        </Menu>
+    );
+
     return (
         <div className="col right right-text">
-            <button className="btn red btn-small" onClick={() => props.removeSong(songItem.id)}>
-                <i className="fas fa-times"></i>
-            </button>
-            <a
-                href={"https://www.youtube.com/results?search_query=" + encodedTitle}
-                className="btn btn-small hide-on-small-only"
-                target="_blank" rel="noopener noreferrer"
-                title="Search song in youtube">
-                    <i className="fas fa-search"></i>
-            </a>
-            <a
-                href={songItem.url}
-                className={"btn btn-small hide-on-small-only" + (songItem.url ? '' : ' disabled')}
-                target="_blank" rel="noopener noreferrer"
-                title="Open song in youtube">
-                    <i className="fas fa-link"></i>
-            </a>
-            <button
-                className="btn btn-small"
-                onClick={searchOnYoutube}
-                title="Find this song using youtube">
-                    <i className="fab fa-youtube"></i>
-            </button>
-            <button
-                className="btn btn-small"
+            <Button
                 onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
                 title="Play song on other devices">
                     <i className="fas fa-tv"></i>
-            </button>
-            <button
-                className="btn btn-small"
-                onClick={props.videoId ? () => props.loadVideoById(props.videoId, props.index) : findAndPlayVideo}
-                title="Play song on this device">
-                    <i className="fas fa-play"></i>
-            </button>
+            </Button>
+            <Dropdown overlay={menu} placement="bottomCenter" arrow trigger={["click"]}>
+                <Button>
+                    <i className="fas fa-ellipsis-v"></i>
+                </Button>
+            </Dropdown>
         </div>
     );
 }

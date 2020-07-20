@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
+import { Button } from 'antd';
 import { UsersApi } from 'what_api';
 
 import { dataTypes } from 'Constants/wsConstants';
@@ -35,6 +36,7 @@ class SongListX extends React.Component {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
         M.updateTextFields();
+
         this.songsLoader = this.getSongs();
         document.addEventListener('scroll', this.onScrollDebounced);
         this.initAutoplay();
@@ -229,6 +231,13 @@ class SongListX extends React.Component {
         });
     }
 
+    findAndPlayVideo(songItem, index) {
+        this.props.getYtItems(songItem.title)
+            .then(ytItems => {
+                this.loadVideoById(ytItems[0].videoId, index);
+            })
+    }
+
     render() {
         return (
             <div>
@@ -254,13 +263,19 @@ class SongListX extends React.Component {
                             const videoId = videoIdMatch ? videoIdMatch[1] : '';
                             return (
                                 <li className={"collection-item row" + (index === this.state.currentlyPlaying ? ' blue-grey lighten-4' : '')} key={songItem.id}>
+                                    <div className="col">
+                                        <Button type="primary"
+                                            onClick={videoId ? () => this.loadVideoById(videoId, index) : () => this.findAndPlayVideo(songItem, index)}
+                                            title="Play song on this device">
+                                                <i className="fas fa-play"></i>
+                                        </Button>
+                                    </div>
                                     <SongInfoContainer
                                         songItem={songItem}
                                         tags={this.props.tags}
                                         updateSingleSong={s => this.updateSingleSong(s)}
                                     />
                                     <SongActionButtons 
-                                        index={index}
                                         songItem={songItem}
                                         videoId={videoId}
                                         getYtItems={this.props.getYtItems}
