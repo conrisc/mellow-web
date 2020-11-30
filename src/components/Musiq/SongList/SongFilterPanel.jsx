@@ -1,5 +1,6 @@
 import React, {useRef} from 'react';
-import { Button } from 'antd';
+import { Button, Input, InputNumber, Select } from 'antd';
+const { Option } = Select;
 
 export function SongFilterPanel(props) {
     const serachSongsInputRef = useRef();
@@ -20,69 +21,62 @@ export function SongFilterPanel(props) {
         props.getSongsDebounced();
     }
 
-    function updateSkip(event) {
-        props.setSkip(Number(event.target.value));
+    function updateSkip(value) {
+        props.setSkip(Number(value));
         props.getSongsDebounced();
     }
 
-    function updateSort(event) {
+    function updateSort(value) {
         props.setSkip(0);
-        props.setSort(event.target.value);
+        props.setSort(value);
         props.getSongsDebounced();
     }
 
     return (
         <div className="row mt-1">
-            <div className="input-field col">
+            <div className="col">
                 <Button onClick={props.showTagsDrawer}>
                     <i className="fas fa-tags"></i>
                 </Button>
             </div>
-            <div className="input-field col s4">
-                <input
-                    ref={serachSongsInputRef}
-                    id="searchBar"
-                    type="text"
+            <div className="col s4">
+                <Input
+                    placeholder="Search song"
+                    allowClear={true}
                     value={props.titleFilter}
                     onChange={handleTitleFilterChange}
                 />
-                <button className="clear-input" onClick={clearSearchSongsInput}>
-                    <i className="fas fa-times"></i>
-                </button>
-                <label htmlFor="searchBar">Search song</label>
             </div>
-            <div className="input-field col s2">
-                <input
-                    id="skip"
-                    type="number"
+            <div className="col s2">
+                Skip
+                <InputNumber
                     value={props.skip}
                     onChange={updateSkip}
-                    min="0"
+                    min={0}
                 />
-                <label htmlFor="skip">Skip</label>
             </div>
-            <div className="input-field col s2">
-                <select
+            <div className="col s2">
+                Limit
+                <Select
                     value={props.limit}
-                    onChange={e => props.setLimit(Number(e.target.value))}>
-                    <option value={10}>10</option>
-                    <option value={30}>30</option>
-                    <option value={50}>50</option>
-                </select>
-                <label>Limit</label>
+                    onChange={v => props.setLimit(Number(v))}>
+                    <Option value={10}>10</Option>
+                    <Option value={30}>30</Option>
+                    <Option value={50}>50</Option>
+                </Select>
             </div>
-            <div className="input-field col s2">
-                <select
+            <div className="col s2">
+                Sort
+                <Select
                     value={props.sort}
                     onChange={updateSort}>
-                    <option value={'none'}>None</option>
-                    <option value={'title_asc'}>Title Asc</option>
-                    <option value={'title_desc'}>Title Desc</option>
-                    <option value={'random'}>Random</option>
-                </select>
-                <label>Sort</label>
+                    <Option value="none">None</Option>
+                    <Option value="title_asc">Title Asc</Option>
+                    <Option value="title_desc">Title Desc</Option>
+                    <Option value="random">Random</Option>
+                </Select>
             </div>
-            <div className="input-field col">
+            <div className="col">
                 <Button onClick={props.showNewSongModal}>
                     <i className="fas fa-plus"></i>
                 </Button>

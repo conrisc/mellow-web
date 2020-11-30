@@ -38,10 +38,6 @@ class SongListX extends React.Component {
     }
 
     componentDidMount() {
-        const elems = document.querySelectorAll('select');
-        M.FormSelect.init(elems, {});
-        M.updateTextFields();
-
         this.songsLoader = this.getSongs();
         document.addEventListener('scroll', this.onScrollDebounced);
         this.initAutoplay();
