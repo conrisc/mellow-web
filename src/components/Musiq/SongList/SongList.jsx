@@ -11,6 +11,7 @@ import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
 import { NewSongModal } from './NewSongModal';
+import { TagList } from './TagList';
 
 class SongListX extends React.Component {
 
@@ -22,11 +23,14 @@ class SongListX extends React.Component {
             skip: 0,
             limit: 30,
             songs: [],
+            tags: [],
             sort: 'none',
             shouldShowSongs: false,
             shouldShowLoader: true,
-            currentlyPlaying: null
+            currentlyPlaying: null,
+            isTagDrawerVisible: false
         };
+        this.getTags();
         this.loadingVideo = false;
         this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
         this.onScrollDebounced = debounce(800, () => this.onScroll())
@@ -59,14 +63,42 @@ class SongListX extends React.Component {
         webSocket.addListeners(wsListeners);
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.tags !== prevProps.tags) {
-            this.getSongsDebounced();
-        }
-    }
-
     componentWillUnmount() {
         document.removeEventListener('scroll', this.onScrollDebounced);
+    }
+
+    getTags() {
+        const api = new UsersApi();
+
+        const opts = {
+            skip: 0,
+            limit: 300
+        };
+
+        api.searchTag(opts)
+            .then(data => {
+                this.setState({
+                    tags: data.map(tagItem => ({ tagItem, selected: false }))
+                })
+                this.getSongsDebounced();
+            }, error => {
+                console.error(error);
+            });
+    }
+
+    toggleTag(tagElement) {
+        const newTags = this.state.tags.map(el => {
+            if (tagElement.tagItem.id === el.tagItem.id)
+                return {
+                    tagItem: tagElement.tagItem,
+                    selected: !tagElement.selected
+                }
+            return el;
+        });
+        this.setState(
+            { tags: newTags }
+        );
+        this.getSongsDebounced();
     }
 
     getSongs() {
@@ -78,7 +110,7 @@ class SongListX extends React.Component {
             skip: this.state.skip,
             limit: this.state.limit,
             title: this.state.titleFilter,
-            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
+            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
             sort: this.state.sort
         };
 
@@ -105,7 +137,7 @@ class SongListX extends React.Component {
             skip: this.state.skip + this.state.limit,
             limit: this.state.limit,
             title: this.state.titleFilter,
-            tags:  this.props.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
+            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
             sort: this.state.sort
         };
 
@@ -238,11 +270,21 @@ class SongListX extends React.Component {
             })
     }
 
+    setIsTagDrawerVisible(isTagDrawerVisible) {
+        this.setState({ isTagDrawerVisible })
+    }
+
     render() {
         return (
             <div>
+                <TagList
+                    toggleTag={(tagElement) => this.toggleTag(tagElement)}
+                    tags={this.state.tags}
+                    isVisible={this.state.isTagDrawerVisible}
+                    setIsVisible={(i) => this.setIsTagDrawerVisible(i)}
+                />
                 <NewSongModal 
-                    tags={this.props.tags}
+                    tags={this.state.tags}
                 />
                 <SongFilterPanel
                     titleFilter={this.state.titleFilter}
@@ -254,7 +296,7 @@ class SongListX extends React.Component {
                     sort={this.state.sort}
                     setSort={sort => this.setState({sort})}
                     getSongsDebounced={this.getSongsDebounced}
-
+                    showTagsDrawer={() => this.setIsTagDrawerVisible(true)}
                 />
                 <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
                     {
@@ -272,7 +314,7 @@ class SongListX extends React.Component {
                                     </div>
                                     <SongInfoContainer
                                         songItem={songItem}
-                                        tags={this.props.tags}
+                                        tags={this.state.tags}
                                         updateSingleSong={s => this.updateSingleSong(s)}
                                     />
                                     <SongActionButtons 

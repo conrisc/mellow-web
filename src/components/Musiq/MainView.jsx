@@ -78,7 +78,6 @@ export class MainView extends React.Component {
                 item:
                     <SongList
                         isActive={this.state.visibleView === 0}
-                        tags={this.props.tags}
                         loadVideo={id => this.loadVideo(id)}
                         getYtItems={t => this.getYtItems(t)}
                         showYtTab={() => this.showYtTab()}

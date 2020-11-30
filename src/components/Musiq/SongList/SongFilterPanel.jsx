@@ -1,4 +1,5 @@
 import React, {useRef} from 'react';
+import { Button } from 'antd';
 
 export function SongFilterPanel(props) {
     const serachSongsInputRef = useRef();
@@ -33,9 +34,9 @@ export function SongFilterPanel(props) {
     return (
         <div className="row mt-1">
             <div className="input-field col">
-                <a href="#" data-target="slide-out" className="mt-1 sidenav-trigger btn btn-small">
+                <Button onClick={props.showTagsDrawer}>
                     <i className="fas fa-tags"></i>
-                </a>
+                </Button>
             </div>
             <div className="input-field col s4">
                 <input
