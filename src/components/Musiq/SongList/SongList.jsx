@@ -28,7 +28,8 @@ class SongListX extends React.Component {
             shouldShowSongs: false,
             shouldShowLoader: true,
             currentlyPlaying: null,
-            isTagDrawerVisible: false
+            isTagDrawerVisible: false,
+            isNewSongModalVisible: false
         };
         this.getTags();
         this.loadingVideo = false;
@@ -274,6 +275,10 @@ class SongListX extends React.Component {
         this.setState({ isTagDrawerVisible })
     }
 
+    setIsNewSongModalVisible(isNewSongModalVisible) {
+        this.setState({ isNewSongModalVisible })
+    }
+
     render() {
         return (
             <div>
@@ -285,6 +290,8 @@ class SongListX extends React.Component {
                 />
                 <NewSongModal 
                     tags={this.state.tags}
+                    isVisible={this.state.isNewSongModalVisible}
+                    closeModal={() => this.setIsNewSongModalVisible(false)}
                 />
                 <SongFilterPanel
                     titleFilter={this.state.titleFilter}
@@ -297,6 +304,7 @@ class SongListX extends React.Component {
                     setSort={sort => this.setState({sort})}
                     getSongsDebounced={this.getSongsDebounced}
                     showTagsDrawer={() => this.setIsTagDrawerVisible(true)}
+                    showNewSongModal={() => this.setIsNewSongModalVisible(true)}
                 />
                 <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
                     {

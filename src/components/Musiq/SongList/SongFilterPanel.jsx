@@ -83,9 +83,9 @@ export function SongFilterPanel(props) {
                 <label>Sort</label>
             </div>
             <div className="input-field col">
-                <button data-target="add-song-modal" className="btn btn-small mt-1 modal-trigger">
+                <Button onClick={props.showNewSongModal}>
                     <i className="fas fa-plus"></i>
-                </button>
+                </Button>
             </div>
         </div>
     );

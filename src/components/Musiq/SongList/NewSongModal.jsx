@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {UsersApi, SongItem} from 'what_api';
+import { Modal } from 'antd';
 
 export function NewSongModal(props) {
     const [title, setTitle] = useState('');
@@ -13,11 +14,6 @@ export function NewSongModal(props) {
             return acc;
         },
     {});
-
-    useEffect(() => {
-        const elems = document.querySelectorAll('.modal');
-        M.Modal.init(elems, {});
-    }, []);
 
     function handleTagChange(event) {
         const value = event.target.value;
@@ -65,6 +61,8 @@ export function NewSongModal(props) {
             }, error => {
                 console.error(error);
             });
+
+        props.closeModal();
     }
 
     function handleUrlChange(event) {
@@ -77,39 +75,37 @@ export function NewSongModal(props) {
     }
 
     return (
-        <div id="add-song-modal" className="modal">
-            <div className="modal-content">
-                <h4>Add song</h4>
-                <div className="row">
-                    <div className="col s6 input-field">
-                        <i className="fas fa-music prefix"></i>
-                        <input id="addSongTitle" type="text" className="validate" value={title} onChange={e => setTitle(e.target.value)} />
-                        <label htmlFor="addSongTitle">Song title</label>
-                    </div>
-                    <div className="col s6 input-field">
-                        <i className="fas fa-link prefix"></i>
-                        <input id="addSongUrl" type="text" className="validate" value={url} onChange={handleUrlChange} />
-                        <label htmlFor="addSongUrl">Song url</label>
-                    </div>
+        <Modal
+            title="Add song"
+            visible={props.isVisible}
+            onOk={addSong}
+            onCancel={props.closeModal}
+        >
+            <div className="row">
+                <div className="col s6 input-field">
+                    <i className="fas fa-music prefix"></i>
+                    <input id="addSongTitle" type="text" className="validate" value={title} onChange={e => setTitle(e.target.value)} />
+                    <label htmlFor="addSongTitle">Song title</label>
                 </div>
-                <div className="row">
-                    <div className="col">
-                        {songTags.map((tagName, index) =>
-                            <div key={index} className="tag-item">
-                                {tagName}
-                                {/* <i className="fas fa-times"></i> */}
-                            </div>)
-                        }
-                    </div>
-                    <div className="col">
-                        <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
-                    </div>
+                <div className="col s6 input-field">
+                    <i className="fas fa-link prefix"></i>
+                    <input id="addSongUrl" type="text" className="validate" value={url} onChange={handleUrlChange} />
+                    <label htmlFor="addSongUrl">Song url</label>
                 </div>
             </div>
-            <div className="modal-footer">
-                <a href="#!" className="modal-close waves-effect waves-green btn-flat">Cancel</a>
-                <a href="#!" className="modal-close waves-effect waves-green btn" onClick={addSong}>Add</a>
+            <div className="row">
+                <div className="col">
+                    {songTags.map((tagName, index) =>
+                        <div key={index} className="tag-item">
+                            {tagName}
+                            {/* <i className="fas fa-times"></i> */}
+                        </div>)
+                    }
+                </div>
+                <div className="col">
+                    <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
+                </div>
             </div>
-        </div>
+        </Modal>
     );
 }
