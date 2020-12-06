@@ -49,6 +49,11 @@ export function DeviceListController(props) {
     }
 
     return (
-        <DeviceListModal onlineDevices={onlineDevices} toggleCheck={toggleCheck} />
+        <DeviceListModal
+            isVisible={props.isVisible}
+            closeModal={props.closeModal}
+            onlineDevices={onlineDevices}
+            toggleCheck={toggleCheck}
+        />
     );
 }

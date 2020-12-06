@@ -1,6 +1,7 @@
 import React from 'react';
 import { debounce } from 'throttle-debounce';
 import { UsersApi } from 'what_api';
+import { Row, Col } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -105,15 +106,16 @@ export class MainView extends React.Component {
         const views = this.getViews();
         const nextViewIndex = (this.state.visibleView + 1) % views.length;
         return (
-            <div ref={this.mainViewRef} className="main-view row pos-relative">
+            <Row className="pos-relative">
                 {this.getViews()
                     .map((view, index)=> (
-                        <div key={index}
-                            className={"item-view col s12 l6 " +
-                                view.customStyles +
-                                (index === this.state.visibleView ? '' : ' d-none-sm')}>
+                        <Col key={index}
+                            xs={{span: index === this.state.visibleView ? 24 : 0}}
+                            sm={{span: index === this.state.visibleView ? 24 : 0}}
+                            lg={{span: 12}}
+                            className={view.customStyles}>
                             {view.item}
-                        </div>
+                        </Col>
                     ))
                 }
                 <ViewSwitch
@@ -121,7 +123,7 @@ export class MainView extends React.Component {
                     nextViewName={views[nextViewIndex].name}
                     customClasses={views[nextViewIndex].customClasses}
                 />
-            </div>
+            </Row>
         );
     }
 }

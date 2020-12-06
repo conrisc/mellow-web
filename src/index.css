@@ -58,6 +58,7 @@ body, p {
 }
 
 .top-panel {
+    background-color: #fff;
     position: sticky;
     top: 0;
     width: 100%;
@@ -119,7 +120,7 @@ body, p {
 .yt-list {
     overflow-y: auto;
     position: sticky;
-    top: 56px;
+    top: 52px;
     height: calc(100vh - 86px);
     padding-bottom: 10px;
     overscroll-behavior-y: contain;
@@ -200,6 +201,12 @@ input.input-small[type=text] {
     padding: 0 8px;
 }
 
+.d-none-lg {
+    display: none;
+
+}
+
+/* IT should be mobile first: @media only screen and (min-width: 993px)*/
 @media only screen and (max-width: 992px) {
     .yt-player-container, .control-panel {
         bottom: 50px;
@@ -218,6 +225,7 @@ input.input-small[type=text] {
         height: auto;
         position: relative;
         top: 0;
+        margin-bottom: 86px;
     }
 
     .control-panel {
@@ -246,6 +254,10 @@ input.input-small[type=text] {
 
     .d-none-sm {
         display: none;
+    }
+
+    .d-none-lg {
+        display: initial;
     }
 
     .transform-right-100 {

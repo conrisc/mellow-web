@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {UsersApi, SongItem} from 'what_api';
-import { Modal } from 'antd';
+import { Modal, Row, Col, Input } from 'antd';
 
 export function NewSongModal(props) {
     const [title, setTitle] = useState('');
@@ -81,31 +81,29 @@ export function NewSongModal(props) {
             onOk={addSong}
             onCancel={props.closeModal}
         >
-            <div className="row">
-                <div className="col s6 input-field">
+            <Row>
+                <Col span={12}>
                     <i className="fas fa-music prefix"></i>
-                    <input id="addSongTitle" type="text" className="validate" value={title} onChange={e => setTitle(e.target.value)} />
-                    <label htmlFor="addSongTitle">Song title</label>
-                </div>
-                <div className="col s6 input-field">
+                    <Input value={title} onChange={e => setTitle(e.target.value)} />
+                </Col>
+                <Col span={12}>
                     <i className="fas fa-link prefix"></i>
-                    <input id="addSongUrl" type="text" className="validate" value={url} onChange={handleUrlChange} />
-                    <label htmlFor="addSongUrl">Song url</label>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col">
+                    <Input value={url} onChange={handleUrlChange} />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
                     {songTags.map((tagName, index) =>
                         <div key={index} className="tag-item">
                             {tagName}
                             {/* <i className="fas fa-times"></i> */}
                         </div>)
                     }
-                </div>
-                <div className="col">
-                    <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
-                </div>
-            </div>
+                </Col>
+                <Col>
+                    <Input value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
+                </Col>
+            </Row>
         </Modal>
     );
 }

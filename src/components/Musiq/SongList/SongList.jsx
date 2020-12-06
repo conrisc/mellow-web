@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { Button } from 'antd';
 import { UsersApi } from 'what_api';
+import { List, Row, Col } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -277,7 +278,7 @@ class SongListX extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{ padding: '16px' }}>
                 <TagList
                     toggleTag={(tagElement) => this.toggleTag(tagElement)}
                     tags={this.state.tags}
@@ -302,25 +303,17 @@ class SongListX extends React.Component {
                     showTagsDrawer={() => this.setIsTagDrawerVisible(true)}
                     showNewSongModal={() => this.setIsNewSongModalVisible(true)}
                 />
-                <ul className={'collection' + (this.state.shouldShowSongs ? '' : ' hide')}>
-                    {
-                        this.state.songs.map((songItem, index) => {
-                            const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-                            const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                            return (
-                                <li className={"collection-item row" + (index === this.state.currentlyPlaying ? ' blue-grey lighten-4' : '')} key={songItem.id}>
-                                    <div className="col">
-                                        <Button type="primary"
-                                            onClick={videoId ? () => this.loadVideoById(videoId, index) : () => this.findAndPlayVideo(songItem, index)}
-                                            title="Play song on this device">
-                                                <i className="fas fa-play"></i>
-                                        </Button>
-                                    </div>
-                                    <SongInfoContainer
-                                        songItem={songItem}
-                                        tags={this.state.tags}
-                                        updateSingleSong={s => this.updateSingleSong(s)}
-                                    />
+                <List
+                    rowKey="id"
+                    loading={this.state.shouldShowLoader}
+                    dataSource={this.state.songs}
+                    renderItem={(songItem, index) => {
+                        const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+                        const videoId = videoIdMatch ? videoIdMatch[1] : '';
+                        return (
+                            <List.Item
+                                className={index === this.state.currentlyPlaying ? ' grey lighten-4' : ''} 
+                                extra={
                                     <SongActionButtons 
                                         songItem={songItem}
                                         videoId={videoId}
@@ -330,14 +323,31 @@ class SongListX extends React.Component {
                                         loadVideoById={(id, i) => this.loadVideoById(id, i)}
                                         removeSong={(id) => this.removeSong(id)}
                                     />
-                                </li>
-                            );
-                        })
-                    }
-                </ul>
-                <div className={'center-align' + (this.state.shouldShowLoader ? '' : ' hide')}>
+                                }
+                            >
+                                <Row gutter={16}>
+                                    <Col>
+                                        <Button type="primary"
+                                            onClick={videoId ? () => this.loadVideoById(videoId, index) : () => this.findAndPlayVideo(songItem, index)}
+                                            title="Play song on this device">
+                                                <i className="fas fa-play"></i>
+                                        </Button>
+                                    </Col>
+                                    <Col>
+                                        <SongInfoContainer
+                                            songItem={songItem}
+                                            tags={this.state.tags}
+                                            updateSingleSong={s => this.updateSingleSong(s)}
+                                        />
+                                    </Col>
+                                </Row>
+                            </List.Item>
+                        );
+                    }}
+                />
+                {/* <div className={'center-align' + (this.state.shouldShowLoader ? '' : ' hide')}>
                     <Spinner />
-                </div>
+                </div> */}
             </div>
         );
     }

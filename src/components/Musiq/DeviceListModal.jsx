@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Modal, Button, List, Checkbox } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -37,30 +38,34 @@ function DeviceListModalX(props) {
     }
 
     return (
-        <div id="device-list-modal" className="modal">
-            <div className="modal-content">
-                <h4>Device list</h4>
-                <ul>
-                    {onlineDevices.map((device) => <li key={device.name}>
-                        <label>
-                            <input
-                                name=""
-                                type="checkbox"
-                                checked={device.isChecked}
-                                onChange={(e) => props.toggleCheck(e, device)}
-                            />
+        <Modal
+            title="Device list"
+            visible={props.isVisible}
+            onCancel={props.closeModal}
+            footer={[
+                <Button onClick={props.closeModal}>
+                    Close
+                </Button>
+            ]}
+        >
+            <List
+                rowKey="name"
+                dataSource={onlineDevices}
+                renderItem={(device) => (
+                    <List.Item>
+                        <Checkbox
+                            checked={device.isChecked}
+                            onChange={(e) => props.toggleCheck(e, device)}
+                        >
                             <span className={ device.isMe ? 'green-text' : ''}>{device.userAgent.parsed} [{device.name}]</span>
-                        </label>
+                        </Checkbox>
                         <p>
                             {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
                         </p>
-                    </li>)}
-                </ul>
-            </div>
-            <div className="modal-footer">
-                <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
-            </div>
-        </div>
+                    </List.Item>
+                )}
+            />
+        </Modal>
     );
 }
 

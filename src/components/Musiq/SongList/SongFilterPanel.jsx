@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import { Button, Input, InputNumber, Select } from 'antd';
+import { Row, Col, Button, Input, InputNumber, Select } from 'antd';
 const { Option } = Select;
 
 export function SongFilterPanel(props) {
@@ -33,29 +33,29 @@ export function SongFilterPanel(props) {
     }
 
     return (
-        <div className="row mt-1">
-            <div className="col">
+        <Row>
+            <Col>
                 <Button onClick={props.showTagsDrawer}>
                     <i className="fas fa-tags"></i>
                 </Button>
-            </div>
-            <div className="col s4">
+            </Col>
+            <Col span={8}>
                 <Input
                     placeholder="Search song"
                     allowClear={true}
                     value={props.titleFilter}
                     onChange={handleTitleFilterChange}
                 />
-            </div>
-            <div className="col s2">
+            </Col>
+            <Col span={4}>
                 Skip
                 <InputNumber
                     value={props.skip}
                     onChange={updateSkip}
                     min={0}
                 />
-            </div>
-            <div className="col s2">
+            </Col>
+            <Col span={4}>
                 Limit
                 <Select
                     value={props.limit}
@@ -64,8 +64,8 @@ export function SongFilterPanel(props) {
                     <Option value={30}>30</Option>
                     <Option value={50}>50</Option>
                 </Select>
-            </div>
-            <div className="col s2">
+            </Col>
+            <Col span={4}>
                 Sort
                 <Select
                     value={props.sort}
@@ -75,12 +75,12 @@ export function SongFilterPanel(props) {
                     <Option value="title_desc">Title Desc</Option>
                     <Option value="random">Random</Option>
                 </Select>
-            </div>
-            <div className="col">
+            </Col>
+            <Col>
                 <Button onClick={props.showNewSongModal}>
                     <i className="fas fa-plus"></i>
                 </Button>
-            </div>
-        </div>
+            </Col>
+        </Row>
     );
 }

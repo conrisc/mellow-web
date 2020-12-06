@@ -46,7 +46,7 @@ export function SongActionButtons(props) {
     );
 
     return (
-        <div className="col right right-text">
+        <div>
             <Button
                 onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
                 title="Play song on other devices">

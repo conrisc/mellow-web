@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { Row, Col, Button, Slider } from 'antd';
 
 function BottomPanelX(props) {
     const [time, setTime] = useState(0);
@@ -34,8 +35,7 @@ function BottomPanelX(props) {
         }
     }
 
-    function handleTimeChange(event) {
-        const value = event.target.value;
+    function handleTimeChange(value) {
         props.ytPlayer.seekTo(value);
     }
 
@@ -54,30 +54,27 @@ function BottomPanelX(props) {
     }
 
     return (
-        <div className="">
-            <div className="control-panel row blue-grey darken-3 white-text">
-                <div className="col">
-                    <button className="btn btn-simple" onClick={playVideo}>
+        <div>
+            <Row className="control-panel blue-grey darken-3 white-text" justify="space-between">
+                <Col>
+                    <Button ghost={true} onClick={playVideo}>
                         <i className="fas fa-play"></i>
-                    </button>
-                    <button className="btn btn-simple" onClick={pauseVideo}>
+                    </Button>
+                    <Button ghost={true} onClick={pauseVideo}>
                         <i className="fas fa-pause"></i>
-                    </button>
-                </div>
-                <div className="col s1 timer">
+                    </Button>
+                </Col>
+                <Col className="timer" span={2}>
                     <span>{formatSeconds(time)}</span>
-                </div>
-                <div className="col s7">
-                    <form action="#">
-                        <p className="range-field">
-                            <input type="range" min="0" max={duration} value={time} onChange={handleTimeChange}/>
-                        </p>
-                    </form>
-                </div>
-                <div className="col s1 timer">
+                </Col>
+                <Col span={14}>
+                    {/* Use handleTimeChange debounce */}
+                    <Slider min={0} max={duration} value={time} onChange={handleTimeChange} tipFormatter={formatSeconds} />
+                </Col>
+                <Col className="timer" span={2}>
                     <span>{formatSeconds(duration)}</span>
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { UsersApi, TagItem } from 'what_api';
-import { Drawer } from 'antd';
+import { Drawer, List, Button, Input } from 'antd';
 
 export function TagList(props) {
     const tagNameInputRef = useRef();
@@ -34,18 +34,23 @@ export function TagList(props) {
             onClose={() => props.setIsVisible(false)}
             visible={props.isVisible}
         >
-            <ul className="collection">
-                {
-                    props.tags.map(tagElement =>
-                        <li key={tagElement.tagItem.id}
-                            className={"collection-item" + (tagElement.selected ? ' active' : '')}
-                            onClick={() => props.toggleTag(tagElement)}>{tagElement.tagItem.name}
-                        </li>
-                    )
+            <List
+                bordered
+                dataSource={props.tags}
+                rowKey={(tagElement) => tagElement.tagItem.id}
+                renderItem={
+                    (tagElement) =>
+                        <List.Item
+                            key={tagElement.tagItem.id}
+                            className={tagElement.selected ? ' grey lighten-4' : ''}
+                            onClick={() => props.toggleTag(tagElement)}>
+                                {tagElement.tagItem.name}
+                        </List.Item>
+
                 }
-            </ul>
-            <input ref={tagNameInputRef} type="text"></input>
-            <button onClick={addTag}>Add tag</button>
+            />
+            <Input ref={tagNameInputRef} />
+            <Button type="primary" onClick={addTag}>Add tag</Button>
         </Drawer>
     );
 }

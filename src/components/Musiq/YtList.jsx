@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Input, List, Row, Col, Button } from 'antd';
 
 import { Spinner } from 'CommonComponents/Spinner';
 
 function YtListX(props) {
-    const searchYtInputRef = useRef();
 
     function loadVideoById(videoId) {
         props.ytPlayer.loadVideoById(videoId)
@@ -15,56 +15,48 @@ function YtListX(props) {
         props.getYtItemsDebounced(title);
     }
 
-    function clearSearchYtInput() {
-        searchYtInputRef.current.value = "";
-        searchYtInputRef.current.focus();
-    }
-
     return (
         <div>
-            <div className="input-field">
-                <input ref={searchYtInputRef} id="ytSearchBar" type="text" className="white-text" onChange={handleSearchChange}></input>
-                <button className="clear-input white-text" onClick={clearSearchYtInput}>
-                    <i className="fas fa-times"></i>
-                </button>
-                <label htmlFor="ytSearchBar">Search youtube</label>
-            </div>
+            <Input allowClear={true} onChange={handleSearchChange} />
             {
                 props.isFetchingYtItems ?
                     <div className="center-align">
                         <Spinner />
                     </div>
                 :
-                    <ul className="">
-                        {
-                            props.ytItems.map((el, index) => {
-                                return <li className="bb-1 mt-1" key={index}>
-                                        <div className="row">
-                                            <div className="col s8">
-                                                <a href={`https://youtube.com/watch?v=${el.videoId}`}
-                                                    target="_blank" rel="noopener noreferrer"
-                                                    title="Open song in youtube"
-                                                >
-                                                    <span>{el.title}</span>
-                                                </a><br />
-                                                <div className="mt-1">
-                                                    <button className="btn red" onClick={() => props.loadVideo(el.videoId)}>
-                                                        <i className="fas fa-tv"></i>
-                                                    </button>
-                                                    <button className="btn red" onClick={() => loadVideoById(el.videoId)}>
-                                                        <i className="fas fa-play"></i>
-                                                    </button>
-                                                </div>
+                    <List
+                        rowKey="key"
+                        dataSource={props.ytItems}
+                        renderItem={
+                            (el) => (
+                                <List.Item>
+                                    <Row justify="space-between" style={{ width: '100%'}}>
+                                        <Col flex="1 1 auto">
+                                            <a href={`https://youtube.com/watch?v=${el.videoId}`}
+                                                target="_blank" rel="noopener noreferrer"
+                                                title="Open song in youtube"
+                                            >
+                                                <span>{el.title}</span>
+                                            </a><br />
+                                            <div className="mt-1">
+                                                <Button className="red" onClick={() => props.loadVideo(el.videoId)}>
+                                                    <i className="fas fa-tv"></i>
+                                                </Button>
+                                                <Button className="red" onClick={() => loadVideoById(el.videoId)}>
+                                                    <i className="fas fa-play"></i>
+                                                </Button>
                                             </div>
-                                            <div className="col right">
-                                                <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
-                                                {/* <img src={el.thumbnailUrl}></img> */}
-                                            </div>
-                                        </div>
-                                </li>;
-                            })
+                                        </Col>
+                                        <Col flex="0 0 120px">
+                                            <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
+                                            {/* <img src={el.thumbnailUrl}></img> */}
+                                        </Col>
+                                    </Row>
+                                </List.Item>
+                            )
+
                         }
-                    </ul>
+                    />
             }
         </div>
     );

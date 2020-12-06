@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UsersApi, SongItem } from 'what_api';
+import { Row, Col, Input, Button } from 'antd';
 
 export function SongInfoContainer(props) {
     const songItem = props.songItem;
@@ -100,35 +101,33 @@ export function SongInfoContainer(props) {
     }
 
     return (
-        <div className="col">
+        <>
             { titleEditMode ?
-                <input type="text" value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleTitleInputKeyDown} onBlur={updateTitle} /> :
+                <Input value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleTitleInputKeyDown} onBlur={updateTitle} /> :
                 <h6 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h6>
             }
-            <div className="row">
-                <div className="col">
+            <Row>
+                <Col>
                     {songTags.map((tagName, index) =>
                         <div key={index} className="tag-item">
                             {tagName}
                             {/* <i className="fas fa-times"></i> */}
                         </div>)
                     }
-                </div>
+                </Col>
                 {
                     tagsEditMode &&
-                    <div className="col">
-                        <input className="input-small" type="text" value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
-                    </div>
+                    <Col>
+                        <Input value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
+                    </Col>
                 }
-                <div className="col">
-                    <button className="btn btn-small btn-simple btn-mini black-text" onClick={toggleTagsEditMode}>
-                        <i className="far fa-edit"></i>
-                    </button>
-                </div>
-            </div>
+                <Col>
+                    <Button type="primary" size="small" icon={<i className="far fa-edit"></i>} onClick={toggleTagsEditMode} />
+                </Col>
+            </Row>
             <p>
                 <span className="small-text grey-text">{date}</span>
             </p>
-        </div>
+        </>
     );
 }
