@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
 import { UsersApi, NoteItem } from 'what_api';
+import { Input } from 'antd';
 
+const { TextArea } = Input;
 
 function saveNote(noteId, text) {
 	const opts = { 
@@ -22,29 +24,28 @@ const handleNoteUpdate = throttle(2000, saveNote);
 
 export function NoteEditor(props) {
 	const noteId = props.note.id;
-	const text = props.note.text;
+	const [text, setText] = useState(props.note.text);
 	const textRef = React.createRef();
 
 	useEffect(() => {
-		// textRef.current.focus();
-		textRef.current.value = text;
-		M.textareaAutoResize(textRef.current);
-		M.updateTextFields();
+		setText(props.note.text);
+		textRef.current.focus();
 	}, [noteId]);
 
     return (
         <div className="mt-3">
-            <form>
-                <div className="input-field">
-					<textarea autoFocus
-						ref={textRef}
-						id="textarea1"
-						className="materialize-textarea"
-						onChange={ (e) => { const t = e.target.value; props.onNoteChange(noteId, t); handleNoteUpdate(noteId, t); } }>
-					</textarea>
-                    <label htmlFor="textarea1">Your note</label>
-                </div>
-            </form>
+			<TextArea
+				ref={textRef}
+				autoFocus
+				autoSize={{ minRows: 4 }}
+				value={text}
+				onChange={(e) => {
+					const t = e.target.value;
+					setText(t);
+					props.onNoteChange(noteId, t);
+					handleNoteUpdate(noteId, t);
+				}} 
+			/>
         </div>
     );
 }

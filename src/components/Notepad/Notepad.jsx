@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, withRouter, Link } from 'react-router-dom';
 import { UsersApi, NoteItem } from 'what_api';
+import { Row, Col, Button } from 'antd';
 
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
@@ -131,22 +132,20 @@ function NotepadN(props) {
 
     return (
         <div className="notepad">
-            <div className={"row smooth-transform width-2x-sm" + (noteId ? ' transform-left-50' : '')}>
-                <div className={"col s6 l6"}>
+            <Row className={"smooth-transform width-2x-sm" + (noteId ? ' transform-left-50' : '')} gutter={16}>
+                <Col span={12}>
                     <NoteList noteId={noteId} notes={notes} updateNotes={getNotes} removeNote={removeNote} 
                         createEmptyNote={createEmptyNote} />
-                </div>
-                <div className={"col s6 l6" + (noteId ? '' : ' hide')}>
-                    <Link to="/notepad" className="waves-effect waves-light btn hide-on-large-only light-blue lighten-2">
-                        <i className="fas fa-angle-left"></i>
-                    </Link>
+                </Col>
+                <Col span={noteId ? 12 : 0}>
+                    <Button href="/notepad" type="primary" icon={<i className="fas fa-angle-left"></i>} className="d-none-lg" />
                     { 
                         note ?
                         <NoteEditor note={note} onNoteChange={onNoteChange} /> :
                         <Info shouldShowSpinner={shouldShowSpinner} msg={'Note not found! :('} />
                     }
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     );
 }

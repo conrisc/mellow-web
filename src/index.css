@@ -15,12 +15,18 @@ body, p {
     min-height: 100vh;
     overflow: hidden;
     /* background: #eeeeee; */
+    padding: 8px;
 }
 
 .note-rm-btn {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 4px;
+    right: 7px;
+}
+
+.note {
+    overflow: hidden;
+    height: 20rem;
 }
 
 .mt-1 {
@@ -48,13 +54,8 @@ body, p {
     background: #dadada;
 }
 
-.input-field input[type=text]:focus + label {
-    color: #000;
-}
-
-.input-field input[type=text]:focus {
-    border-bottom: 1px solid #000;
-    box-shadow: 0 1px 0 0 #000;
+.note-inactive {
+    background: #fff;
 }
 
 .top-panel {
@@ -162,51 +163,12 @@ body, p {
     border-bottom: 1px solid #9e9e9e;
 }
 
-.clear-input {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    cursor: pointer;
-    background: none;
-    border: none;
-}
-
-.clear-input:focus {
-    background: none;
-}
-
-.clear-input:hover {
-    opacity: 0.6;
-}
-
-.btn-simple, .btn-simple:hover, .btn-simple:focus {
-     background: none;
-     box-shadow: none;
- }
-
-.btn-simple:hover {
-    opacity: 0.6;
-}
-
-input.input-small[type=text] {
-    font-size: 16px;
-    height: 28px;
-    width: 100px;
-    margin: 0;
-}
-
-.btn-mini {
-    height: 28px;
-    line-height: 28px;
-    padding: 0 8px;
-}
-
 .d-none-lg {
     display: none;
 
 }
 
-/* IT should be mobile first: @media only screen and (min-width: 993px)*/
+/* It should be mobile first: @media only screen and (min-width: 993px)*/
 @media only screen and (max-width: 992px) {
     .yt-player-container, .control-panel {
         bottom: 50px;
@@ -298,24 +260,6 @@ input.input-small[type=text] {
 
 :root {
     --label-color: #db9e1a; /* #40c4ff; /* #00b0ff; */
-}
-
-textarea.materialize-textarea:focus:not([readonly]) + label {
-    color: var(--label-color);
-}
-
-textarea.materialize-textarea:focus:not([readonly]) {
-    border-bottom: 1px solid var(--label-color);
-    box-shadow: 0 1px 0 0 var(--label-color);
-}
-
-textarea.materialize-textarea {
-    border-bottom: 1px solid var(--label-color);
-    box-shadow: 0 1px 0 0 var(--label-color);
-}
-
-textarea.materialize-textarea + label {
-    color: var(--label-color);
 }
 
 .row {
