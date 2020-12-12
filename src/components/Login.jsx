@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ApiClient, DevelopersApi, UserPost } from 'what_api';
+import { Form, Input, Button } from 'antd';
 
 function LoginX(props) {
     const [email, setEmail] = useState('');
@@ -32,11 +33,29 @@ function LoginX(props) {
     }
 
     return (
-        <div>
-            <input type="text" name="email" onChange={e => setEmail(e.target.value)} />
-            <input type="password" name="password" onChange={e => setPassword(e.target.value)} />
-            <button onClick={loginUser}>Sign in</button>
-        </div>
+        <Form
+            labelCol={{ span: 4 }}
+            wrapperCol={{ flex: "400px" }}
+            style={{ padding: 40 }}
+        >
+            <Form.Item
+                name="email"
+                label="E-mail"
+            >
+                <Input onChange={e => setEmail(e.target.value)} />
+            </Form.Item>
+            <Form.Item
+                name="password"
+                label="Password"
+           >
+                <Input type="password" onChange={e => setPassword(e.target.value)} />
+            </Form.Item>
+            <Form.Item
+                wrapperCol={{ offset: 4, flex: "400px" }}
+            >
+                <Button type="primary" onClick={loginUser} htmlType="submit">Sign in</Button>
+            </Form.Item>
+        </Form>
     );
 }
 

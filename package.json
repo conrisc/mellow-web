@@ -50,7 +50,6 @@
     "@fortawesome/fontawesome-free": "^5.11.2",
     "antd": "^4.4.3",
     "express": "^4.17.1",
-    "materialize-css": "^1.0.0-rc.2",
     "path": "^0.12.7",
     "querystring": "0.2.0",
     "react": "^16.10.2",
