@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Tooltip } from 'antd';
+import { Tag, Tooltip } from 'antd';
 
 export function SongInfoContainer(props) {
-    const { songItem } = props;
+    const { songItem, tags } = props;
     const [songTags, setTags] = useState([]);
     const dateAdded = new Date(songItem.dateAdded).toLocaleDateString();
 
-    const tagsIdToNameMap = props.tags.reduce(
+    const tagsIdToNameMap = tags.reduce(
         (acc, tagElement) => { 
             acc[tagElement.tagItem.id] = tagElement.tagItem.name;
             return acc;
@@ -23,10 +23,9 @@ export function SongInfoContainer(props) {
             <h3 className="bold">{songItem.title}</h3>
             <div>
                 {songTags.map((tagName, index) =>
-                    <div key={index} className="tag-item">
+                    <Tag key={index} color="green">
                         {tagName}
-                        {/* <i className="fas fa-times"></i> */}
-                    </div>)
+                    </Tag>)
                 }
             </div>
             <Tooltip title="Date added" placement="bottom">

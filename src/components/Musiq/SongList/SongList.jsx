@@ -353,7 +353,6 @@ class SongListX extends React.Component {
                                         <SongInfoContainer
                                             songItem={songItem}
                                             tags={this.state.tags}
-                                            updateSingleSong={s => this.updateSingleSong(s)}
                                         />
                                     </Col>
                                 </Row>
