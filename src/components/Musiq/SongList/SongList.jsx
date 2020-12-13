@@ -278,7 +278,7 @@ class SongListX extends React.Component {
 
     render() {
         return (
-            <div style={{ padding: '16px' }}>
+            <div style={{ padding: 8 }}>
                 <TagList
                     toggleTag={(tagElement) => this.toggleTag(tagElement)}
                     tags={this.state.tags}
@@ -312,7 +312,8 @@ class SongListX extends React.Component {
                         const videoId = videoIdMatch ? videoIdMatch[1] : '';
                         return (
                             <List.Item
-                                className={index === this.state.currentlyPlaying ? ' grey lighten-4' : ''} 
+                                style={{paddingLeft: 8, paddingRight: 8}}
+                                className={index === this.state.currentlyPlaying ? 'item-selected' : ''} 
                                 extra={
                                     <SongActionButtons 
                                         songItem={songItem}

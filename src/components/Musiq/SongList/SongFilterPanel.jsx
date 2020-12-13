@@ -35,7 +35,7 @@ export function SongFilterPanel(props) {
     }
 
     return (
-        <Row justify="space-between" gutter={8}>
+        <Row justify="space-between" gutter={8} style={{ padding: 8 }}>
             <Col>
                 <Button onClick={props.showTagsDrawer}>
                     <i className="fas fa-tags"></i>

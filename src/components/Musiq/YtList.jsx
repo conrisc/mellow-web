@@ -18,6 +18,7 @@ function YtListX(props) {
     return (
         <div>
             <Input
+                className="yt-search"
                 allowClear={true}
                 onChange={handleSearchChange}
                 prefix={<i className="fas fa-search"></i>}

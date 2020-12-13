@@ -104,7 +104,7 @@ export function SongInfoContainer(props) {
         <>
             { titleEditMode ?
                 <Input value={songTitle} onChange={handleSongTitleChange} onKeyDown={handleTitleInputKeyDown} onBlur={updateTitle} /> :
-                <h6 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h6>
+                <h3 className="bold" onDoubleClick={() => setTitleEditMode(true)}>{songTitle}</h3>
             }
             <Row>
                 <Col>

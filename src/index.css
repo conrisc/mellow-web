@@ -1,7 +1,7 @@
 body, p {
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
 .example {
@@ -124,9 +124,14 @@ body, p {
     position: sticky;
     top: 52px;
     height: calc(100vh - 86px);
-    padding: 10px;
+    padding: 16px;
     overscroll-behavior-y: contain;
     background-color: #424242;
+}
+
+.yt-search, .yt-search input, .yt-search svg {
+    color: #fff;
+    background: none;
 }
 
 .view-switch {
@@ -168,6 +173,10 @@ body, p {
 .d-none-lg {
     display: none;
 
+}
+
+.item-selected {
+    background-color: #efefef;
 }
 
 /* It should be mobile first: @media only screen and (min-width: 993px)*/
