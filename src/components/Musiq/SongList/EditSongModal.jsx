@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {UsersApi, SongItem} from 'what_api';
-import { Modal, Row, Col, Input } from 'antd';
+import { Modal, Select, Input } from 'antd';
+const { Option } = Select;
 
 export function EditSongModal(props) {
 	const { songItem, tags } = props;
@@ -22,33 +23,6 @@ export function EditSongModal(props) {
     const [title, setTitle] = useState(songItem.title);
     const [url, setUrl] = useState(songItem.url);
     const [songTags, setTags] = useState(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
-    const [editedTag, setEditedTag] = useState('');
-
-
-    function handleTagChange(event) {
-        const value = event.target.value;
-        setEditedTag(value);
-    }
-
-    function handleTagAction(event) {
-        switch(event.key) {
-            case ' ':
-            case 'Enter':
-                if (editedTag.trim() !== '') {
-                    setTags([...songTags, editedTag.trim()]);
-                    setEditedTag('');
-                    event.preventDefault();
-                }
-                break;
-            case 'Backspace':
-                if (editedTag === '') {
-                    setEditedTag(songTags[songTags.length-1]);
-                    setTags(songTags.slice(0,-1));
-                    event.preventDefault();
-                }
-                break;
-        }
-    }
 
     function handleUrlChange(event) {
         const url = event.target.value;
@@ -95,29 +69,31 @@ export function EditSongModal(props) {
             onOk={updateSong}
             onCancel={props.closeModal}
         >
-            <Row>
-                <Col span={12}>
-                    <i className="fas fa-music prefix"></i>
-                    <Input value={title} onChange={e => setTitle(e.target.value)} />
-                </Col>
-                <Col span={12}>
-                    <i className="fas fa-link prefix"></i>
-                    <Input value={url} onChange={handleUrlChange} />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    {songTags.map((tagName, index) =>
-                        <div key={index} className="tag-item">
-                            {tagName}
-                            {/* <i className="fas fa-times"></i> */}
-                        </div>)
-                    }
-                </Col>
-                <Col>
-                    <Input value={editedTag} onChange={handleTagChange} onKeyDown={handleTagAction} />
-                </Col>
-            </Row>
+            <Input
+                style={{ margin: 8 }}
+                prefix={<i className="fas fa-music prefix"></i>}
+                placeholder="Song title"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+            />
+            <Input
+                style={{ margin: 8 }}
+                prefix={<i className="fas fa-link prefix"></i>}
+                placeholder="Song url"
+                value={url}
+                onChange={handleUrlChange}
+            />
+            <Select
+                style={{ width: '100%', margin: 8 }}
+                mode="multiple"
+                placeholder="Song tags"
+                onChange={setTags}
+                defaultValue={songTags}
+            >
+                {tags.map(({tagItem}) => (
+                    <Option key={tagItem.id} value={tagItem.name}>{tagItem.name}</Option>
+                ))}
+            </Select>
         </Modal>
     );
 }
