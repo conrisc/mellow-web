@@ -10,7 +10,7 @@ export function SongInfoContainer(props) {
         (acc, tagElement) => { 
             acc[tagElement.tagItem.id] = tagElement.tagItem.name;
             return acc;
-        }, 
+        },
     {});
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export function SongInfoContainer(props) {
             <h3 className="bold">{songItem.title}</h3>
             <div>
                 {songTags.map((tagName, index) =>
-                    <Tag key={index} color="green">
+                    <Tag key={index} color="geekblue">
                         {tagName}
                     </Tag>)
                 }

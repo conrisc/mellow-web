@@ -59,7 +59,7 @@ body, p {
 }
 
 .top-panel {
-    background-color: #fff;
+    background-image: linear-gradient(to right, #7e649e, #6870ab, #4e7cb1, #3486b1, #238eac);
     position: sticky;
     top: 0;
     width: 100%;

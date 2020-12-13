@@ -4,7 +4,7 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
 
 import './index.css';
 
