@@ -39,6 +39,9 @@ export function SongActionButtons(props) {
                     Open in YT
                 </a>
             </Menu.Item>
+            <Menu.Item onClick={props.editSong}>
+                Edit
+            </Menu.Item>
             <Menu.Divider />
             <Menu.Item danger onClick={() => props.removeSong(songItem.id)}>
                 Remove

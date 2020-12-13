@@ -42,7 +42,7 @@ export function TagList(props) {
                     (tagElement) =>
                         <List.Item
                             key={tagElement.tagItem.id}
-                            className={tagElement.selected ? ' grey lighten-4' : ''}
+                            className={tagElement.selected ? 'item-selected' : ''}
                             onClick={() => props.toggleTag(tagElement)}>
                                 {tagElement.tagItem.name}
                         </List.Item>

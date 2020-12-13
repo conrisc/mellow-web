@@ -13,6 +13,7 @@ import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
 import { NewSongModal } from './NewSongModal';
 import { TagList } from './TagList';
+import { EditSongModal } from './EditSongModal';
 
 class SongListX extends React.Component {
 
@@ -30,7 +31,9 @@ class SongListX extends React.Component {
             shouldShowLoader: true,
             currentlyPlaying: null,
             isTagDrawerVisible: false,
-            isNewSongModalVisible: false
+            isNewSongModalVisible: false,
+            isEditSongModalVisible: false,
+            editedSong: null
         };
         this.getTags();
         this.loadingVideo = false;
@@ -276,6 +279,10 @@ class SongListX extends React.Component {
         this.setState({ isNewSongModalVisible })
     }
 
+    setIsEditSongModalVisible(isEditSongModalVisible) {
+        this.setState({ isEditSongModalVisible })
+    }
+
     render() {
         return (
             <div style={{ padding: 8 }}>
@@ -290,6 +297,13 @@ class SongListX extends React.Component {
                     isVisible={this.state.isNewSongModalVisible}
                     closeModal={() => this.setIsNewSongModalVisible(false)}
                 />
+                {this.state.editedSong && <EditSongModal
+                    tags={this.state.tags}
+                    isVisible={this.state.isEditSongModalVisible}
+                    closeModal={() => { this.setIsEditSongModalVisible(false); this.setState({ editedSong: null }) }}
+                    songItem={this.state.editedSong}
+                    updateSingleSong={s => this.updateSingleSong(s)}
+                />}
                 <SongFilterPanel
                     titleFilter={this.state.titleFilter}
                     setTitleFilter={titleFilter => this.setState({ titleFilter })}
@@ -322,6 +336,7 @@ class SongListX extends React.Component {
                                         showYtTab={this.props.showYtTab}
                                         loadVideo={this.props.loadVideo}
                                         loadVideoById={(id, i) => this.loadVideoById(id, i)}
+                                        editSong={() => { this.setState({ editedSong: songItem }); this.setIsEditSongModalVisible(true) }}
                                         removeSong={(id) => this.removeSong(id)}
                                     />
                                 }
