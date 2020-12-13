@@ -55,11 +55,13 @@ function BottomPanelX(props) {
 
     return (
         <div>
-            <Row className="control-panel blue-grey darken-3 white-text" justify="space-between">
+            <Row className="control-panel" justify="space-around">
                 <Col>
                     <Button ghost={true} onClick={playVideo}>
                         <i className="fas fa-play"></i>
                     </Button>
+                </Col>
+                <Col>
                     <Button ghost={true} onClick={pauseVideo}>
                         <i className="fas fa-pause"></i>
                     </Button>
