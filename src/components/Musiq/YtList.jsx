@@ -17,7 +17,12 @@ function YtListX(props) {
 
     return (
         <div>
-            <Input allowClear={true} onChange={handleSearchChange} />
+            <Input
+                allowClear={true}
+                onChange={handleSearchChange}
+                prefix={<i className="fas fa-search"></i>}
+                placeholder="Search youtube"
+            />
             {
                 props.isFetchingYtItems ?
                     <div className="center-align">

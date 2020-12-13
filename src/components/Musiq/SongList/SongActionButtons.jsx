@@ -19,8 +19,8 @@ export function SongActionButtons(props) {
 
     const menu = (
         <Menu>
-            <Menu.Item>
-                <a href="#" onClick={searchOnYoutube}>Find</a>
+            <Menu.Item onClick={searchOnYoutube}>
+                Find
             </Menu.Item>
             <Menu.Item>
                 <a
@@ -39,8 +39,9 @@ export function SongActionButtons(props) {
                     Open in YT
                 </a>
             </Menu.Item>
-            <Menu.Item>
-                <a href="#" style={{color: 'red'}} onClick={() => props.removeSong(songItem.id)}>Remove</a>
+            <Menu.Divider />
+            <Menu.Item danger onClick={() => props.removeSong(songItem.id)}>
+                Remove
             </Menu.Item>
         </Menu>
     );

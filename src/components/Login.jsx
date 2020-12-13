@@ -48,7 +48,7 @@ function LoginX(props) {
                 name="password"
                 label="Password"
            >
-                <Input type="password" onChange={e => setPassword(e.target.value)} />
+                <Input.Password onChange={e => setPassword(e.target.value)} />
             </Form.Item>
             <Form.Item
                 wrapperCol={{ offset: 4, flex: "400px" }}

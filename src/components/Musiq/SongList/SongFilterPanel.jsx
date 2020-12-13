@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import { Row, Col, Button, Input, InputNumber, Select } from 'antd';
+import { Row, Col, Button, Input, InputNumber, Select, Divider } from 'antd';
 const { Option } = Select;
 
 export function SongFilterPanel(props) {
@@ -22,8 +22,10 @@ export function SongFilterPanel(props) {
     }
 
     function updateSkip(value) {
-        props.setSkip(Number(value));
-        props.getSongsDebounced();
+        if (!isNaN(value)) {
+            props.setSkip(Number(value));
+            props.getSongsDebounced();
+        }
     }
 
     function updateSort(value) {
@@ -33,30 +35,32 @@ export function SongFilterPanel(props) {
     }
 
     return (
-        <Row>
+        <Row justify="space-between" gutter={8}>
             <Col>
                 <Button onClick={props.showTagsDrawer}>
                     <i className="fas fa-tags"></i>
                 </Button>
             </Col>
-            <Col span={8}>
+            <Col flex="auto">
                 <Input
                     placeholder="Search song"
                     allowClear={true}
                     value={props.titleFilter}
                     onChange={handleTitleFilterChange}
+                    prefix={<i className="fas fa-search"></i>}
                 />
             </Col>
-            <Col span={4}>
-                Skip
+            <Col>
+                {/* Skip */}
                 <InputNumber
                     value={props.skip}
                     onChange={updateSkip}
                     min={0}
+                    precision={0}
                 />
             </Col>
-            <Col span={4}>
-                Limit
+            <Col>
+                {/* Limit */}
                 <Select
                     value={props.limit}
                     onChange={v => props.setLimit(Number(v))}>
@@ -65,11 +69,13 @@ export function SongFilterPanel(props) {
                     <Option value={50}>50</Option>
                 </Select>
             </Col>
-            <Col span={4}>
-                Sort
+            <Col>
+                {/* Sort */}
                 <Select
+                    style={{ width: 90}}
                     value={props.sort}
-                    onChange={updateSort}>
+                    onChange={updateSort}
+                >
                     <Option value="none">None</Option>
                     <Option value="title_asc">Title Asc</Option>
                     <Option value="title_desc">Title Desc</Option>

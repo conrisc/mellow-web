@@ -96,7 +96,7 @@ export class MainView extends React.Component {
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />,
                 name: 'YT LIST',
-                customStyles: 'grey darken-3 white-text yt-list',
+                customStyles: 'yt-list',
                 customClasses: 'red'
             }
         ];
