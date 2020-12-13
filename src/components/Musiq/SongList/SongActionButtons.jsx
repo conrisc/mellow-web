@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Dropdown, Menu } from 'antd';
+import { Button, Dropdown, Menu, Modal } from 'antd';
 
 export function SongActionButtons(props) {
-    const songItem = props.songItem;
+    const { songItem } = props;
     const encodedTitle = encodeURIComponent(songItem.title);
 
     function findAndLoadVideo() {
@@ -15,6 +15,21 @@ export function SongActionButtons(props) {
     function searchOnYoutube() {
         props.getYtItems(songItem.title);
         props.showYtTab();
+    }
+
+    function showRemoveConfirmation() {
+        Modal.confirm({
+            title: 'Do you want to remove that song:',
+            icon: <i
+                    style={{ float: 'left', fontSize: 21, color: '#faad14', marginRight: 16 }}
+                    className="fas fa-exclamation-circle">
+                </i>,
+            content: songItem.title,
+            onOk() {
+                props.removeSong(songItem.id)
+            },
+            onCancel() {}
+        });
     }
 
     const menu = (
@@ -43,7 +58,7 @@ export function SongActionButtons(props) {
                 Edit
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item danger onClick={() => props.removeSong(songItem.id)}>
+            <Menu.Item danger onClick={showRemoveConfirmation}>
                 Remove
             </Menu.Item>
         </Menu>
