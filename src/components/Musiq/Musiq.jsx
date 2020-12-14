@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -7,40 +7,31 @@ import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
 
-class MusiqX extends React.Component {
+function MusiqX(props) {
+    const { ytPlayer, setOnline, setOffline } = props;
+    const webSocket = useRef(musiqWebsocket.getInstance({ setOnline, setOffline }));
 
-    constructor(props) {
-        super(props);
-
-        this.webSocket = musiqWebsocket.getInstance({
-            setOnline: this.props.setOnline,
-            setOffline: this.props.setOffline
-        });
-    }
-
-    componentDidMount() {
+    useEffect(() => {
         document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
-        this.webSocket.open();
-    }
+        webSocket.current.open();
 
-    componentWillUnmount() {
-        this.webSocket.close();
-    }
+        return () => {
+            webSocket.current.close();
+        }
+    }, []);
 
-    render() {
-        return (
-            <div>
-                {this.props.ytPlayer &&
-                    <div>
-                        <TopPanel />
-                        <MainView />
-                        <BottomPanel />
-                    </div>
-                }
-                <YtPlayer />
-            </div>
-        );
-    }
+    return (
+        <div>
+            {ytPlayer &&
+                <div>
+                    <TopPanel />
+                    <MainView />
+                    <BottomPanel />
+                </div>
+            }
+            <YtPlayer />
+        </div>
+    );
 };
 
 const mapStateToProps = state => {
