@@ -74,10 +74,6 @@ const mapStateToProps = state => {
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-
-    }
-}
+const mapDispatchToProps = dispatch => ({});
 
 export const TopPanel = connect(mapStateToProps, mapDispatchToProps)(TopPanelX);

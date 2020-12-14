@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { Button } from 'antd';
 import { UsersApi } from 'what_api';
-import { List, Row, Col } from 'antd';
+import { List, Row, Col, notification } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -52,11 +52,11 @@ class SongListX extends React.Component {
                 switch (dataFromServer.type) {
                     case dataTypes.NEXT_SONG:
                         this.playNextSong();
-                        this.props.pushToast('Play next song');
+                        this.pushNotification('Play next song');
                         break;
                     case dataTypes.PREV_SONG:
                         this.playPreviousSong();
-                        this.props.pushToast('Play previous song');
+                        this.pushNotification('Play previous song');
                         break;
                 }
             }
@@ -66,6 +66,13 @@ class SongListX extends React.Component {
 
     componentWillUnmount() {
         document.removeEventListener('scroll', this.onScrollDebounced);
+    }
+
+    pushNotification(text) {
+        notification.open({
+            message: 'Song list notification',
+            description: text
+        });
     }
 
     getTags() {
@@ -126,7 +133,7 @@ class SongListX extends React.Component {
                     currentlyPlaying: null
                 });
             }, error => {
-                // this.pushToast('Cound not get songs');
+                // this.pushNotification('Cound not get songs');
                 console.error(error);
             });
     }
@@ -153,7 +160,7 @@ class SongListX extends React.Component {
                     shouldShowLoader: false
                 });
             }, error => {
-                // this.pushToast('Cound not update songs');
+                // this.pushNotification('Cound not update songs');
                 console.error(error);
             });
     }
@@ -374,10 +381,6 @@ const mapStateToProps = state => {
     };
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        pushToast: (toast) => dispatch({ type: 'PUSH_TOAST', toast })
-    };
-}
+const mapDispatchToProps = dispatch => ({});
 
 export const SongList = connect(mapStateToProps, mapDispatchToProps)(SongListX);

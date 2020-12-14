@@ -19,21 +19,10 @@ const initialState = {
 	isAuthenticated: false,
 	ytPlayer: null,
 	isOnline: false,
-	toastId: 0,
-	toasts: []
 };
 
 function reducer(state = initialState, action) {
-	let toasts = [];
 	switch (action.type) {
-		case 'PUSH_TOAST':
-			const newToast = { text: action.toast, date: new Date(), id: state.toastId };
-			const toastId = state.toastId + 1;
-			toasts = [ ...state.toasts, newToast];
-			return { ...state, toasts, toastId };
-		case 'DISMISS_TOAST':
-			toasts = state.toasts.filter(toast => toast.id !== action.id);
-			return { ...state, toasts };
 		case 'SET_ONLINE':
 			return  { ...state, isOnline: true };
 		case 'SET_OFFLINE':

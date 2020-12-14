@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { musiqWebsocket } from 'Services/musiqWebsocket';
-import { ToastList } from 'CommonComponents/ToastList';
 import { YtPlayer } from './YtPlayer';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
@@ -31,7 +30,6 @@ class MusiqX extends React.Component {
     render() {
         return (
             <div>
-                <ToastList />
                 {this.props.ytPlayer &&
                     <div>
                         <TopPanel />

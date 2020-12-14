@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { notification } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -34,19 +35,19 @@ function YtPlayerX(props) {
                         break;
                     case dataTypes.PLAY:
                         props.ytPlayer.playVideo();
-                        props.pushToast('Playing video');
+                        pushNotification('Playing video');
                         break;
                     case dataTypes.PAUSE:
                         props.ytPlayer.pauseVideo();
-                        props.pushToast('Pausing video');
+                        pushNotification('Pausing video');
                         break;
                     case dataTypes.SET_VOLUME:
                         props.ytPlayer.setVolume(dataFromServer.volume);
-                        props.pushToast(`Setting volume to ${dataFromServer.volume}`);
+                        pushNotification(`Setting volume to ${dataFromServer.volume}`);
                         break;
                     case dataTypes.LOAD_VIDEO:
                         props.ytPlayer.loadVideoById(dataFromServer.videoId)
-                        props.pushToast(`Loading video: ${dataFromServer.videoId}`);
+                        pushNotification(`Loading video: ${dataFromServer.videoId}`);
                         break;
                 }
             }
@@ -73,6 +74,13 @@ function YtPlayerX(props) {
         });
     }, [props.ytPlayer]);
 
+    function pushNotification(text) {
+        notification.open({
+            message: 'Player notification',
+            description: text
+        });
+    }
+
     return (
         <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
             <div ref={playerRef} className="w-100" />
@@ -88,7 +96,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        pushToast: (toast) => dispatch({ type: 'PUSH_TOAST', toast }),
         setYtPlayer: ytPlayer => dispatch({ type: 'SET_YT_PLAYER', ytPlayer })
     };
 }
