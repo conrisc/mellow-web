@@ -110,22 +110,19 @@ function SongListX(props) {
     }, []);
 
     useEffect(() => {
-        setShouldShowLoader(true);
-        getSongs().finally(() => {
-            setShouldShowLoader(false);
-            dispatch({ type: 'RESET' });
-        });
-    }, [tags, songFilters.title, songFilters.skip, songFilters.sort]); // loadMoreSongs sets skip :(
+        reloadSongs();
+    }, [tags]);
 
     useEffect(() => {
         if (scrollPosition < 100) {
             setShouldShowLoader(true);
-            loadMoreSongs().finally(() => {
-                setShouldShowLoader(false);
-                setScrollPosition(Infinity);
-            });
+            loadMoreSongs()
+                .then(({ fetched }) => {
+                    setShouldShowLoader(false);
+                    setScrollPosition(Infinity);
+                    setSongFilters(sf => ({...sf, skip: sf.skip + fetched}));
+                });
         }
-                // .then(({ fetched }) => setSkip(skip + fetched))
     }, [scrollPosition]);
 
     useEffect(() => {
@@ -144,9 +141,10 @@ function SongListX(props) {
             }
         }
 
-        if (currentlyPlaying >= songs.length) {
+        if (typeof currentplyPlaying === 'number' && currentlyPlaying >= songs.length) {
+                console.log(currentlyPlaying, songs.length)
                 loadMoreSongs()
-                    // .then(({ fetched }) => setSkip(skip + fetched))
+                    .then(({ fetched }) => setSongFilters(sf => ({...sf, skip: sf.skip + fetched})))
                     .then(playSong);
         } else {
             playSong();
@@ -158,6 +156,14 @@ function SongListX(props) {
         notification.open({
             message: 'Song list notification',
             description: text
+        });
+    }
+
+    function reloadSongs() {
+        setShouldShowLoader(true);
+        getSongs().finally(() => {
+            setShouldShowLoader(false);
+            dispatch({ type: 'RESET' });
         });
     }
 
@@ -212,6 +218,7 @@ function SongListX(props) {
             <SongFilterPanel
                 songFilters={songFilters}
                 setSongFilters={setSongFilters}
+                reloadSongs={reloadSongs}
                 showTagsDrawer={() => setIsTagDrawerVisible(true)}
                 showNewSongModal={() => setIsNewSongModalVisible(true)}
             />
