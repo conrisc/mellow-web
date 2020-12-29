@@ -3,35 +3,39 @@ import { Row, Col, Button, Input, InputNumber, Select, Divider } from 'antd';
 const { Option } = Select;
 
 export function SongFilterPanel(props) {
-    const serachSongsInputRef = useRef();
-
+    const { songFilters, setSongFilters, showTagsDrawer, showNewSongModal } = props;
 
     function handleTitleFilterChange(event) {
-        handleTitleChange(event.target.value)
+        const title = event.target.value;
+        setSongFilters({
+            ...songFilters,
+            skip: 0,
+            title
+        });
     }
 
-    function clearSearchSongsInput() {
-        handleTitleChange('');
-        serachSongsInputRef.current.focus();
-    }
-
-    function handleTitleChange(title) {
-        props.setSkip(0);
-        props.setTitleFilter(title);
-        props.getSongsDebounced();
-    }
-
-    function updateSkip(value) {
+    function handleSkipFilterChange(value) {
         if (!isNaN(value)) {
-            props.setSkip(Number(value));
-            props.getSongsDebounced();
+            setSongFilters({
+                ...songFilters,
+                skip: Number(value)
+            });
         }
     }
 
-    function updateSort(value) {
-        props.setSkip(0);
-        props.setSort(value);
-        props.getSongsDebounced();
+    function handleLimitFilterChange(value) {
+            setSongFilters({
+                ...songFilters,
+                limit: Number(value)
+            });
+    }
+
+    function handleSortFilterChange(sort) {
+        setSongFilters({
+            ...songFilters,
+            skip: 0,
+            sort
+        });
     }
 
     return (
@@ -41,7 +45,7 @@ export function SongFilterPanel(props) {
             style={{ padding: 8 }}
         >
             <Col>
-                <Button onClick={props.showTagsDrawer}>
+                <Button onClick={showTagsDrawer}>
                     <i className="fas fa-tags"></i>
                 </Button>
             </Col>
@@ -49,7 +53,7 @@ export function SongFilterPanel(props) {
                 <Input
                     placeholder="Search song"
                     allowClear={true}
-                    value={props.titleFilter}
+                    value={songFilters.title}
                     onChange={handleTitleFilterChange}
                     prefix={<i className="fas fa-search"></i>}
                 />
@@ -57,8 +61,8 @@ export function SongFilterPanel(props) {
             <Col>
                 {/* Skip */}
                 <InputNumber
-                    value={props.skip}
-                    onChange={updateSkip}
+                    value={songFilters.skip}
+                    onChange={handleSkipFilterChange}
                     min={0}
                     precision={0}
                 />
@@ -66,8 +70,8 @@ export function SongFilterPanel(props) {
             <Col>
                 {/* Limit */}
                 <Select
-                    value={props.limit}
-                    onChange={v => props.setLimit(Number(v))}>
+                    value={songFilters.limit}
+                    onChange={handleLimitFilterChange}>
                     <Option value={10}>10</Option>
                     <Option value={30}>30</Option>
                     <Option value={50}>50</Option>
@@ -77,8 +81,8 @@ export function SongFilterPanel(props) {
                 {/* Sort */}
                 <Select
                     style={{ width: 90}}
-                    value={props.sort}
-                    onChange={updateSort}
+                    value={songFilters.sort}
+                    onChange={handleSortFilterChange}
                 >
                     <Option value="none">None</Option>
                     <Option value="title_asc">Title Asc</Option>
@@ -87,7 +91,7 @@ export function SongFilterPanel(props) {
                 </Select>
             </Col>
             <Col>
-                <Button onClick={props.showNewSongModal}>
+                <Button onClick={showNewSongModal}>
                     <i className="fas fa-plus"></i>
                 </Button>
             </Col>

@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { Button } from 'antd';
-import { UsersApi } from 'what_api';
 import { List, Row, Col, notification } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
-import { Spinner } from 'CommonComponents/Spinner';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
@@ -15,364 +13,252 @@ import { NewSongModal } from './NewSongModal';
 import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
 
-class SongListX extends React.Component {
+import { useTags } from './useTags';
+import { useSongs } from './useSongs';
 
-    constructor(props) {
-        super(props);
+let loadingVideo = false;
 
-        this.state = {
-            titleFilter: '',
-            skip: 0,
-            limit: 30,
-            songs: [],
-            tags: [],
-            sort: 'none',
-            shouldShowSongs: false,
-            shouldShowLoader: true,
-            currentlyPlaying: null,
-            isTagDrawerVisible: false,
-            isNewSongModalVisible: false,
-            isEditSongModalVisible: false,
-            editedSong: null
-        };
-        this.getTags();
-        this.loadingVideo = false;
-        this.getSongsDebounced = debounce(800, () => this.songsLoader.then(() => this.getSongs()));
-        this.onScrollDebounced = debounce(800, () => this.onScroll())
+function switchSong({ currentlyPlaying }, action) {
+    switch (action.type) {
+        case 'PLAY_PREVIOUS':
+            console.log('switchSong: Play previous');
+            if (currentlyPlaying > 0)
+                return { currentlyPlaying: currentlyPlaying - 1 };
+            break;
+        case 'PLAY_NEXT':
+            console.log('switchSong: Play next');
+            return {
+                currentlyPlaying: currentlyPlaying === null
+                    ? 0
+                    : currentlyPlaying + 1
+            }
+        case 'PLAY_BY_INDEX':
+            console.log('switchSong: Play by index: ', action.songIndex);
+            return {
+                currentlyPlaying: isNaN(action.songIndex)
+                    ? null
+                    : action.songIndex
+            }
+        case 'RESET':
+            console.log('switchSong: Reset');
+            return {
+                currentlyPlaying: null
+            }
+        default:
+            throw new Error(`switchSong: Action ${action.type} is not recognizable`);
     }
+}
 
-    componentDidMount() {
-        this.songsLoader = this.getSongs();
-        document.addEventListener('scroll', this.onScrollDebounced);
-        this.initAutoplay();
+// TODO:
+// init autoplay
+// move api request to useSongs (on song remove, on song update)
+// update song list after adding a song
+// debounce getSongs
+
+function SongListX(props) {
+    const { tags, toggleTag } = useTags();
+    const [songFilters, setSongFilters] = useState({
+        title: '',
+        skip: 0,
+        limit: 30,
+        sort: 'none'
+    });
+
+    const { songs, getSongs, loadMoreSongs, updateSingleSong, removeSong } = useSongs(tags, songFilters);
+    const [shouldShowLoader, setShouldShowLoader] = useState(true);
+    const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
+    const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
+    const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
+    const [isEditSongModalVisible, setIsEditSongModalVisible] = useState(false);
+    const [editedSong, setEditedSong] = useState(null);
+    const [scrollPosition, setScrollPosition] = useState(Infinity);
+
+    // const getSongsDebounced = useDebounce(getSongs, 800, []);
+
+    useEffect(() => {
         const webSocket = musiqWebsocket.getInstance();
         const wsListeners = {
             message: (message) => {
                 const dataFromServer = JSON.parse(message.data);
                 switch (dataFromServer.type) {
                     case dataTypes.NEXT_SONG:
-                        this.playNextSong();
-                        this.pushNotification('Play next song');
+                        dispatch({type: 'PLAY_NEXT'})
+                        pushNotification('Play next song');
                         break;
                     case dataTypes.PREV_SONG:
-                        this.playPreviousSong();
-                        this.pushNotification('Play previous song');
+                        dispatch({type: 'PLAY_PREVIOUS'})
+                        pushNotification('Play previous song');
                         break;
                 }
             }
         };
         webSocket.addListeners(wsListeners);
-    }
+        // initAutoplay();
+    }, []);
 
-    componentWillUnmount() {
-        document.removeEventListener('scroll', this.onScrollDebounced);
-    }
+    useEffect(() => {
+        const onScroll = () => {
+            const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+            setScrollPosition(scrollHeight - scrollTop - clientHeight);
+        }
+        const onScrollDebounced = debounce(300, onScroll);
+        document.addEventListener('scroll', onScrollDebounced);
 
-    pushNotification(text) {
+        return () => {
+            document.removeEventListener('scroll', onScrollDebounced);
+        }
+    }, []);
+
+    useEffect(() => {
+        setShouldShowLoader(true);
+        getSongs().finally(() => {
+            setShouldShowLoader(false);
+            dispatch({ type: 'RESET' });
+        });
+    }, [tags, songFilters.title, songFilters.skip, songFilters.sort]); // loadMoreSongs sets skip :(
+
+    useEffect(() => {
+        if (scrollPosition < 100) {
+            setShouldShowLoader(true);
+            loadMoreSongs().finally(() => {
+                setShouldShowLoader(false);
+                setScrollPosition(Infinity);
+            });
+        }
+                // .then(({ fetched }) => setSkip(skip + fetched))
+    }, [scrollPosition]);
+
+    useEffect(() => {
+        const playSong = () => {
+            const songItem = songs[currentlyPlaying];
+            if (songItem) {
+                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+
+                if (videoIdMatch)
+                    loadVideoById(videoIdMatch[1]);
+                else
+                    props.getYtItems(songItem.title)
+                        .then(ytItems => {
+                            loadVideoById(ytItems[0].videoId);
+                        })
+            }
+        }
+
+        if (currentlyPlaying >= songs.length) {
+                loadMoreSongs()
+                    // .then(({ fetched }) => setSkip(skip + fetched))
+                    .then(playSong);
+        } else {
+            playSong();
+        }
+    }, [currentlyPlaying]);
+
+
+    function pushNotification(text) {
         notification.open({
             message: 'Song list notification',
             description: text
         });
     }
 
-    getTags() {
-        const api = new UsersApi();
+    // function initAutoplay() {
+    //     props.ytPlayer.addEventListener('onStateChange', state => {
+    //         console.log('STATE: ', state.data, loadingVideo);
+    //         if (state.data === 1) {         // PLAYING
+    //             loadingVideo = false;
+    //         }
+    //         else if (state.data === 3) {    // FETCHING DATA
+    //             loadingVideo = true;
+    //         }
+    //         else if (state.data === -1 && loadingVideo) {   // INTERUPTED OR STH
+    //             loadingVideo = false;
+    //             const songItem = songs[currentlyPlaying];
+    //             console.log('Currently: ', currentlyPlaying);
+    //             props.getYtItems(songItem.title)
+    //                 .then(ytItems => {
+    //                     loadVideoById(ytItems[0].videoId);
+    //                 });
+    //         }
+    //         else if (state.data === 0) {                // FINISHED
+    //             dispatch({ type: 'PLAY_NEXT' });
+    //         }
+    //     });
+    // }
 
-        const opts = {
-            skip: 0,
-            limit: 300
-        };
-
-        api.searchTag(opts)
-            .then(data => {
-                this.setState({
-                    tags: data.map(tagItem => ({ tagItem, selected: false }))
-                })
-                this.getSongsDebounced();
-            }, error => {
-                console.error(error);
-            });
+    function loadVideoById(videoId) {
+        props.ytPlayer.loadVideoById(videoId);
     }
 
-    toggleTag(tagElement) {
-        const newTags = this.state.tags.map(el => {
-            if (tagElement.tagItem.id === el.tagItem.id)
-                return {
-                    tagItem: tagElement.tagItem,
-                    selected: !tagElement.selected
-                }
-            return el;
-        });
-        this.setState(
-            { tags: newTags }
-        );
-        this.getSongsDebounced();
-    }
-
-    getSongs() {
-        this.setState({
-            shouldShowSongs: false,
-            shouldShowLoader: true
-        });
-        const opts = {
-            skip: this.state.skip,
-            limit: this.state.limit,
-            title: this.state.titleFilter,
-            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
-            sort: this.state.sort
-        };
-
-        console.log('Fetching songs...');
-        const api = new UsersApi();
-        return api.searchSong(opts)
-            .then(data => {
-                this.setState({
-                    songs: data,
-                    shouldShowSongs: true,
-                    shouldShowLoader: false,
-                    currentlyPlaying: null
-                });
-            }, error => {
-                // this.pushNotification('Cound not get songs');
-                console.error(error);
-            });
-    }
-
-    updateSongs () {
-        const api = new UsersApi();
-
-        const opts = {
-            skip: this.state.skip + this.state.limit,
-            limit: this.state.limit,
-            title: this.state.titleFilter,
-            tags:  this.state.tags.filter(tagElement => tagElement.selected).map(tagElement => tagElement.tagItem.id),
-            sort: this.state.sort
-        };
-
-        this.setState({
-            shouldShowLoader: true
-        });
-        return api.searchSong(opts)
-            .then(data => {
-                this.setState({
-                    songs: [...this.state.songs, ...data],
-                    skip: this.state.skip + data.length,
-                    shouldShowLoader: false
-                });
-            }, error => {
-                // this.pushNotification('Cound not update songs');
-                console.error(error);
-            });
-    }
-
-    removeSong(songId) {
-        const api = new UsersApi();
-        api.removeSong(songId)
-            .then(() => {
-                this.setState({
-                    songs: this.state.songs.filter(songItem => songItem.id !== songId)
-                })
-                console.log('Song successfuly removed');
-            }, error => {
-                console.error(error);
-            });
-    }
-
-
-    onScroll() {
-        if (!this.props.isActive) return;
-
-        const element = document.documentElement;
-        if (element.clientHeight + element.scrollTop > element.scrollHeight - 100) {
-            this.songsLoader = this.songsLoader
-                .then(() => this.updateSongs());
-        }
-    }
-
-    playPreviousSong() {
-        if (this.state.currentlyPlaying > 0) {
-            const previousVideoIndex = this.state.currentlyPlaying - 1;
-            const songItem = this.state.songs[previousVideoIndex];
-            if (songItem) {
-                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-
-                if (videoIdMatch)
-                    this.loadVideoById(videoIdMatch[1], previousVideoIndex);
-                else
-                    this.props.getYtItems(songItem.title)
-                        .then(ytItems => {
-                            this.loadVideoById(ytItems[0].videoId, previousVideoIndex);
-                        })
-            }
-        }
-    }
-
-    playNextSong() {
-        const nextVideoIndex = this.state.currentlyPlaying === null ? 0 : this.state.currentlyPlaying + 1;
-
-        const playNextSong = () => {
-            const songItem = this.state.songs[nextVideoIndex];
-            if (songItem) {
-                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-
-                if (videoIdMatch)
-                    this.loadVideoById(videoIdMatch[1], nextVideoIndex);
-                else
-                    this.props.getYtItems(songItem.title)
-                        .then(ytItems => {
-                            this.loadVideoById(ytItems[0].videoId, nextVideoIndex);
-                        })
-            }
-        }
-
-        if (nextVideoIndex >= this.state.songs.length) {
-            this.songsLoader = this.songsLoader
-                .then(() => this.updateSongs())
-                .then(playNextSong);
-        } else {
-            playNextSong();
-        }
-    }
-
-    initAutoplay() {
-        this.props.ytPlayer.addEventListener('onStateChange', state => {
-            if (state.data === 1) {
-                this.loadingVideo = false;
-            }
-            if (state.data === 3) {
-                this.loadingVideo = true;
-            }
-            if (state.data === -1 && this.loadingVideo) {
-                this.loadingVideo = false;
-                const songItem = this.state.songs[this.state.currentlyPlaying];
-                this.props.getYtItems(songItem.title)
-                    .then(ytItems => {
-                        this.loadVideoById(ytItems[0].videoId, this.state.currentlyPlaying);
-                    });
-            }
-            if (state.data === 0) {
-                this.playNextSong();
-            }
-        });
-    }
-
-    loadVideoById(videoId, index) {
-        this.props.ytPlayer.loadVideoById(videoId);
-        this.setState({ currentlyPlaying: index });
-    }
-
-    updateSingleSong(updatedSongItem) {
-        this.setState({
-            songs: this.state.songs.map(songItem => {
-                return songItem.id === updatedSongItem.id ?
-                    updatedSongItem :
-                    songItem;
-            })
-        });
-    }
-
-    findAndPlayVideo(songItem, index) {
-        this.props.getYtItems(songItem.title)
-            .then(ytItems => {
-                this.loadVideoById(ytItems[0].videoId, index);
-            })
-    }
-
-    setIsTagDrawerVisible(isTagDrawerVisible) {
-        this.setState({ isTagDrawerVisible })
-    }
-
-    setIsNewSongModalVisible(isNewSongModalVisible) {
-        this.setState({ isNewSongModalVisible })
-    }
-
-    setIsEditSongModalVisible(isEditSongModalVisible) {
-        this.setState({ isEditSongModalVisible })
-    }
-
-    render() {
-        return (
-            <div style={{ padding: 8 }}>
-                <TagList
-                    toggleTag={(tagElement) => this.toggleTag(tagElement)}
-                    tags={this.state.tags}
-                    isVisible={this.state.isTagDrawerVisible}
-                    setIsVisible={(i) => this.setIsTagDrawerVisible(i)}
-                />
-                <NewSongModal 
-                    tags={this.state.tags}
-                    isVisible={this.state.isNewSongModalVisible}
-                    closeModal={() => this.setIsNewSongModalVisible(false)}
-                />
-                {this.state.editedSong && <EditSongModal
-                    tags={this.state.tags}
-                    isVisible={this.state.isEditSongModalVisible}
-                    closeModal={() => { this.setIsEditSongModalVisible(false); this.setState({ editedSong: null }) }}
-                    songItem={this.state.editedSong}
-                    updateSingleSong={s => this.updateSingleSong(s)}
-                />}
-                <SongFilterPanel
-                    titleFilter={this.state.titleFilter}
-                    setTitleFilter={titleFilter => this.setState({ titleFilter })}
-                    skip={this.state.skip}
-                    setSkip={skip => this.setState({skip})}
-                    limit={this.state.limit}
-                    setLimit={limit => this.setState({limit})}
-                    sort={this.state.sort}
-                    setSort={sort => this.setState({sort})}
-                    getSongsDebounced={this.getSongsDebounced}
-                    showTagsDrawer={() => this.setIsTagDrawerVisible(true)}
-                    showNewSongModal={() => this.setIsNewSongModalVisible(true)}
-                />
-                <List
-                    rowKey="id"
-                    loading={this.state.shouldShowLoader}
-                    dataSource={this.state.songs}
-                    renderItem={(songItem, index) => {
-                        const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-                        const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                        return (
-                            <List.Item
-                                style={{paddingLeft: 8, paddingRight: 8}}
-                                className={index === this.state.currentlyPlaying ? 'item-selected' : ''} 
-                                extra={
-                                    <SongActionButtons 
+    return (
+        <div style={{ padding: 8 }}>
+            <TagList
+                toggleTag={(tagElement) => toggleTag(tagElement)}
+                tags={tags}
+                isVisible={isTagDrawerVisible}
+                setIsVisible={(i) => setIsTagDrawerVisible(i)}
+            />
+            <NewSongModal 
+                tags={tags}
+                isVisible={isNewSongModalVisible}
+                closeModal={() => setIsNewSongModalVisible(false)}
+            />
+            {editedSong && <EditSongModal
+                tags={tags}
+                isVisible={isEditSongModalVisible}
+                closeModal={() => { setIsEditSongModalVisible(false); setEditedSong(null); }}
+                songItem={editedSong}
+                updateSingleSong={s => updateSingleSong(s)}
+            />}
+            <SongFilterPanel
+                songFilters={songFilters}
+                setSongFilters={setSongFilters}
+                showTagsDrawer={() => setIsTagDrawerVisible(true)}
+                showNewSongModal={() => setIsNewSongModalVisible(true)}
+            />
+            <List
+                rowKey="id"
+                loading={shouldShowLoader}
+                dataSource={songs}
+                renderItem={(songItem, index) => {
+                    const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+                    const videoId = videoIdMatch ? videoIdMatch[1] : '';
+                    return (
+                        <List.Item
+                            style={{paddingLeft: 8, paddingRight: 8}}
+                            className={index === currentlyPlaying ? 'item-selected' : ''} 
+                            extra={
+                                <SongActionButtons 
+                                    songItem={songItem}
+                                    videoId={videoId}
+                                    getYtItems={props.getYtItems}
+                                    showYtTab={props.showYtTab}
+                                    loadVideo={props.loadVideo}
+                                    editSong={() => {  setEditedSong(songItem); setIsEditSongModalVisible(true) }}
+                                    removeSong={(id) => removeSong(id)}
+                                />
+                            }
+                        >
+                            <Row gutter={16}>
+                                <Col>
+                                    <Button type="primary"
+                                        onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
+                                        title="Play song on this device">
+                                            <i className="fas fa-play"></i>
+                                    </Button>
+                                </Col>
+                                <Col>
+                                    <SongInfoContainer
                                         songItem={songItem}
-                                        videoId={videoId}
-                                        getYtItems={this.props.getYtItems}
-                                        showYtTab={this.props.showYtTab}
-                                        loadVideo={this.props.loadVideo}
-                                        loadVideoById={(id, i) => this.loadVideoById(id, i)}
-                                        editSong={() => { this.setState({ editedSong: songItem }); this.setIsEditSongModalVisible(true) }}
-                                        removeSong={(id) => this.removeSong(id)}
+                                        tags={tags}
                                     />
-                                }
-                            >
-                                <Row gutter={16}>
-                                    <Col>
-                                        <Button type="primary"
-                                            onClick={videoId ? () => this.loadVideoById(videoId, index) : () => this.findAndPlayVideo(songItem, index)}
-                                            title="Play song on this device">
-                                                <i className="fas fa-play"></i>
-                                        </Button>
-                                    </Col>
-                                    <Col>
-                                        <SongInfoContainer
-                                            songItem={songItem}
-                                            tags={this.state.tags}
-                                        />
-                                    </Col>
-                                </Row>
-                            </List.Item>
-                        );
-                    }}
-                />
-                {/* <div className={'center-align' + (this.state.shouldShowLoader ? '' : ' hide')}>
-                    <Spinner />
-                </div> */}
-            </div>
-        );
-    }
+                                </Col>
+                            </Row>
+                        </List.Item>
+                    );
+                }}
+            />
+        </div>
+    );
 }
 
 const mapStateToProps = state => {

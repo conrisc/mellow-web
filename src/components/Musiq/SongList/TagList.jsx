@@ -3,6 +3,7 @@ import { UsersApi, TagItem } from 'what_api';
 import { Drawer, List, Button, Input } from 'antd';
 
 export function TagList(props) {
+    const { isVisible, setIsVisible, tags, toggleTag } = props;
     const tagNameInputRef = useRef();
 
     function addTag() {
@@ -31,19 +32,19 @@ export function TagList(props) {
             title="Tag list"
             placement='left'
             closable={true}
-            onClose={() => props.setIsVisible(false)}
-            visible={props.isVisible}
+            onClose={() => setIsVisible(false)}
+            visible={isVisible}
         >
             <List
                 bordered
-                dataSource={props.tags}
+                dataSource={tags}
                 rowKey={(tagElement) => tagElement.tagItem.id}
                 renderItem={
                     (tagElement) =>
                         <List.Item
                             key={tagElement.tagItem.id}
                             className={tagElement.selected ? 'item-selected' : ''}
-                            onClick={() => props.toggleTag(tagElement)}>
+                            onClick={() => toggleTag(tagElement)}>
                                 {tagElement.tagItem.name}
                         </List.Item>
 
