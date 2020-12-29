@@ -114,7 +114,7 @@ function SongListX(props) {
     }, [tags]);
 
     useEffect(() => {
-        if (scrollPosition < 100) {
+        if (props.isActive && scrollPosition < 100) {
             setShouldShowLoader(true);
             loadMoreSongs()
                 .then(({ fetched }) => {
