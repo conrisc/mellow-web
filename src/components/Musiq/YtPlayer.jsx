@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { notification } from 'antd';
+import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -63,6 +64,7 @@ function YtPlayerX(props) {
         if (!props.ytPlayer) return;
 
         const webSocket = musiqWebsocket.getInstance();
+        const sendDataDebounced = debounce(1200, webSocket.sendData.bind(webSocket));
         props.ytPlayer.addEventListener('onStateChange', state => {
             const playerState = {
                 state: state.data,
@@ -70,7 +72,7 @@ function YtPlayerX(props) {
                 title: props.ytPlayer.getVideoData().title || '',
                 time: Math.floor(props.ytPlayer.getCurrentTime()) || 0
             };
-            webSocket.sendData(dataTypes.PLAYER_STATE, playerState);
+            sendDataDebounced(dataTypes.PLAYER_STATE, playerState);
         });
     }, [props.ytPlayer]);
 
