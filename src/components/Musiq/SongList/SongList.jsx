@@ -68,7 +68,6 @@ function SongListX(props) {
     const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
     const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
     const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
-    const [isEditSongModalVisible, setIsEditSongModalVisible] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
     const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
@@ -206,8 +205,8 @@ function SongListX(props) {
             />
             {editedSong && <EditSongModal
                 tags={tags}
-                isVisible={isEditSongModalVisible}
-                closeModal={() => { setIsEditSongModalVisible(false); setEditedSong(null); }}
+                isVisible={!!editedSong}
+                closeModal={() => setEditedSong(null)}
                 songItem={editedSong}
                 updateSingleSong={s => updateSingleSong(s)}
             />}
@@ -235,7 +234,7 @@ function SongListX(props) {
                                     getYtItems={props.getYtItems}
                                     showYtTab={props.showYtTab}
                                     loadVideo={props.loadVideo}
-                                    editSong={() => {  setEditedSong(songItem); setIsEditSongModalVisible(true) }}
+                                    editSong={() => setEditedSong(songItem)}
                                     removeSong={(id) => removeSong(id)}
                                 />
                             }
