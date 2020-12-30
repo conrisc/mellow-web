@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react';
 import { connect } from 'react-redux';
-import { debounce } from 'throttle-debounce';
 import { Button } from 'antd';
 import { List, Row, Col, notification } from 'antd';
 
@@ -13,6 +12,7 @@ import { NewSongModal } from './NewSongModal';
 import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
 
+import { useScroll } from 'CommonComponents/useScroll';
 import { useTags } from './useTags';
 import { useSongs } from './useSongs';
 
@@ -70,7 +70,7 @@ function SongListX(props) {
     const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
     const [isEditSongModalVisible, setIsEditSongModalVisible] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
-    const [scrollPosition, setScrollPosition] = useState(Infinity);
+    const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
 
 
@@ -95,19 +95,6 @@ function SongListX(props) {
         // initAutoplay();
     }, []);
 
-    useEffect(() => {
-        const onScroll = () => {
-            const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-            setScrollPosition(scrollHeight - scrollTop - clientHeight);
-        }
-        const onScrollDebounced = debounce(300, onScroll);
-        document.addEventListener('scroll', onScrollDebounced);
-
-        return () => {
-            document.removeEventListener('scroll', onScrollDebounced);
-        }
-    }, []);
-
     // Refetch songs without a delay
     useEffect(() => {
         clearTimeout(songsLoaderRef.current);
@@ -125,12 +112,11 @@ function SongListX(props) {
 
     // Load more songs on scroll to bottom
     useEffect(() => {
-        if (props.isActive && scrollPosition < 100) {
+        if (props.isActive && songs.length > 0 && scrollHeight - scrollPosition < 100){
             setShouldShowLoader(true);
             loadMoreSongs()
                 .then(() => {
                     setShouldShowLoader(false);
-                    setScrollPosition(Infinity);
                 });
         }
     }, [scrollPosition]);
