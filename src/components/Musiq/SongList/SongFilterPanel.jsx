@@ -3,7 +3,7 @@ import { Row, Col, Button, Input, InputNumber, Select, Divider } from 'antd';
 const { Option } = Select;
 
 export function SongFilterPanel(props) {
-    const { songFilters, setSongFilters, reloadSongs, showTagsDrawer, showNewSongModal } = props;
+    const { songFilters, setSongFilters, showTagsDrawer, showNewSongModal } = props;
 
     function handleTitleFilterChange(event) {
         const title = event.target.value;
@@ -12,7 +12,6 @@ export function SongFilterPanel(props) {
             skip: 0,
             title
         });
-        reloadSongs();
     }
 
     function handleSkipFilterChange(value) {
@@ -22,7 +21,6 @@ export function SongFilterPanel(props) {
                 skip: Number(value)
             });
         }
-        reloadSongs();
     }
 
     function handleLimitFilterChange(value) {
@@ -30,7 +28,6 @@ export function SongFilterPanel(props) {
             ...songFilters,
             limit: Number(value)
         });
-        reloadSongs();
     }
 
     function handleSortFilterChange(sort) {
@@ -39,7 +36,6 @@ export function SongFilterPanel(props) {
             skip: 0,
             sort
         });
-        reloadSongs();
     }
 
     return (

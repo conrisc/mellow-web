@@ -23,17 +23,17 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
             ...songFilters,
             tags: selectedTagIds
         };
-        console.log('Fetching songs...');
+        console.log('Fetching songs...', songFilters);
         return fetchSongs(opts, setSongs);
     }
 
     function loadMoreSongs() {
         const opts = {
             ...songFilters,
-            skip: songFilters.skip + songFilters.limit,
+            skip: songFilters.skip + songs.length,
             tags: selectedTagIds
         };
-        console.log('Fetching more songs...');
+        console.log('Fetching more songs...', opts);
         return fetchSongs(opts,
             newSongs => {
                 setSongs(songs => [...songs, ...newSongs])

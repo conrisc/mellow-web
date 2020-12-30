@@ -111,16 +111,15 @@ function SongListX(props) {
 
     useEffect(() => {
         reloadSongs();
-    }, [tags]);
+    }, [tags, songFilters]);
 
     useEffect(() => {
         if (props.isActive && scrollPosition < 100) {
             setShouldShowLoader(true);
             loadMoreSongs()
-                .then(({ fetched }) => {
+                .then(() => {
                     setShouldShowLoader(false);
                     setScrollPosition(Infinity);
-                    setSongFilters(sf => ({...sf, skip: sf.skip + fetched}));
                 });
         }
     }, [scrollPosition]);
@@ -144,7 +143,6 @@ function SongListX(props) {
         if (typeof currentplyPlaying === 'number' && currentlyPlaying >= songs.length) {
                 console.log(currentlyPlaying, songs.length)
                 loadMoreSongs()
-                    .then(({ fetched }) => setSongFilters(sf => ({...sf, skip: sf.skip + fetched})))
                     .then(playSong);
         } else {
             playSong();
@@ -218,7 +216,6 @@ function SongListX(props) {
             <SongFilterPanel
                 songFilters={songFilters}
                 setSongFilters={setSongFilters}
-                reloadSongs={reloadSongs}
                 showTagsDrawer={() => setIsTagDrawerVisible(true)}
                 showNewSongModal={() => setIsNewSongModalVisible(true)}
             />
