@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useCallback } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { Button } from 'antd';
@@ -51,9 +51,8 @@ function switchSong({ currentlyPlaying }, action) {
 
 // TODO:
 // init autoplay
-// move api request to useSongs (on song remove, on song update)
 // update song list after adding a song
-// debounce getSongs
+// move api request to useSongs (on song remove, on song update)
 
 function SongListX(props) {
     const { tags, toggleTag } = useTags();
@@ -72,8 +71,8 @@ function SongListX(props) {
     const [isEditSongModalVisible, setIsEditSongModalVisible] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
     const [scrollPosition, setScrollPosition] = useState(Infinity);
+    const songsLoaderRef = useRef(null);
 
-    // const getSongsDebounced = useDebounce(getSongs, 800, []);
 
     useEffect(() => {
         const webSocket = musiqWebsocket.getInstance();
@@ -109,10 +108,22 @@ function SongListX(props) {
         }
     }, []);
 
+    // Refetch songs without a delay
     useEffect(() => {
+        clearTimeout(songsLoaderRef.current);
         reloadSongs();
-    }, [tags, songFilters]);
+    }, [songFilters.limit, songFilters.sort]);
 
+    // Refetch songs with a delay (debounced)
+    useEffect(() => {
+        songsLoaderRef.current = setTimeout(reloadSongs, 800);
+
+        return () => {
+            clearTimeout(songsLoaderRef.current);
+        }
+    }, [tags, songFilters.skip, songFilters.title]);
+
+    // Load more songs on scroll to bottom
     useEffect(() => {
         if (props.isActive && scrollPosition < 100) {
             setShouldShowLoader(true);
@@ -124,6 +135,7 @@ function SongListX(props) {
         }
     }, [scrollPosition]);
 
+    // Play a song with index equal to the currentlyPlaying
     useEffect(() => {
         const playSong = () => {
             const songItem = songs[currentlyPlaying];
