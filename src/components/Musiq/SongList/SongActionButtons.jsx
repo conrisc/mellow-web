@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dropdown, Menu, Modal } from 'antd';
 
 export function SongActionButtons(props) {
-    const { songItem } = props;
+    const { songItem, removeSong } = props;
     const encodedTitle = encodeURIComponent(songItem.title);
 
     function findAndLoadVideo() {
@@ -26,7 +26,7 @@ export function SongActionButtons(props) {
                 </i>,
             content: songItem.title,
             onOk() {
-                props.removeSong(songItem.id)
+                removeSong(songItem.id)
             },
             onCancel() {}
         });

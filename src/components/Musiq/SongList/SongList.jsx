@@ -52,7 +52,6 @@ function switchSong({ currentlyPlaying }, action) {
 // TODO:
 // init autoplay
 // update song list after adding a song
-// move api request to useSongs (on song remove, on song update)
 
 function SongListX(props) {
     const { tags, toggleTag } = useTags();
@@ -63,7 +62,7 @@ function SongListX(props) {
         sort: 'none'
     });
 
-    const { songs, getSongs, loadMoreSongs, updateSingleSong, removeSong } = useSongs(tags, songFilters);
+    const { songs, getSongs, loadMoreSongs, updateSong, removeSong } = useSongs(tags, songFilters);
     const [shouldShowLoader, setShouldShowLoader] = useState(true);
     const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
     const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
@@ -208,7 +207,7 @@ function SongListX(props) {
                 isVisible={!!editedSong}
                 closeModal={() => setEditedSong(null)}
                 songItem={editedSong}
-                updateSingleSong={s => updateSingleSong(s)}
+                updateSong={s => updateSong(s)}
             />}
             <SongFilterPanel
                 songFilters={songFilters}

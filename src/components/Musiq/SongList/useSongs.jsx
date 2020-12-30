@@ -41,24 +41,36 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
         );
     }
 
-    function updateSingleSong(updatedSongItem) {
-        setSongs(
-            songs.map(songItem => {
-                return songItem.id === updatedSongItem.id ?
-                    updatedSongItem :
-                    songItem;
+    function updateSong(songItem) {
+        const opts = { songItem };
+
+        const api = new UsersApi();
+        return api.updateSong(opts)
+            .then(updatedSongItem => {
+                console.log('Song successfuly updated');
+                setSongs(
+                    songs.map(songItem => {
+                        return songItem.id === updatedSongItem.id ?
+                            updatedSongItem :
+                            songItem;
+                    })
+                )
             })
-        )
+            .catch(error => {
+                console.error('Error while updating song: ', error);
+                throw error;
+			});
     }
 
     function removeSong(songId) {
         const api = new UsersApi();
-        api.removeSong(songId)
+        return api.removeSong(songId)
             .then(() => {
-                setSongs(songs.filter(songItem => songItem.id !== songId))
                 console.log('Song successfuly removed');
-            }, error => {
-                console.error(error);
+                setSongs(songs.filter(songItem => songItem.id !== songId))
+            })
+            .catch(error => {
+                console.error('Error while removing song: ', error);
             });
     }
 
@@ -66,7 +78,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 		songs,
 		getSongs,
         loadMoreSongs,
-        updateSingleSong,
+        updateSong,
         removeSong
 	}
 }

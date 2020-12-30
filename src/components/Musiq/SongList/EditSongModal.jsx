@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {UsersApi, SongItem} from 'what_api';
+import { SongItem } from 'what_api';
 import { Modal, Select, Input } from 'antd';
 const { Option } = Select;
 
@@ -40,23 +40,16 @@ export function EditSongModal(props) {
         }
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
-        const opts = {
-            songItem: new SongItem(title.trim(), url.trim(), songItem.dateAdded, songTagsIds)
-        }
-        opts.songItem.id = songItem.id;
 
-        const api = new UsersApi();
-        api.updateSong(opts)
-            .then(result => {
-                console.log('Song updated');
-                props.updateSingleSong(result);
-            })
-            .catch(err => {
+        const updatedSongItem = new SongItem(title.trim(), url.trim(), songItem.dateAdded, songTagsIds);
+        updatedSongItem.id = songItem.id;
+
+        props.updateSong(updatedSongItem)
+            .catch(() => {
 				setTitle(songItem.title);
 				setUrl(songItem.url);
 				setTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
-                console.warn('Error while updating song: ', err);
-			})
+			});
 
 		props.closeModal();
     }
