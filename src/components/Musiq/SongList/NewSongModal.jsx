@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {UsersApi, SongItem} from 'what_api';
+import { SongItem } from 'what_api';
 import { Modal, Select, Input } from 'antd';
 const { Option } = Select;
 
@@ -33,21 +33,15 @@ export function NewSongModal(props) {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
 
-        const opts = {
-            songItem: new SongItem(title.trim(), url.trim(), new Date().toISOString(), songTagsIds)
-        }
+        const newSongItem = new SongItem(title.trim(), url.trim(), new Date().toISOString(), songTagsIds);
 
-        const api = new UsersApi();
-        api.addSong(opts)
-            .then(data => {
+        props.addSong(newSongItem)
+            .then(() => {
                 setTitle('');
                 setUrl('');
-                console.log('API called successfully.', data);
-            }, error => {
-                console.error(error);
+                setTags([]);
+                props.closeModal();
             });
-
-        props.closeModal();
     }
 
     return (

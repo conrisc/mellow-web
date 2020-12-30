@@ -41,6 +41,20 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
         );
     }
 
+    function addSong(songItem) {
+        const opts = { songItem };
+
+        const api = new UsersApi();
+        return api.addSong(opts)
+            .then(newSongId => {
+                console.log('Song successfully added');
+                getSongs();     // temporary?
+            })
+            .catch(error => {
+                console.error('Error while adding the song: ', error);
+            });
+    }
+
     function updateSong(songItem) {
         const opts = { songItem };
 
@@ -57,7 +71,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
                 )
             })
             .catch(error => {
-                console.error('Error while updating song: ', error);
+                console.error('Error while updating the song: ', error);
                 throw error;
 			});
     }
@@ -70,7 +84,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
                 setSongs(songs.filter(songItem => songItem.id !== songId))
             })
             .catch(error => {
-                console.error('Error while removing song: ', error);
+                console.error('Error while removing the song: ', error);
             });
     }
 
@@ -78,6 +92,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 		songs,
 		getSongs,
         loadMoreSongs,
+        addSong,
         updateSong,
         removeSong
 	}
