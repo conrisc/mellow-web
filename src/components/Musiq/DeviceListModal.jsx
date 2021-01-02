@@ -25,7 +25,7 @@ function DeviceListModalX(props) {
         return () => {
             webSocket.removeListeners(playersStatusListener);
         };
-    });
+    }, []);
 
     function handlePlayerState(playerStatus) {
         const playerState = {
@@ -57,7 +57,7 @@ function DeviceListModalX(props) {
                             checked={device.isChecked}
                             onChange={(e) => props.toggleCheck(e, device)}
                         >
-                            <span className={ device.isMe ? 'green-text' : ''}>{device.userAgent.parsed} [{device.name}]</span>
+                            <span style={device.isMe ? { color: 'green' } : {}}>{device.userAgent.parsed} [{device.name}]</span>
                         </Checkbox>
                         <p>
                             {playersStatus[device.name] ? playersStatus[device.name].title : 'N/A'}
