@@ -70,6 +70,8 @@ function SongListX(props) {
     const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
     const currentSongItem = useRef(null);
+    const hasMoreSongs = useRef(true);
+
 
 
     useEffect(() => {
@@ -110,12 +112,8 @@ function SongListX(props) {
 
     // Load more songs on scroll to bottom
     useEffect(() => {
-        if (props.isActive && songs.length > 0 && scrollHeight - scrollPosition < 100){
-            setShouldShowLoader(true);
-            loadMoreSongs()
-                .then(() => {
-                    setShouldShowLoader(false);
-                });
+        if (props.isActive && songs.length > 0 && scrollHeight - scrollPosition < 100) {
+            loadMore();
         }
     }, [scrollPosition]);
 
@@ -139,8 +137,7 @@ function SongListX(props) {
         }
 
         if (typeof currentplyPlaying === 'number' && currentlyPlaying >= songs.length) {
-                console.log(currentlyPlaying, songs.length)
-                loadMoreSongs()
+                loadMore()
                     .then(playSong);
         } else {
             playSong();
@@ -202,9 +199,21 @@ function SongListX(props) {
     function reloadSongs() {
         setShouldShowLoader(true);
         getSongs().finally(() => {
+            hasMoreSongs.current = true;
             setShouldShowLoader(false);
             dispatch({ type: 'RESET' });
         });
+    }
+
+    function loadMore() {
+        if (!hasMoreSongs.current) return Promise.resolve();
+
+        setShouldShowLoader(true);
+        return loadMoreSongs()
+            .then(({ fetched }) => {
+                if (fetched === 0) hasMoreSongs.current = false;
+                setShouldShowLoader(false);
+            });
     }
 
     function loadVideoById(videoId) {
