@@ -8,7 +8,6 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
-import { NewSongModal } from './NewSongModal';
 import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
 
@@ -65,7 +64,6 @@ function SongListX(props) {
     const [shouldShowLoader, setShouldShowLoader] = useState(true);
     const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
     const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
-    const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
     const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
@@ -228,12 +226,6 @@ function SongListX(props) {
                 isVisible={isTagDrawerVisible}
                 setIsVisible={(i) => setIsTagDrawerVisible(i)}
             />
-            <NewSongModal 
-                tags={tags}
-                addSong={addSong}
-                isVisible={isNewSongModalVisible}
-                closeModal={() => setIsNewSongModalVisible(false)}
-            />
             {editedSong && <EditSongModal
                 tags={tags}
                 isVisible={!!editedSong}
@@ -242,6 +234,8 @@ function SongListX(props) {
                 updateSong={updateSong}
             />}
             <SongFilterPanel
+                tags={tags}
+                addSong={addSong}
                 songFilters={songFilters}
                 setSongFilters={setSongFilters}
                 showTagsDrawer={() => setIsTagDrawerVisible(true)}
