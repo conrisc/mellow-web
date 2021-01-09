@@ -14,6 +14,7 @@ import { EditSongModal } from './EditSongModal';
 import { useScroll } from 'CommonComponents/useScroll';
 import { useTags } from './useTags';
 import { useSongs } from './useSongs';
+import { usePlayerStatus } from './usePlayerStatus';
 
 function switchSong({ currentlyPlaying }, action) {
     switch (action.type) {
@@ -47,11 +48,11 @@ function switchSong({ currentlyPlaying }, action) {
 }
 
 // TODO:
-// init autoplay
 // update currentlyPlaying after removing/adding a new song
-// fix LoadMoreSongs when the list is short
 
 function SongListX(props) {
+    const { ytPlayer } = props;
+    const playerStatus = usePlayerStatus(ytPlayer);
     const { tags, toggleTag } = useTags();
     const [songFilters, setSongFilters] = useState({
         title: '',
@@ -67,13 +68,10 @@ function SongListX(props) {
     const [editedSong, setEditedSong] = useState(null);
     const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
-    const currentSongItem = useRef(null);
     const hasMoreSongs = useRef(true);
-
-
+    const allowedRetries = useRef(0);
 
     useEffect(() => {
-        initAutoplay();
         const webSocket = musiqWebsocket.getInstance();
         const wsListeners = {
             message: (message) => {
@@ -115,77 +113,45 @@ function SongListX(props) {
         }
     }, [scrollPosition]);
 
+    // Handle player's status change
+    useEffect(() => {
+        switch(playerStatus) {
+            case 'FAILED':
+                if (allowedRetries.current > 0) {
+                    playSong();
+                    allowedRetries.current--;
+                }
+                break;
+            case 'ENDED':
+                dispatch({ type: 'PLAY_NEXT' });
+                break;
+        }
+    }, [playerStatus]);
+
     // Play a song with index equal to the currentlyPlaying
     useEffect(() => {
-        const playSong = () => {
-            const songItem = songs[currentlyPlaying];
-            if (songItem) {
-                currentSongItem.current = songItem;
-                const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-
-                if (videoIdMatch)
-                    loadVideoById(videoIdMatch[1]);
-                else
-                    props.getYtItems(songItem.title)
-                        .then(ytItems => {
-                            loadVideoById(ytItems.length > 0 ? ytItems[0].videoId : 'fakeVideoId'); // workaround for autoreplay
-                        })
-            } else
-                currentSongItem.current = null;
-        }
-
+        allowedRetries.current = 3;
         if (typeof currentplyPlaying === 'number' && currentlyPlaying >= songs.length) {
-                loadMore()
-                    .then(playSong);
+            loadMore()
+                .then(playSong);
         } else {
             playSong();
         }
     }, [currentlyPlaying]);
 
-    function initAutoplay() {
-        let retrier;
-        let songData = {
-            songItem: null,
-            retries: 0
-        };
-        const autoplayer = state => {
-            console.log('STATE: ', state.data);
-            if (state.data === 1) {         // PLAYING
-                clearTimeout(retrier);
-                songData = {
-                    songItem: currentSongItem.current,
-                    retries: 0
-                }
-            }
-            else if (state.data === -1) {   // UNSTARTED   /try with onError event
-                clearTimeout(retrier);
-                if (songData.songItem !== currentSongItem.current) {
-                    console.log('New song loaded!');
-                    songData = {
-                        songItem: currentSongItem.current,
-                        retries: 3
-                    }
-                }
-                else if (songData.songItem && songData.retries > 0) {
-                    console.log('Register retrier', songData.retries);
-                    retrier = setTimeout(() => {
-                        console.log('Retrying...');
-                        props.getYtItems(songData.songItem.title)
-                            .then(ytItems => {
-                                loadVideoById(ytItems.length > 0 ? ytItems[0].videoId : 'fakeVideoId'); // workaround for autoreplay
-                            });
-                    }, 1500);
-                    songData.retries--;
-                }
-            }
-            else if (state.data === 0) {                // FINISHED
-                dispatch({ type: 'PLAY_NEXT' });
-            }
+    function playSong() {
+        const songItem = songs[currentlyPlaying];
+        if (songItem) {
+            const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+            if (videoIdMatch)
+                ytPlayer.loadVideoById(videoIdMatch[1]);
+            else
+                props.getYtItems(songItem.title)
+                    .then(ytItems => {
+                        ytPlayer.loadVideoById(ytItems.length > 0 ? ytItems[0].videoId : 'fakeVideoId'); // workaround for autoretry
+                    });
         }
-
-        props.ytPlayer.addEventListener('onStateChange', autoplayer);
     }
-
 
     function pushNotification(text) {
         notification.open({
@@ -212,10 +178,6 @@ function SongListX(props) {
                 if (fetched === 0) hasMoreSongs.current = false;
                 setShouldShowLoader(false);
             });
-    }
-
-    function loadVideoById(videoId) {
-        props.ytPlayer.loadVideoById(videoId);
     }
 
     return (
