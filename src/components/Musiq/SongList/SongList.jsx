@@ -49,6 +49,7 @@ function switchSong({ currentlyPlaying }, action) {
 
 // TODO:
 // update currentlyPlaying after removing/adding a new song
+// onClick "Play" for the current song (it should try to replay that song (maybe, im not sure yet))
 
 function SongListX(props) {
     const { ytPlayer } = props;
@@ -249,11 +250,11 @@ function SongListX(props) {
     );
 }
 
-const mapStateToProps = state => {
-    return {
+const mapStateToProps = state => (
+    {
         ytPlayer: state.ytPlayer
-    };
-}
+    }
+);
 
 const mapDispatchToProps = dispatch => ({});
 

@@ -42,11 +42,11 @@ function DeviceListModalX(props) {
             title="Device list"
             visible={props.isVisible}
             onCancel={props.closeModal}
-            footer={[
+            footer={
                 <Button onClick={props.closeModal}>
                     Close
                 </Button>
-            ]}
+            }
         >
             <List
                 rowKey="name"
