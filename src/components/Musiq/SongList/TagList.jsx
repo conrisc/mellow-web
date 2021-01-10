@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { Drawer, List, Button, Input } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
@@ -7,11 +7,11 @@ export function TagList(props) {
     const { isVisible, setIsVisible } = props;
     const { tags } = useTagsState();
     const { toggleTag, addTag } = useTagsDispatch();
-    const tagNameInputRef = useRef();
+    const [tagName, setTagName] = useState('');
 
-    function handleAddTag() {
-        const tagName = tagNameInputRef.current.value;
-        addTag(tagName);
+    function handleTagNameChange(event) {
+        const name = event.target.value;
+        setTagName(name);
     }
 
     return (
@@ -37,8 +37,8 @@ export function TagList(props) {
 
                 }
             />
-            <Input ref={tagNameInputRef} />
-            <Button type="primary" onClick={handleAddTag}>Add tag</Button>
+            <Input value={tagName} onChange={handleTagNameChange} />
+            <Button type="primary" onClick={() => addTag(tagName)}>Add tag</Button>
         </Drawer>
     );
 }
