@@ -5,7 +5,7 @@ const { Option } = Select;
 import { NewSongModal } from './NewSongModal';
 
 export function SongFilterPanel(props) {
-    const { songFilters, setSongFilters, showTagsDrawer, tags, addSong } = props;
+    const { songFilters, setSongFilters, showTagsDrawer, addSong } = props;
     const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
 
     function handleTitleFilterChange(event) {
@@ -44,7 +44,6 @@ export function SongFilterPanel(props) {
     return (
         <>
             <NewSongModal
-                tags={tags}
                 addSong={addSong}
                 isVisible={isNewSongModalVisible}
                 closeModal={() => setIsNewSongModalVisible(false)}

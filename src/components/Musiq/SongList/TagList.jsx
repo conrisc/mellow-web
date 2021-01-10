@@ -1,30 +1,17 @@
 import React, { useRef } from 'react';
-import { UsersApi, TagItem } from 'what_api';
 import { Drawer, List, Button, Input } from 'antd';
 
+import { useTagsState, useTagsDispatch } from './TagsContext';
+
 export function TagList(props) {
-    const { isVisible, setIsVisible, tags, toggleTag } = props;
+    const { isVisible, setIsVisible } = props;
+    const { tags } = useTagsState();
+    const { toggleTag, addTag } = useTagsDispatch();
     const tagNameInputRef = useRef();
 
-    function addTag() {
+    function handleAddTag() {
         const tagName = tagNameInputRef.current.value;
-        if (!tagName.match(/^\w[\w\s-]*\w$/)) {
-            console.warn('Tag name does not match criteria!')
-            return;
-        }
-
-        const api = new UsersApi();
-
-        const opts = {
-            tagItem: new TagItem(tagName)
-        }
-
-        api.addTag(opts)
-            .then(data => {
-                console.log('API called successfully.', data);
-            }, error => {
-                console.error(error);
-            });
+        addTag(tagName);
     }
 
     return (
@@ -51,7 +38,7 @@ export function TagList(props) {
                 }
             />
             <Input ref={tagNameInputRef} />
-            <Button type="primary" onClick={addTag}>Add tag</Button>
+            <Button type="primary" onClick={handleAddTag}>Add tag</Button>
         </Drawer>
     );
 }

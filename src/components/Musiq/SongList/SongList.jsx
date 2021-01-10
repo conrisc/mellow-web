@@ -10,9 +10,9 @@ import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
 import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
+import { TagsProvider, useTagsState } from './TagsContext';
 
 import { useScroll } from 'CommonComponents/useScroll';
-import { useTags } from './useTags';
 import { useSongs } from './useSongs';
 import { usePlayerStatus } from './usePlayerStatus';
 
@@ -50,11 +50,12 @@ function switchSong({ currentlyPlaying }, action) {
 // TODO:
 // update currentlyPlaying after removing/adding a new song
 // onClick "Play" for the current song (it should try to replay that song (maybe, im not sure yet))
+// reload songs only on tag selection change
 
 function SongListX(props) {
     const { ytPlayer } = props;
     const playerStatus = usePlayerStatus(ytPlayer);
-    const { tags, toggleTag } = useTags();
+    const { tags } = useTagsState();
     const [songFilters, setSongFilters] = useState({
         title: '',
         skip: 0,
@@ -185,19 +186,16 @@ function SongListX(props) {
         <div style={{ padding: 8 }}>
             <TagList
                 toggleTag={(tagElement) => toggleTag(tagElement)}
-                tags={tags}
                 isVisible={isTagDrawerVisible}
                 setIsVisible={(i) => setIsTagDrawerVisible(i)}
             />
             {editedSong && <EditSongModal
-                tags={tags}
                 isVisible={!!editedSong}
                 closeModal={() => setEditedSong(null)}
                 songItem={editedSong}
                 updateSong={updateSong}
             />}
             <SongFilterPanel
-                tags={tags}
                 addSong={addSong}
                 songFilters={songFilters}
                 setSongFilters={setSongFilters}
@@ -238,7 +236,6 @@ function SongListX(props) {
                                 <Col>
                                     <SongInfoContainer
                                         songItem={songItem}
-                                        tags={tags}
                                     />
                                 </Col>
                             </Row>
@@ -258,4 +255,12 @@ const mapStateToProps = state => (
 
 const mapDispatchToProps = dispatch => ({});
 
-export const SongList = connect(mapStateToProps, mapDispatchToProps)(SongListX);
+const SongListConnected = connect(mapStateToProps, mapDispatchToProps)(SongListX);
+
+export function SongList(props) {
+    return (
+        <TagsProvider>
+            <SongListConnected {...props} />
+        </TagsProvider>
+    );
+}

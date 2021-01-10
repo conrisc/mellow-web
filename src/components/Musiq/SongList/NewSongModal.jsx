@@ -3,18 +3,13 @@ import { SongItem } from 'what_api';
 import { Modal, Select, Input } from 'antd';
 const { Option } = Select;
 
+import { useTagsState } from './TagsContext';
+
 export function NewSongModal(props) {
-    const { tags } = props;
     const [title, setTitle] = useState('');
     const [url, setUrl] = useState('');
-    const [songTags, setTags] = useState([]);
-
-    const tagsNameToIdMap = tags.reduce(
-        (acc, tagElement) => {
-            acc[tagElement.tagItem.name] = tagElement.tagItem.id;
-            return acc;
-        },
-    {});
+    const [songTags, setSongTags] = useState([]);
+    const { tags, tagsNameToIdMap } = useTagsState();
 
     function handleUrlChange(event) {
         const url = event.target.value;
@@ -39,7 +34,7 @@ export function NewSongModal(props) {
             .then(() => {
                 setTitle('');
                 setUrl('');
-                setTags([]);
+                setSongTags([]);
                 props.closeModal();
             });
     }
@@ -69,7 +64,7 @@ export function NewSongModal(props) {
                 style={{ width: '100%', margin: 8 }}
                 mode="multiple"
                 placeholder="Song tags"
-                onChange={setTags}
+                onChange={setSongTags}
             >
                 {tags.map(({tagItem}) => (
                     <Option key={tagItem.id} value={tagItem.name}>{tagItem.name}</Option>

@@ -3,26 +3,15 @@ import { SongItem } from 'what_api';
 import { Modal, Select, Input } from 'antd';
 const { Option } = Select;
 
+import { useTagsState } from './TagsContext';
+
 export function EditSongModal(props) {
-	const { songItem, tags } = props;
-
-    const tagsNameToIdMap = tags.reduce(
-        (acc, tagElement) => {
-            acc[tagElement.tagItem.name] = tagElement.tagItem.id;
-            return acc;
-        },
-	{});
-
-    const tagsIdToNameMap = tags.reduce(
-        (acc, tagElement) => {
-            acc[tagElement.tagItem.id] = tagElement.tagItem.name;
-            return acc;
-        },
-	{});
+    const { songItem } = props;
+    const { tags, tagsNameToIdMap, tagsIdToNameMap } = useTagsState();
 
     const [title, setTitle] = useState(songItem.title);
     const [url, setUrl] = useState(songItem.url);
-    const [songTags, setTags] = useState(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
+    const [songTags, setSongTags] = useState(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
 
     function handleUrlChange(event) {
         const url = event.target.value;
@@ -48,7 +37,7 @@ export function EditSongModal(props) {
             .catch(() => {
 				setTitle(songItem.title);
 				setUrl(songItem.url);
-				setTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
+				setSongTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
 			});
 
 		props.closeModal();
@@ -80,7 +69,7 @@ export function EditSongModal(props) {
                 style={{ width: '100%', margin: 8 }}
                 mode="multiple"
                 placeholder="Song tags"
-                onChange={setTags}
+                onChange={setSongTags}
                 defaultValue={songTags}
             >
                 {tags.map(({tagItem}) => (

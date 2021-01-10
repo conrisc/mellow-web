@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Tag, Tooltip } from 'antd';
 
+import { useTagsState } from './TagsContext';
+
 export function SongInfoContainer(props) {
-    const { songItem, tags } = props;
+    const { songItem, } = props;
     const [songTags, setTags] = useState([]);
     const dateAdded = new Date(songItem.dateAdded).toLocaleDateString();
-
-    const tagsIdToNameMap = tags.reduce(
-        (acc, tagElement) => { 
-            acc[tagElement.tagItem.id] = tagElement.tagItem.name;
-            return acc;
-        },
-    {});
+    const { tagsIdToNameMap } = useTagsState();
 
     useEffect(() => {
         setTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
