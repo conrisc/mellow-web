@@ -120,7 +120,7 @@ function SongListX(props) {
         switch(playerStatus) {
             case 'FAILED':
                 if (allowedRetries.current > 0) {
-                    playSong();
+                    playSongFromYT();
                     allowedRetries.current--;
                 }
                 break;
@@ -148,10 +148,17 @@ function SongListX(props) {
             if (videoIdMatch)
                 ytPlayer.loadVideoById(videoIdMatch[1]);
             else
-                props.getYtItems(songItem.title)
-                    .then(ytItems => {
-                        ytPlayer.loadVideoById(ytItems.length > 0 ? ytItems[0].videoId : 'fakeVideoId'); // workaround for autoretry
-                    });
+                playSongFromYT();
+        }
+    }
+
+    function playSongFromYT() {
+        const songItem = songs[currentlyPlaying];
+        if (songItem) {
+            props.getYtItems(songItem.title)
+                .then(ytItems => {
+                    ytPlayer.loadVideoById(ytItems.length > 0 ? ytItems[0].videoId : 'fakeVideoId'); // workaround for autoretry
+                });
         }
     }
 
