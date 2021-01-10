@@ -64,7 +64,7 @@ function SongListX(props) {
     });
 
     const { songs, getSongs, loadMoreSongs, addSong, updateSong, removeSong } = useSongs(tags, songFilters);
-    const [shouldShowLoader, setShouldShowLoader] = useState(true);
+    const [isLoadingSongs, setIsLoadingSongs] = useState(true);
     const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
     const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
@@ -163,22 +163,23 @@ function SongListX(props) {
     }
 
     function reloadSongs() {
-        setShouldShowLoader(true);
-        getSongs().finally(() => {
-            hasMoreSongs.current = true;
-            setShouldShowLoader(false);
-            dispatch({ type: 'RESET' });
-        });
+        setIsLoadingSongs(true);
+        getSongs()
+            .finally(() => {
+                hasMoreSongs.current = true;
+                setIsLoadingSongs(false);
+                dispatch({ type: 'RESET' });
+            });
     }
 
     function loadMore() {
-        if (!hasMoreSongs.current) return Promise.resolve();
+        if (!hasMoreSongs.current || isLoadingSongs) return Promise.resolve();
 
-        setShouldShowLoader(true);
+        setIsLoadingSongs(true);
         return loadMoreSongs()
             .then(({ fetched }) => {
                 if (fetched === 0) hasMoreSongs.current = false;
-                setShouldShowLoader(false);
+                setIsLoadingSongs(false);
             });
     }
 
@@ -204,7 +205,7 @@ function SongListX(props) {
             />
             <List
                 rowKey="id"
-                loading={shouldShowLoader}
+                loading={isLoadingSongs}
                 dataSource={songs}
                 renderItem={(songItem, index) => {
                     const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
