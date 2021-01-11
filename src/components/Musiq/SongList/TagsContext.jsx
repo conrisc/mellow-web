@@ -8,12 +8,12 @@ const TagsDispatchContext = createContext();
 export function TagsProvider({ children }) {
 	const {
 		tags, tagsNameToIdMap, tagsIdToNameMap,
-		toggleTag, addTag
+		toggleTag, addTag, removeTag
 	} = useTags();
 
 	return (
 		<TagsStateContext.Provider value={{ tags, tagsNameToIdMap, tagsIdToNameMap }}>
-			<TagsDispatchContext.Provider value={{ toggleTag, addTag }}>
+			<TagsDispatchContext.Provider value={{ toggleTag, addTag, removeTag }}>
 				{ children }
 			</TagsDispatchContext.Provider>
 		</TagsStateContext.Provider>

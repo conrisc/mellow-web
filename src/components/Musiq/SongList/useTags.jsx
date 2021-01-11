@@ -60,7 +60,7 @@ export function useTags() {
     function addTag(tagName) {
         if (typeof tagName !== 'string' || !tagName.match(/^\w[\w\s-]*\w$/)) {
             console.warn('Tag name does not match criteria!')
-            return;
+            return Promise.resolve(false);
         }
 
         const api = new UsersApi();
@@ -69,12 +69,27 @@ export function useTags() {
             tagItem: new TagItem(tagName)
         }
 
-        api.addTag(opts)
+        return api.addTag(opts)
             .then(data => {
                 console.log('API called successfully.', data);
                 getTags(); // temporary?
-            }, error => {
+                return true;
+            })
+            .catch(error => {
                 console.error(error);
+                return false;
+            });
+    }
+
+    function removeTag(tagId) {
+        const api = new UsersApi();
+        return api.removeTag(tagId)
+            .then(() => {
+                console.log('Tag successfuly removed');
+                getTags(); // temporary?
+            })
+            .catch(error => {
+                console.error('Error while removing the tag: ', error);
             });
     }
 
@@ -83,6 +98,7 @@ export function useTags() {
         tagsNameToIdMap,
         tagsIdToNameMap,
         toggleTag,
-        addTag
+        addTag,
+        removeTag
 	};
 }

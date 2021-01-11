@@ -64,6 +64,7 @@ export function NewSongModal(props) {
                 style={{ width: '100%', margin: 8 }}
                 mode="multiple"
                 placeholder="Song tags"
+                value={songTags}
                 onChange={setSongTags}
             >
                 {tags.map(({tagItem}) => (
