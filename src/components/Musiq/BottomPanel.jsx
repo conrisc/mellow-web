@@ -3,23 +3,26 @@ import { connect } from 'react-redux';
 import { Row, Col, Button, Slider } from 'antd';
 
 function BottomPanelX(props) {
+    const { ytPlayer } = props;
     const [time, setTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
 
     useEffect(() => {
+        if (!ytPlayer) return;
+
         const timeUpdater = setInterval(() => {
-            const currentTime = props.ytPlayer.getCurrentTime && props.ytPlayer.getCurrentTime() || 0;
+            const currentTime = ytPlayer.getCurrentTime && ytPlayer.getCurrentTime() || 0;
             const floorTime = Math.floor(currentTime);
             setTime(floorTime);
         }, 200);
 
-        props.ytPlayer.addEventListener('onStateChange', updateVideoDuration);
+        ytPlayer.addEventListener('onStateChange', updateVideoDuration);
 
         return () => {
             clearInterval(timeUpdater);
         }
-    }, [])
+    }, [ytPlayer])
 
     function updateVideoDuration(state) {
         if (state.data === 1) {

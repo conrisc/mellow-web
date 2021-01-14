@@ -138,7 +138,7 @@ function NotepadN(props) {
                         createEmptyNote={createEmptyNote} />
                 </Col>
                 <Col span={noteId ? 12 : 0}>
-                    <Button href="/notepad" type="primary" icon={<i className="fas fa-angle-left"></i>} className="d-none-lg" />
+                    <Button href="/notepad" type="primary" icon={<i className="fas fa-angle-left"></i>} className="hide-on-lg" />
                     { 
                         note ?
                         <NoteEditor note={note} onNoteChange={onNoteChange} /> :

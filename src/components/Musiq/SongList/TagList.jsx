@@ -92,7 +92,7 @@ export function TagList(props) {
             >
                 {content}
             </Drawer>
-            <div className="tag-list hide-on-xs">
+            <div className="tag-list hide-on-xs side-bar">
                 {content}
             </div>
         </>

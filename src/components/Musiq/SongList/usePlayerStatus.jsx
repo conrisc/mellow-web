@@ -4,6 +4,8 @@ export function usePlayerStatus(ytPlayer) {
 	const [status, setStatus] = useState('')
 
 	useEffect(() => {
+		if (!ytPlayer) return;
+
 		let currentVideoId = '';
 		let retrier = null;
 		function stateListener({ data, target }) {
@@ -35,7 +37,7 @@ export function usePlayerStatus(ytPlayer) {
 		}
 
 		ytPlayer.addEventListener('onStateChange', stateListener);
-	}, []);
+	}, [ytPlayer]);
 
 	return status; // INITIALIZED, LOADED, RETRYING, FAILED, ENDED
 }

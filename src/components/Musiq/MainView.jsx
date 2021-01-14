@@ -85,7 +85,6 @@ export class MainView extends React.Component {
                     />,
                 span: 16,
                 name: 'SONG LIST',
-                customStyles: '',
                 customClasses: ''
             },
             {
@@ -98,7 +97,6 @@ export class MainView extends React.Component {
                     />,
                 span: 8,
                 name: 'YT LIST',
-                customStyles: 'yt-list',
                 customClasses: 'red'
             }
         ];
@@ -115,7 +113,7 @@ export class MainView extends React.Component {
                             xs={index === this.state.visibleView ? 24 : 0}
                             sm={index === this.state.visibleView ? 24 : 0}
                             lg={view.span}
-                            className={view.customStyles}>
+                        >
                             {view.item}
                         </Col>
                     ))

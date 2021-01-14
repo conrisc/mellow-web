@@ -2,13 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { musiqWebsocket } from 'Services/musiqWebsocket';
-import { YtPlayer } from './YtPlayer';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
 
 function MusiqX(props) {
-    const { ytPlayer, setOnline, setOffline } = props;
+    const { setOnline, setOffline } = props;
     const webSocket = useRef(musiqWebsocket.getInstance({ setOnline, setOffline }));
 
     useEffect(() => {
@@ -22,22 +21,15 @@ function MusiqX(props) {
 
     return (
         <div>
-            {ytPlayer &&
-                <div>
-                    <TopPanel />
-                    <MainView />
-                    <BottomPanel />
-                </div>
-            }
-            <YtPlayer />
+            <TopPanel />
+            <MainView />
+            {/* <BottomPanel /> */}
         </div>
     );
 };
 
 const mapStateToProps = state => {
-    return {
-        ytPlayer: state.ytPlayer
-    };
+    return {};
 }
 
 const mapDispatchToProps = dispatch => {

@@ -6,18 +6,14 @@ import { debounce } from 'throttle-debounce';
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
 
-const hideClass = 'transform-right-100';
-
 function YtPlayerX(props) {
-    const playerContainerRef = useRef();
     const playerRef = useRef();
 
     useEffect(() => {
         loadYT.then(YT => {
             props.setYtPlayer(
                 new YT.Player(playerRef.current, {
-                    height: 360,
-                    width: 640
+                    playerVars: { controls: 2, modestbranding: 1 }
                 })
             );
         });
@@ -84,8 +80,8 @@ function YtPlayerX(props) {
     }
 
     return (
-        <div ref={playerContainerRef} className={"yt-player-container smooth-transform " + hideClass} >
-            <div ref={playerRef} className="w-100" />
+        <div className={"yt-player-container"} >
+            <div ref={playerRef} className="w-100" style={{ height: 300 }} />
         </div>
     );
 }

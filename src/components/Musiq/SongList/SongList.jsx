@@ -193,7 +193,7 @@ function SongListX(props) {
     }
 
     return (
-        <Row gutter={8}>
+        <Row>
             <Col xs={0} lg={6}>
                 <TagList
                     toggleTag={(tagElement) => toggleTag(tagElement)}
@@ -201,7 +201,7 @@ function SongListX(props) {
                     setIsVisible={(i) => setIsTagDrawerVisible(i)}
                 />
             </Col>
-            <Col xs={24} lg={18}>
+            <Col xs={24} lg={18} className="song-list">
                 {editedSong && <EditSongModal
                     isVisible={!!editedSong}
                     closeModal={() => setEditedSong(null)}

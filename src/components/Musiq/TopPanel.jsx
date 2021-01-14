@@ -63,7 +63,7 @@ function TopPanelX(props) {
                 </Col>
                 <Button type="link" href='/'>Go Back</Button>
             </Row>
-            <Button type="primary" className="remote-btn d-none-lg pos-absolute lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</Button>
+            <Button type="primary" className="remote-btn hide-on-lg pos-absolute lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</Button>
         </div>
     );
 }
