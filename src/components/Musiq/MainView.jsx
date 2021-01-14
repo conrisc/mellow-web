@@ -83,6 +83,7 @@ export class MainView extends React.Component {
                         getYtItems={t => this.getYtItems(t)}
                         showYtTab={() => this.showYtTab()}
                     />,
+                span: 16,
                 name: 'SONG LIST',
                 customStyles: '',
                 customClasses: ''
@@ -95,6 +96,7 @@ export class MainView extends React.Component {
                         getYtItemsDebounced={t => this.getYtItemsDebounced(t)}
                         isFetchingYtItems={this.state.isFetchingYtItems}
                     />,
+                span: 8,
                 name: 'YT LIST',
                 customStyles: 'yt-list',
                 customClasses: 'red'
@@ -110,9 +112,9 @@ export class MainView extends React.Component {
                 {this.getViews()
                     .map((view, index)=> (
                         <Col key={index}
-                            xs={{span: index === this.state.visibleView ? 24 : 0}}
-                            sm={{span: index === this.state.visibleView ? 24 : 0}}
-                            lg={{span: 12}}
+                            xs={index === this.state.visibleView ? 24 : 0}
+                            sm={index === this.state.visibleView ? 24 : 0}
+                            lg={view.span}
                             className={view.customStyles}>
                             {view.item}
                         </Col>

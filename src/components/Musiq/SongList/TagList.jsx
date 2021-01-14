@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Drawer, List, Button, Input, Modal } from 'antd';
+import { Drawer, List, Button, Input, Modal, Typography } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
 
@@ -52,14 +52,8 @@ export function TagList(props) {
             });
     }
 
-    return (
-         <Drawer
-            title="Tag list"
-            placement="left"
-            closable={true}
-            onClose={() => setIsVisible(false)}
-            visible={isVisible}
-        >
+    const content = <>
+            <Typography.Title level={4}>Tag list</Typography.Title>
             <List
                 size="small"
                 dataSource={tags}
@@ -85,6 +79,22 @@ export function TagList(props) {
             />
             <Input value={tagName} onChange={handleTagNameChange} />
             <Button type="primary" onClick={handleAddTag}>Add tag</Button>
-        </Drawer>
+        </>
+
+    return (
+        <>
+            <Drawer
+                className="hide-on-lg"
+                placement="left"
+                closable={true}
+                onClose={() => setIsVisible(false)}
+                visible={isVisible}
+            >
+                {content}
+            </Drawer>
+            <div className="tag-list hide-on-xs">
+                {content}
+            </div>
+        </>
     );
 }

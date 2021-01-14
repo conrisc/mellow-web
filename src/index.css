@@ -89,7 +89,7 @@ body, p {
     bottom: 0;
     right: 0;
     z-index: 50;
-    width: 50%;
+    width: 33.3%;
     height: 38px;
     line-height: 38px;
     background: #afbacf;
@@ -119,6 +119,16 @@ body, p {
     padding: 16px;
     overscroll-behavior-y: contain;
     background-color: #424242;
+}
+
+.tag-list {
+    position: sticky;
+    top: 52px;
+    padding: 8px;
+}
+
+.hide-on-lg {
+    display: none;
 }
 
 .yt-search, .yt-search input, .yt-search svg {
@@ -191,6 +201,14 @@ body, p {
         position: relative;
         top: 0;
         margin-bottom: 86px;
+    }
+
+    .hide-on-xs {
+        display: none;
+    }
+
+    .hide-on-lg {
+        display: initial;
     }
 
     .control-panel {

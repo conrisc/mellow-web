@@ -193,67 +193,71 @@ function SongListX(props) {
     }
 
     return (
-        <div style={{ padding: 8 }}>
-            <TagList
-                toggleTag={(tagElement) => toggleTag(tagElement)}
-                isVisible={isTagDrawerVisible}
-                setIsVisible={(i) => setIsTagDrawerVisible(i)}
-            />
-            {editedSong && <EditSongModal
-                isVisible={!!editedSong}
-                closeModal={() => setEditedSong(null)}
-                songItem={editedSong}
-                updateSong={updateSong}
-            />}
-            <SongFilterPanel
-                addSong={addSong}
-                songFilters={songFilters}
-                setSongFilters={setSongFilters}
-                showTagsDrawer={() => setIsTagDrawerVisible(true)}
-                showNewSongModal={() => setIsNewSongModalVisible(true)}
-            />
-            <List
-                rowKey="id"
-                loading={isLoadingSongs}
-                dataSource={songs}
-                renderItem={(songItem, index) => {
-                    const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
-                    const videoId = videoIdMatch ? videoIdMatch[1] : '';
-                    return (
-                        <List.Item
-                            style={{paddingLeft: 8, paddingRight: 8}}
-                            className={index === currentlyPlaying ? 'item-selected' : ''} 
-                            extra={
-                                <SongActionButtons 
-                                    songItem={songItem}
-                                    videoId={videoId}
-                                    getYtItems={props.getYtItems}
-                                    showYtTab={props.showYtTab}
-                                    loadVideo={props.loadVideo}
-                                    editSong={() => setEditedSong(songItem)}
-                                    removeSong={(id) => removeSong(id)}
-                                />
-                            }
-                        >
-                            <Row gutter={16}>
-                                <Col>
-                                    <Button type="primary"
-                                        onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
-                                        title="Play song on this device">
-                                            <i className="fas fa-play"></i>
-                                    </Button>
-                                </Col>
-                                <Col>
-                                    <SongInfoContainer
+        <Row gutter={8}>
+            <Col xs={0} lg={6}>
+                <TagList
+                    toggleTag={(tagElement) => toggleTag(tagElement)}
+                    isVisible={isTagDrawerVisible}
+                    setIsVisible={(i) => setIsTagDrawerVisible(i)}
+                />
+            </Col>
+            <Col xs={24} lg={18}>
+                {editedSong && <EditSongModal
+                    isVisible={!!editedSong}
+                    closeModal={() => setEditedSong(null)}
+                    songItem={editedSong}
+                    updateSong={updateSong}
+                />}
+                <SongFilterPanel
+                    addSong={addSong}
+                    songFilters={songFilters}
+                    setSongFilters={setSongFilters}
+                    showTagsDrawer={() => setIsTagDrawerVisible(true)}
+                    showNewSongModal={() => setIsNewSongModalVisible(true)}
+                />
+                <List
+                    rowKey="id"
+                    loading={isLoadingSongs}
+                    dataSource={songs}
+                    renderItem={(songItem, index) => {
+                        const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+                        const videoId = videoIdMatch ? videoIdMatch[1] : '';
+                        return (
+                            <List.Item
+                                style={{paddingLeft: 8, paddingRight: 8}}
+                                className={index === currentlyPlaying ? 'item-selected' : ''}
+                                extra={
+                                    <SongActionButtons
                                         songItem={songItem}
+                                        videoId={videoId}
+                                        getYtItems={props.getYtItems}
+                                        showYtTab={props.showYtTab}
+                                        loadVideo={props.loadVideo}
+                                        editSong={() => setEditedSong(songItem)}
+                                        removeSong={(id) => removeSong(id)}
                                     />
-                                </Col>
-                            </Row>
-                        </List.Item>
-                    );
-                }}
-            />
-        </div>
+                                }
+                            >
+                                <Row gutter={16}>
+                                    <Col>
+                                        <Button type="primary"
+                                            onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
+                                            title="Play song on this device">
+                                                <i className="fas fa-play"></i>
+                                        </Button>
+                                    </Col>
+                                    <Col>
+                                        <SongInfoContainer
+                                            songItem={songItem}
+                                        />
+                                    </Col>
+                                </Row>
+                            </List.Item>
+                        );
+                    }}
+                />
+            </Col>
+        </Row>
     );
 }
 

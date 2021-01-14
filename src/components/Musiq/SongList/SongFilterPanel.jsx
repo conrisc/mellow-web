@@ -53,7 +53,7 @@ export function SongFilterPanel(props) {
                 gutter={8}
                 style={{ padding: 8 }}
             >
-                <Col>
+                <Col lg={0}>
                     <Button onClick={showTagsDrawer}>
                         <i className="fas fa-tags"></i>
                     </Button>
