@@ -172,6 +172,7 @@ function SongListX(props) {
     }
 
     function reloadSongs() {
+        document.documentElement.scrollTo(0, 0);
         setIsLoadingSongs(true);
         getSongs()
             .finally(() => {
@@ -201,7 +202,7 @@ function SongListX(props) {
                     setIsVisible={(i) => setIsTagDrawerVisible(i)}
                 />
             </Col>
-            <Col xs={24} lg={18} className="song-list">
+            <Col xs={24} lg={18}>
                 {editedSong && <EditSongModal
                     isVisible={!!editedSong}
                     closeModal={() => setEditedSong(null)}
@@ -216,6 +217,7 @@ function SongListX(props) {
                     showNewSongModal={() => setIsNewSongModalVisible(true)}
                 />
                 <List
+                    className="song-list"
                     rowKey="id"
                     loading={isLoadingSongs}
                     dataSource={songs}
