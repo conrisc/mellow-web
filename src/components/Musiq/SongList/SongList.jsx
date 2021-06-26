@@ -193,6 +193,24 @@ function SongListX(props) {
             });
     }
 
+    function onSongClick(songIndex) {
+        if (songIndex === currentlyPlaying) {
+            switch(playerStatus) {
+                case 'LOADED':
+                    ytPlayer.pauseVideo();
+                    break;
+                case 'PAUSED':
+                case 'ENDED':
+                    ytPlayer.playVideo();
+                    break;
+                case 'FAILED':
+                    playSongFromYT();
+            }
+        } else {
+            dispatch({ type: 'PLAY_BY_INDEX', songIndex });
+        }
+    }
+
     return (
         <Row>
             <Col xs={0} lg={6}>
@@ -226,7 +244,7 @@ function SongListX(props) {
                         const videoId = videoIdMatch ? videoIdMatch[1] : '';
                         return (
                             <List.Item
-                                onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
+                                onClick={() => onSongClick(index)}
                                 className={index === currentlyPlaying ? 'song-item item-selected' : 'song-item'}
                                 extra={
                                     <SongActionButtons

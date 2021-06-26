@@ -29,10 +29,12 @@ export function usePlayerStatus(ytPlayer) {
 				case 0:			// ENDED
 					setStatus('ENDED')
 					break;
-				// case 2:	// PAUSED
-				// case 3:	// LOADING
-				// case 5:	// CUED
-				// default:
+				case 2:	// PAUSED
+					setStatus('PAUSED')
+					break;
+				case 3:	// LOADING
+				case 5:	// CUED
+				default:
 			}
 		}
 
