@@ -191,8 +191,14 @@ body, p {
 .song-item {
     padding-right: 12px;
     padding-left: 12px;
-    transition: background-color 0.3s linear, box-shadow 0.3s linear, margin 0.3s linear;
+    transition: margin 0.2s linear;
+    cursor: pointer;
     flex-wrap: nowrap;
+}
+
+.song-item:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 5px -2px #aaa;
 }
 
 /* It should be mobile first: @media only screen and (min-width: 993px)*/
