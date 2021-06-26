@@ -65,7 +65,7 @@ export function SongActionButtons(props) {
     );
 
     return (
-        <Space>
+        <Space onClick={(e) => e.stopPropagation()}>
             <Button
                 onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
                 title="Play song on other devices">

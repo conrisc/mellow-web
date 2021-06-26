@@ -226,6 +226,7 @@ function SongListX(props) {
                         const videoId = videoIdMatch ? videoIdMatch[1] : '';
                         return (
                             <List.Item
+                                onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
                                 className={index === currentlyPlaying ? 'song-item item-selected' : 'song-item'}
                                 extra={
                                     <SongActionButtons
@@ -241,11 +242,7 @@ function SongListX(props) {
                             >
                                 <Row gutter={16} style={{ flexWrap: 'nowrap' }}>
                                     <Col>
-                                        <Button type="primary"
-                                            onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
-                                            title="Play song on this device">
-                                                <i className="fas fa-play"></i>
-                                        </Button>
+                                        <i className="fas fa-play"></i>
                                     </Col>
                                     <Col>
                                         <SongInfoContainer
