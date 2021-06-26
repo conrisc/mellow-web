@@ -205,9 +205,24 @@ function SongListX(props) {
                     break;
                 case 'FAILED':
                     playSongFromYT();
+                    break;
             }
         } else {
             dispatch({ type: 'PLAY_BY_INDEX', songIndex });
+        }
+    }
+
+    function getIconForCurrentSong() {
+        switch(playerStatus) {
+            case 'PAUSED':
+                return  <div><i className="fas fa-pause-circle"></i></div>
+            case 'ENDED':
+                return  <div><i className="fas fa-play-circle"></i></div>
+            case 'FAILED':
+                return  <p><i className="fas fa-exclamation-circle"></i></p>
+            case 'LOADED':
+            default:
+                return  <span><i className="fas fa-compact-disc fa-spin"></i></span>
         }
     }
 
@@ -261,8 +276,8 @@ function SongListX(props) {
                                 <Row gutter={16} style={{ flexWrap: 'nowrap' }}>
                                     <Col style={{ fontSize: 32, color: '#6158c4' }}>
                                         {index === currentlyPlaying
-                                            ? <span><i className="fas fa-compact-disc fa-spin"></i></span> // icon needs to be wrapped up so React could hold a reference to it
-                                            : <div><i className="fas fa-play-circle"></i></div>
+                                            ? <div>{getIconForCurrentSong()}</div>    // icon needs to be wrapped up so React could hold a reference to it
+                                            : <span><i className="fas fa-play-circle"></i></span>
                                         }
                                     </Col>
                                     <Col>
