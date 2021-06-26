@@ -241,8 +241,11 @@ function SongListX(props) {
                                 }
                             >
                                 <Row gutter={16} style={{ flexWrap: 'nowrap' }}>
-                                    <Col>
-                                        <i className="fas fa-play"></i>
+                                    <Col style={{ fontSize: 32, color: '#6158c4' }}>
+                                        {index === currentlyPlaying
+                                            ? <span><i className="fas fa-compact-disc fa-spin"></i></span> // icon needs to be wrapped up so React could hold a reference to it
+                                            : <div><i className="fas fa-play-circle"></i></div>
+                                        }
                                     </Col>
                                     <Col>
                                         <SongInfoContainer
