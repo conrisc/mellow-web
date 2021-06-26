@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dropdown, Menu, Modal } from 'antd';
+import { Button, Dropdown, Menu, Modal, Space } from 'antd';
 
 export function SongActionButtons(props) {
     const { songItem, removeSong } = props;
@@ -65,7 +65,7 @@ export function SongActionButtons(props) {
     );
 
     return (
-        <div>
+        <Space>
             <Button
                 onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
                 title="Play song on other devices">
@@ -76,6 +76,6 @@ export function SongActionButtons(props) {
                     <i className="fas fa-ellipsis-v"></i>
                 </Button>
             </Dropdown>
-        </div>
+        </Space>
     );
 }
