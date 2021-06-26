@@ -183,7 +183,15 @@ body, p {
 }
 
 .item-selected {
-    background-color: #efefef;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 5px -2px #666;
+    margin: 6px 0;
+}
+
+.song-item {
+    padding-right: 12px;
+    padding-left: 12px;
+    transition: background-color 0.3s linear, box-shadow 0.3s linear, margin 0.3s linear;
 }
 
 /* It should be mobile first: @media only screen and (min-width: 993px)*/

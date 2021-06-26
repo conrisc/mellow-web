@@ -226,8 +226,7 @@ function SongListX(props) {
                         const videoId = videoIdMatch ? videoIdMatch[1] : '';
                         return (
                             <List.Item
-                                style={{paddingLeft: 8, paddingRight: 8}}
-                                className={index === currentlyPlaying ? 'item-selected' : ''}
+                                className={index === currentlyPlaying ? 'song-item item-selected' : 'song-item'}
                                 extra={
                                     <SongActionButtons
                                         songItem={songItem}
@@ -240,7 +239,7 @@ function SongListX(props) {
                                     />
                                 }
                             >
-                                <Row gutter={16}>
+                                <Row gutter={16} style={{ flexWrap: 'nowrap' }}>
                                     <Col>
                                         <Button type="primary"
                                             onClick={() => dispatch({ type: 'PLAY_BY_INDEX', songIndex: index})}
