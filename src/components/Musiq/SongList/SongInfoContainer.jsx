@@ -16,7 +16,7 @@ export function SongInfoContainer(props) {
 
     return (
         <>
-            <h3 className="bold">{songItem.title}</h3>
+            <h4 className="bold">{songItem.title}</h4>
             <div>
                 {songTags.map((tagName, index) =>
                     <Tag key={index} color="geekblue">

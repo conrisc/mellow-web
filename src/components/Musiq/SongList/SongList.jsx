@@ -260,7 +260,7 @@ function SongListX(props) {
                         return (
                             <List.Item
                                 onClick={() => onSongClick(index)}
-                                className={index === currentlyPlaying ? 'song-item item-selected' : 'song-item'}
+                                className={'song-item f-size-medium' + (index === currentlyPlaying ? ' item-selected' : '')}
                                 extra={
                                     <SongActionButtons
                                         songItem={songItem}

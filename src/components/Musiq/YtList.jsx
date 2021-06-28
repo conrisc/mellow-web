@@ -20,7 +20,7 @@ function YtListX(props) {
     return (
         <div className="yt-list side-bar">
             <YtPlayer />
-            <div style={{ padding: 16 }}>
+            <div style={{ padding: 12 }}>
                 <Input
                     className="yt-search"
                     allowClear={true}
@@ -39,14 +39,14 @@ function YtListX(props) {
                             dataSource={props.ytItems}
                             renderItem={
                                 (el) => (
-                                    <List.Item style={{ borderBottom: '1px solid #555959'}}>
+                                    <List.Item className="f-size-medium" style={{ borderBottom: '1px solid #555959'}}>
                                         <Row justify="space-between" style={{ width: '100%', flexWrap: 'nowrap' }}>
                                             <Col flex="1 1 auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
                                                 <a href={`https://youtube.com/watch?v=${el.videoId}`}
                                                     target="_blank" rel="noopener noreferrer"
                                                     title="Open song in youtube"
                                                 >
-                                                    <h3 style={{ color: '#ececec', marginRight: 16, overflow: 'hidden', textOverflow: 'ellipsis' }}>{el.title}</h3>
+                                                    <h4 style={{ color: '#ececec', marginRight: '1em', overflow: 'hidden', textOverflow: 'ellipsis' }}>{el.title}</h4>
                                                 </a>
                                                 <Space className="mt-1">
                                                     <Button onClick={() => props.loadVideo(el.videoId)}>
@@ -57,7 +57,7 @@ function YtListX(props) {
                                                     </Button>
                                                 </Space>
                                             </Col>
-                                            <Col flex="0 0 120px">
+                                            <Col className="yt-image">
                                                 <img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
                                                 {/* <img src={el.thumbnailUrl}></img> */}
                                             </Col>

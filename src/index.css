@@ -106,7 +106,7 @@ body, p {
 }
 
 .song-list {
-    padding: 16px;
+    padding: 12px;
 }
 
 .side-bar {
@@ -133,7 +133,7 @@ body, p {
     top: var(--header-height);
     background-color: #fff;
     z-index: 50;
-    padding: 16px;
+    padding: 12px;
     border-bottom: 1px solid #eee;
 }
 
@@ -159,7 +159,7 @@ body, p {
 }
 
 .smooth-bg {
-    transition: background 0.1s linear;
+    transition: background-color 0.1s linear;
 }
 
 .smooth-transform {
@@ -189,8 +189,7 @@ body, p {
 }
 
 .song-item {
-    padding-right: 12px;
-    padding-left: 12px;
+    padding: 8px 12px;
     transition: margin 0.2s linear;
     cursor: pointer;
     flex-wrap: nowrap;
@@ -199,6 +198,19 @@ body, p {
 .song-item:hover {
     background-color: #f9f9f9;
     box-shadow: 0 1px 5px -2px #aaa;
+}
+
+.yt-image {
+    flex: 0 0 120px;
+    align-self: center;
+}
+
+.yt-image img {
+    width: 120px;
+}
+
+.f-size-medium {
+    font-size: 16px;
 }
 
 /* It should be mobile first: @media only screen and (min-width: 993px)*/
@@ -261,6 +273,18 @@ body, p {
 
     .z-depth-2-sm {
         box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3) 
+    }
+
+    .yt-image {
+        flex: 0 0 80px;
+    }
+
+    .yt-image img {
+        width: 80px
+    }
+
+    .f-size-medium {
+        font-size: 14px;
     }
 }
 
