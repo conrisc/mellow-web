@@ -37,31 +37,41 @@ function TopPanelX(props) {
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white z-depth-1 z-depth-2-sm center-align">
             <DeviceListController isVisible={isDeviceListVisible} closeModal={() => setIsDeviceListVisible(false)} />
-            <Row gutter={16}>
+            <Row gutter={[16, 8]} justify="center">
                 <Col>
-                    <Button type="primary" disabled={props.isOnline ? true : false} onClick={() => webSocket.open()}>Connect</Button>
+                    <Button type="text" disabled={props.isOnline ? true : false} onClick={() => webSocket.open()}>Connect</Button>
                 </Col>
                 <Col>
-                    <Button onClick={play}>Play</Button>
+                    <Button onClick={play}>
+                        <i className="fas fa-play"></i>
+                    </Button>
                 </Col>
                 <Col>
-                    <Button onClick={pause}>Pause</Button>
+                    <Button onClick={pause}>
+                        <i className="fas fa-pause"></i>
+                    </Button>
                 </Col>
-                <Col span={2}>
+                <Col xs={24} lg={3}>
                     <Slider defaultValue={100} onChange={setVolume} />
                 </Col>
                 <Col>
-                    <Button onClick={playPrevious}>Previous</Button>
-                </Col>
-                <Col>
-                    <Button onClick={playNext}>Next</Button>
-                </Col>
-                <Col>
-                    <Button onClick={() => setIsDeviceListVisible(true)}>
-                        Devices
+                    <Button onClick={playPrevious}>
+                        <i className="fas fa-backward"></i>
                     </Button>
                 </Col>
-                <Button type="link" href='/'>Go Back</Button>
+                <Col>
+                    <Button onClick={playNext}>
+                        <i className="fas fa-forward"></i>
+                    </Button>
+                </Col>
+                <Col>
+                    <Button type="ghost" onClick={() => setIsDeviceListVisible(true)}>
+                        <i className="fas fa-server"></i>
+                    </Button>
+                </Col>
+                <Col>
+                    <Button type="text" href='/'>Go Back</Button>
+                </Col>
             </Row>
             <Button type="primary" className="remote-btn hide-on-lg pos-absolute lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</Button>
         </div>

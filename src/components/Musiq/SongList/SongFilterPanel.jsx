@@ -50,7 +50,7 @@ export function SongFilterPanel(props) {
             />
             <Row
                 justify="space-between"
-                gutter={8}
+                gutter={[8, 4]}
                 className="song-filter"
             >
                 <Col lg={0}>
