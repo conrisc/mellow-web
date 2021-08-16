@@ -93,7 +93,8 @@ export function SongFilterPanel(props) {
                         value={songFilters.sort}
                         onChange={handleSortFilterChange}
                     >
-                        <Option value="none">None</Option>
+                        <Option value="addedDate_desc">Latest</Option>
+                        <Option value="addedDate_asc">Oldest</Option>
                         <Option value="title_asc">Title Asc</Option>
                         <Option value="title_desc">Title Desc</Option>
                         <Option value="random">Random</Option>
