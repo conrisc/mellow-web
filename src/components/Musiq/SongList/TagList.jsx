@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useHistory } from "react-router-dom";
 import { Drawer, List, Button, Input, Modal, Typography, Row, Col } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
@@ -15,12 +16,27 @@ function RemoveTagButton(props) {
     );
 }
 
+const TAGS_QUERY_PARAM = 'tags';
+
 export function TagList(props) {
     const { isVisible, setIsVisible } = props;
     const { tags } = useTagsState();
     const { toggleTag, addTag, removeTag } = useTagsDispatch();
     const [tagName, setTagName] = useState('');
     const [hoveredTag, setHoveredTag] = useState();
+    const searchQuery = useLocation().search;
+    const history = useHistory();
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(searchQuery);
+        searchParams.getAll(TAGS_QUERY_PARAM)
+            .map(tagName =>
+                tags.find(tagElement => tagElement.tagItem.name === tagName)
+            )
+            .filter(tagElement => tagElement && !tagElement.selected)
+            .forEach(tagElement => toggleTag(tagElement));
+
+    }, [tags]);
 
     function handleTagNameChange(event) {
         const name = event.target.value;
@@ -52,6 +68,24 @@ export function TagList(props) {
             });
     }
 
+    function handleClickTag(tagElement) {
+        const searchParams = new URLSearchParams(searchQuery);
+        if (tagElement.selected) {
+            const selectedTags = searchParams.getAll(TAGS_QUERY_PARAM)
+                .filter(tagName => tagName !== tagElement.tagItem.name);
+            searchParams.delete(TAGS_QUERY_PARAM);
+            selectedTags.forEach(tagName =>
+                searchParams.append(TAGS_QUERY_PARAM, tagName)
+            );
+        } else {
+            searchParams.append(TAGS_QUERY_PARAM, tagElement.tagItem.name);
+        }
+        history.push({
+            search: searchParams.toString()
+        });
+        toggleTag(tagElement);
+    }
+
     const content = <>
             <Typography.Title level={4}>Tag list</Typography.Title>
             <Row justify="center">
@@ -76,7 +110,7 @@ export function TagList(props) {
                             }
                             key={tagElement.tagItem.id}
                             className={tagElement.selected ? 'item-selected' : ''}
-                            onClick={() => toggleTag(tagElement)}
+                            onClick={() => handleClickTag(tagElement)}
                             onMouseEnter={() => setHoveredTag(tagElement)}
                             onMouseLeave={() => setHoveredTag()}
                         >

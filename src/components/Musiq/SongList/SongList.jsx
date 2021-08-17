@@ -230,7 +230,6 @@ function SongListX(props) {
         <Row>
             <Col xs={0} lg={6}>
                 <TagList
-                    toggleTag={(tagElement) => toggleTag(tagElement)}
                     isVisible={isTagDrawerVisible}
                     setIsVisible={(i) => setIsTagDrawerVisible(i)}
                 />
