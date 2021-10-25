@@ -5,6 +5,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { TopPanel } from './TopPanel';
 import { MainView } from './MainView';
 import { BottomPanel } from './BottomPanel';
+import { SpotifyBox } from './SpotifyBox';
 
 function MusiqX(props) {
     const { setOnline, setOffline } = props;
@@ -22,6 +23,7 @@ function MusiqX(props) {
     return (
         <div>
             <TopPanel />
+            <SpotifyBox />
             <MainView />
             {/* <BottomPanel /> */}
         </div>
