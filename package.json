@@ -11,11 +11,10 @@
   "private": true,
   "scripts": {
     "copy-assets": "cpx \"public/**/*\" dist",
-    "start": "node server_2.js",
+    "start": "npm run serve",
     "build": "webpack --config webpack.prod.js",
-    "build:dev": "webpack --config webpack.dev.js",
-    "serve": "node server.js mode=\"production\"",
-    "serve:dev": "node server.js",
+    "serve": "node server.js",
+    "serve:dev": "webpack serve --config webpack.dev.js",
     "test": "jest --collectCoverage"
   },
   "babel": {
@@ -65,6 +64,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-transform-modules-commonjs": "^7.6.0",
     "@babel/preset-env": "^7.6.3",
+    "@webpack-cli/serve": "^1.6.0",
     "babel": "^6.23.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
@@ -82,8 +82,9 @@
     "style-loader": "^1.0.0",
     "svg-inline-loader": "^0.8.0",
     "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8",
+    "webpack-cli": "^4.3",
     "webpack-dev-middleware": "^3.7.1",
+    "webpack-dev-server": "^4.3.1",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.2"
   }
