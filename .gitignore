@@ -1,6 +1,3 @@
 /node_modules
 /dist
 /coverage
-
-/whatAPI/*
-!whatAPI/javascript/src
