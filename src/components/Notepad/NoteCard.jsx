@@ -4,8 +4,7 @@ import { Card } from 'antd'
 
 export function NoteCard(props) {
     const note = props.note;
-    const noteColor = props.active ? 'note-active' : 'note-inactive';
-    const textColor = props.active ? 'white-text' : 'black-text'
+    const noteClasses = props.active ? 'note-active' : '';
 
     function handleRemoveClick(event) {
         event.stopPropagation();
@@ -13,21 +12,24 @@ export function NoteCard(props) {
         props.removeNote(note.id);
     }
 
+    const lines = note.text.split('\n');
 
     return (
         <Link to={`/notepad/${note.id}`}>
             <Card
-                className={`note ${noteColor} smooth-bg`}
+                className={`note smooth-bg ${noteClasses}`}
+                bordered={false}
                 size="small"
-                title={<span>Title</span>}
+                headStyle={{color: '#ffffff' }}
+                title={<span>{lines.length > 0 ? lines[0] : ''}</span>}
                 extra={
                     <div onClick={handleRemoveClick}>
-                        <i className="fas fa-times"></i>
+                        <i className="fas fa-times text-red"></i>
                     </div>
                 }
             >
-                <div className={`card-content ${textColor}`}>
-                    {note.text.split('\n', 11).map((el, i)=> {
+                <div className="note-content">
+                    {lines.slice(1,11).map((el, i)=> {
                         return el ? <div key={i}>{el}</div> : <br key={i}></br>;
                     })}
                 </div>

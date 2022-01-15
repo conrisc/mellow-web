@@ -1,5 +1,5 @@
 :root {
-    --header-height: 60px;
+    --header-height: 52px;
 }
 
 body, p {
@@ -15,10 +15,9 @@ body, p {
 }
 
 .notepad {
-    background-image: linear-gradient(to right, #4299f8, #00b2f8, #37c7ef, #72d9e5, #a5e8e0, #baeee9, #cef5f1, #e2fbf9, #e9fcff, #f3fcff, #fbfdff, #ffffff);
+    background-image: linear-gradient(to right, #141e30, #243b55);
     min-height: 100vh;
     overflow: hidden;
-    /* background: #eeeeee; */
     padding: 8px;
 }
 
@@ -29,8 +28,22 @@ body, p {
 }
 
 .note {
+    background: #202025;
     overflow: hidden;
     height: 20rem;
+    color: #dddddd;
+}
+
+.note-content {
+    word-break: break-all;
+}
+
+.note-active {
+    background: #222730;
+}
+
+.text-red {
+    color: #ef3050;
 }
 
 .mt-1 {
@@ -52,14 +65,6 @@ body, p {
 .msg-info {
     font-size: 18px;
     color: #EEE;
-}
-
-.note-active {
-    background: #dadada;
-}
-
-.note-inactive {
-    background: #fff;
 }
 
 .top-panel {
