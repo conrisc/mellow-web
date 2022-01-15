@@ -1,12 +1,9 @@
 {
-  "name": "justsome",
+  "name": "what-project",
   "sideEffects": [
     "*.css"
   ],
   "version": "1.0.0",
-  "engines": {
-    "node": "10.16.3"
-  },
   "description": "Nothing important",
   "private": true,
   "scripts": {
@@ -33,6 +30,18 @@
         {
           "loose": true
         }
+      ],
+      [
+        "@babel/plugin-proposal-private-methods",
+        {
+          "loose": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-private-property-in-object",
+        {
+          "loose": true
+        }
       ]
     ],
     "env": {
@@ -49,6 +58,7 @@
     "@fortawesome/fontawesome-free": "^5.11.2",
     "antd": "^4.4.3",
     "express": "^4.17.1",
+    "mellov_api": "https://github.com/conrisc/mellov-js-api",
     "path": "^0.12.7",
     "querystring": "0.2.0",
     "react": "^16.10.2",
@@ -64,6 +74,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-transform-modules-commonjs": "^7.6.0",
     "@babel/preset-env": "^7.6.3",
+    "@babel/preset-react": "^7.16.7",
     "@webpack-cli/serve": "^1.6.0",
     "babel": "^6.23.0",
     "babel-loader": "^8.0.6",
@@ -76,16 +87,17 @@
     "cpx": "^1.5.0",
     "css-loader": "^3.2.0",
     "file-loader": "^4.2.0",
+    "imports-loader": "^3.1.1",
     "jest": "^24.9.0",
     "less": "^3.13.0",
     "less-loader": "^7.1.0",
     "style-loader": "^1.0.0",
     "svg-inline-loader": "^0.8.0",
-    "webpack": "^4.39.3",
+    "webpack": "^5.66.0",
     "webpack-cli": "^4.3",
-    "webpack-dev-middleware": "^3.7.1",
-    "webpack-dev-server": "^4.3.1",
-    "webpack-hot-middleware": "^2.25.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-dev-middleware": "^5.3.0",
+    "webpack-dev-server": "^4.7.3",
+    "webpack-hot-middleware": "^2.25.1",
+    "webpack-merge": "^5.8.0"
   }
 }

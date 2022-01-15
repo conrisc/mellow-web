@@ -66,15 +66,17 @@ module.exports = {
             // }
             {
                 test: /\.(js|jsx)$/,
-                loader: 'babel-loader',
                 exclude: /node_modules/,
-                query: {
-                    presets: [
-                        '@babel/react',
-                        '@babel/preset-env',
-                        { 'plugins': ['@babel/plugin-proposal-class-properties']}
-                    ]
-                }
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            '@babel/react',
+                            '@babel/preset-env',
+                            { 'plugins': ['@babel/plugin-proposal-class-properties']}
+                        ]
+                    }
+                },
             }
         ]
     }

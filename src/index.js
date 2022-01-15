@@ -10,7 +10,7 @@ import './index.css';
 
 import './exampleScript';
 import { App } from './components/App';
-import { ApiClient } from 'what_api';
+import { ApiClient } from 'mellov_api';
 
 console.log('index.js has been loaded');
 

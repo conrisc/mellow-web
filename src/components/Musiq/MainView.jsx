@@ -1,6 +1,6 @@
 import React from 'react';
 import { debounce } from 'throttle-debounce';
-import { UsersApi } from 'what_api';
+import { UsersApi } from 'mellov_api';
 import { Row, Col } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';

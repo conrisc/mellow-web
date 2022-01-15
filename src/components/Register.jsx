@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DevelopersApi, UserPost } from 'what_api';
+import { DevelopersApi, UserPost } from 'mellov_api';
 
 export function Register() {
     const [email, setEmail] = useState('');

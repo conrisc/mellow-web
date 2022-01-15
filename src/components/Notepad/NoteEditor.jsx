@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { UsersApi, NoteItem } from 'what_api';
+import { UsersApi, NoteItem } from 'mellov_api';
 import { Input } from 'antd';
 
 const { TextArea } = Input;

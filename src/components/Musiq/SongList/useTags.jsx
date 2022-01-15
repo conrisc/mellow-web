@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UsersApi, TagItem } from 'what_api';
+import { UsersApi, TagItem } from 'mellov_api';
 
 export function useTags() {
     const [tags, setTags] = useState([]);
