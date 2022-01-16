@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux'
+import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import '@fortawesome/fontawesome-free/css/all.css'
-import '@fortawesome/fontawesome-free/js/all.js'
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@fortawesome/fontawesome-free/js/all.js';
 import 'antd/dist/antd.less';
 
 import './index.css';
@@ -11,9 +11,11 @@ import './index.css';
 import './exampleScript';
 import { App } from './components/App';
 import { ApiClient } from 'mellov_api';
+import { MELLOV_API_URL } from 'Constants/environment';
 
 console.log('index.js has been loaded');
 
+ApiClient.instance.basePath = MELLOV_API_URL;
 
 const initialState = {
 	isAuthenticated: false,
@@ -24,9 +26,9 @@ const initialState = {
 function reducer(state = initialState, action) {
 	switch (action.type) {
 		case 'SET_ONLINE':
-			return  { ...state, isOnline: true };
+			return { ...state, isOnline: true };
 		case 'SET_OFFLINE':
-			return  { ...state, isOnline: false };
+			return { ...state, isOnline: false };
 		case 'SET_YT_PLAYER':
 			return { ...state, ytPlayer: action.ytPlayer };
 		case 'SET_AUTHENTICATED':
@@ -41,17 +43,17 @@ function reducer(state = initialState, action) {
 const store = createStore(reducer);
 
 if (sessionStorage.getItem('what_auth_token')) {
-    const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
-    AuthorizationHeader.apiKey = sessionStorage.getItem('what_auth_token');
-    store.dispatch({ type: 'SET_AUTHENTICATED' });
+	const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
+	AuthorizationHeader.apiKey = sessionStorage.getItem('what_auth_token');
+	store.dispatch({ type: 'SET_AUTHENTICATED' });
 }
 
 const appContainer = document.querySelector('#app');
 ReactDOM.render(
-    <Provider store={store}>
+	<Provider store={store}>
 		<App />
-    </Provider>,
-    appContainer
+	</Provider>,
+	appContainer
 );
 
 if (module.hot) {

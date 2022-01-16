@@ -65,7 +65,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' })
+        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' }),
+        setUnauthenticated: () => dispatch({ type: 'SET_UNAUTHENTICATED' })
     };
 }
 
