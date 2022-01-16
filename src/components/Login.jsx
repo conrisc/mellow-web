@@ -22,7 +22,7 @@ function LoginX(props) {
                 if (response.data && response.data.authToken) {
                     const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
                     AuthorizationHeader.apiKey = response.data.authToken;
-                    sessionStorage.setItem('what_auth_token', response.data.authToken)
+                    sessionStorage.setItem('mellov_api_auth_token', response.data.authToken)
                     props.setAuthenticated()
                     history.replace(from);
                 }

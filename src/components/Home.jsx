@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 function HomeX(props) {
 
     function signOut() {
-        sessionStorage.removeItem('what_auth_token');
+        sessionStorage.removeItem('mellov_api_auth_token');
         props.setUnauthenticated();
     }
 

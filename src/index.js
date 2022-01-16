@@ -42,9 +42,9 @@ function reducer(state = initialState, action) {
 
 const store = createStore(reducer);
 
-if (sessionStorage.getItem('what_auth_token')) {
+if (sessionStorage.getItem('mellov_api_auth_token')) {
 	const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
-	AuthorizationHeader.apiKey = sessionStorage.getItem('what_auth_token');
+	AuthorizationHeader.apiKey = sessionStorage.getItem('mellov_api_auth_token');
 	store.dispatch({ type: 'SET_AUTHENTICATED' });
 }
 
