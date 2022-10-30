@@ -7,13 +7,18 @@ const Dotenv = require('dotenv-webpack');
 module.exports = merge(common, {
 	mode: 'development',
 	entry: {
-		app: ['./src/index.js', 'webpack-hot-middleware/client'],
+		app: ['./src/index.js'],
 		preLoader: './src/preLoader.js',
 	},
 	devtool: 'inline-source-map',
 	devServer: {
 		static: './dist',
 		historyApiFallback: true,
+		// https: true,
+		client: {
+			overlay: true,
+			progress: true,
+		},
 	},
 	plugins: [
 		new Dotenv({
