@@ -63,7 +63,7 @@
 		"@fortawesome/fontawesome-free": "^5.11.2",
 		"amazon-cognito-identity-js": "^6.1.1",
 		"antd": "^4.4.3",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"mellov_api": "https://github.com/conrisc/mellov-api-client",
 		"path": "^0.12.7",
 		"querystring": "0.2.0",
