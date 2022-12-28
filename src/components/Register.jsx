@@ -1,22 +1,10 @@
 import React, { useState } from 'react';
-import { DevelopersApi, UserPost } from 'mellov_api';
 
 export function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function registerUser() {
-        const opts = {
-            userCredentials: new UserPost(email, password)
-        };
-        const api = new DevelopersApi();
-        api.signUpUser(opts)
-            .then((data) => {
-                console.log(data);
-            }, error => {
-                console.warn('Error while signing up', error);
-            });
-    }
+    function registerUser() {}
 
     return (
         <div>

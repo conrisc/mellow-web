@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ApiClient, DevelopersApi, UserPost } from 'mellov_api';
+import { ApiClient } from 'mellov_api';
 import { Form, Input, Button } from 'antd';
+import { signInUser } from '../services/auth.service';
 
 function LoginX(props) {
     const [email, setEmail] = useState('');
@@ -12,23 +13,17 @@ function LoginX(props) {
     const { from } = location.state || { from: { pathname: "/" } };
 
     function loginUser() {
-        const opts = {
-            userCredentials: new UserPost(email, password)
-        };
-        const api = new DevelopersApi();
-        api.signInUser(opts)
-            .then((response) => {
-                console.log(response);
-                if (response.data && response.data.authToken) {
-                    const AuthorizationHeader = ApiClient.instance.authentications['AuthorizationHeader'];
-                    AuthorizationHeader.apiKey = response.data.authToken;
-                    sessionStorage.setItem('mellov_api_auth_token', response.data.authToken)
-                    props.setAuthenticated()
-                    history.replace(from);
-                }
+        signInUser(email, password)
+            .then((accessToken) => {
+                const AuthorizationHeader = ApiClient.instance.authentications['MellovAuthorizer'];
+                const authToken = `Bearer ${accessToken}`
+                AuthorizationHeader.apiKey = authToken;
+                sessionStorage.setItem('mellov_api_auth_token', authToken);
+                props.setAuthenticated();
+                history.replace(from);
             }, error => {
                 console.warn('Error while signing in', error);
-                props.setUnauthenticated()
+                props.setUnauthenticated();
             });
     }
 
@@ -42,13 +37,13 @@ function LoginX(props) {
                 name="email"
                 label="E-mail"
             >
-                <Input onChange={e => setEmail(e.target.value)} />
+                <Input onChange={e => setEmail(e.target.value)} defaultValue={email}/>
             </Form.Item>
             <Form.Item
                 name="password"
                 label="Password"
            >
-                <Input.Password onChange={e => setPassword(e.target.value)} />
+                <Input.Password onChange={e => setPassword(e.target.value)} defaultValue={password} />
             </Form.Item>
             <Form.Item
                 wrapperCol={{ offset: 4, flex: "400px" }}
