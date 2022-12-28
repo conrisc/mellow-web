@@ -37,7 +37,7 @@ export function useTags() {
             limit: 300
         };
 
-        api.searchTag(opts)
+        api.searchTags(opts)
             .then(data => {
 				setTags(data.map(tagItem => ({ tagItem, selected: false })))
             }, error => {

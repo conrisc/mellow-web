@@ -8,15 +8,15 @@ import { BottomPanel } from './BottomPanel';
 
 function MusiqX(props) {
     const { setOnline, setOffline } = props;
-    const webSocket = useRef(musiqWebsocket.getInstance({ setOnline, setOffline }));
+    // const webSocket = useRef(musiqWebsocket.getInstance({ setOnline, setOffline }));
 
     useEffect(() => {
         document.querySelector('#manifest-placeholder').setAttribute('href', '/manifest-musiq.json');
-        webSocket.current.open();
+        // webSocket.current.open();
 
-        return () => {
-            webSocket.current.close();
-        }
+        // return () => {
+        //     webSocket.current.close();
+        // }
     }, []);
 
     return (

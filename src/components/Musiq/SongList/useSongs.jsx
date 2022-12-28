@@ -7,7 +7,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function fetchSongs(opts, callback) {
         const api = new UsersApi();
-        return api.searchSong(opts)
+        return api.searchSongs(opts)
             .then(data => {
                 callback(data);
 				return { fetched: data.length }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, withRouter, Link } from 'react-router-dom';
-import { UsersApi, NoteItem } from 'mellov_api';
+import { UsersApi,
+    // NoteItem
+} from 'mellov_api';
 import { Row, Col, Button } from 'antd';
 
 import { Info } from 'CommonComponents/Info';
@@ -114,10 +116,11 @@ function NotepadN(props) {
     }
 
     function createEmptyNote() {
+
         const api = new UsersApi();
 
-        const opts = { 
-            noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add
+        const opts = {
+            // noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add
         };
 
         api.addNote(opts)

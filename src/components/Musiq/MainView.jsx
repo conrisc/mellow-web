@@ -48,7 +48,7 @@ export class MainView extends React.Component {
         this.setState({
             isFetchingYtItems: true
         });
-        return api.getYtItems(encodedTitle, opts)
+        return api.searchYtItems(encodedTitle, opts)
             .then(ytItems => {
                 this.setState({
                     ytItems,

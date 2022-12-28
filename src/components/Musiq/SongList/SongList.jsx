@@ -60,7 +60,7 @@ function SongListX(props) {
         title: '',
         skip: 0,
         limit: 30,
-        sort: 'addedDate_desc'
+        sort: 'added_date_desc'
     });
 
     const { songs, getSongs, loadMoreSongs, addSong, updateSong, removeSong } = useSongs(tags, songFilters);

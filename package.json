@@ -64,7 +64,7 @@
 		"amazon-cognito-identity-js": "^6.1.1",
 		"antd": "^4.4.3",
 		"express": "^4.17.1",
-		"mellov_api": "https://github.com/conrisc/mellov-js-api",
+		"mellov_api": "https://github.com/conrisc/mellov-api-client",
 		"path": "^0.12.7",
 		"querystring": "0.2.0",
 		"react": "^16.10.2",
