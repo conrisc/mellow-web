@@ -23,7 +23,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
             ...songFilters,
             tags: selectedTagIds
         };
-        console.log('Fetching songs...', songFilters);
+        console.log('Fetching songs...');
         return fetchSongs(opts, setSongs);
     }
 
@@ -33,7 +33,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
             skip: songFilters.skip + songs.length,
             tags: selectedTagIds
         };
-        console.log('Fetching more songs...', opts);
+        console.log('Fetching more songs...');
         return fetchSongs(opts,
             newSongs => {
                 setSongs(songs => [...songs, ...newSongs])

@@ -63,15 +63,12 @@ export function useTags() {
             return Promise.resolve(false);
         }
 
+        const tagItem = new TagItem(tagName);
         const api = new UsersApi();
 
-        const opts = {
-            tagItem: new TagItem(tagName)
-        }
-
-        return api.addTag(opts)
+        return api.addTag(tagItem)
             .then(data => {
-                console.log('API called successfully.', data);
+                console.log('API called successfully.');
                 getTags(); // temporary?
                 return true;
             })
@@ -83,7 +80,7 @@ export function useTags() {
 
     function removeTag(tagId) {
         const api = new UsersApi();
-        return api.removeTag(tagId)
+        return api.deleteTag(tagId)
             .then(() => {
                 console.log('Tag successfuly removed');
                 getTags(); // temporary?
