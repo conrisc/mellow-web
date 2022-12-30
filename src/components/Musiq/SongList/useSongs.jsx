@@ -42,11 +42,9 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
     }
 
     function addSong(songItem) {
-        const opts = { songItem };
-
         const api = new UsersApi();
-        return api.addSong(opts)
-            .then(newSongId => {
+        return api.addSong(songItem)
+            .then(data => {
                 console.log('Song successfully added');
                 getSongs();     // temporary?
             })
@@ -56,10 +54,8 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
     }
 
     function updateSong(songItem) {
-        const opts = { songItem };
-
         const api = new UsersApi();
-        return api.updateSong(opts)
+        return api.updateSong(songItem.id, songItem)
             .then(updatedSongItem => {
                 console.log('Song successfuly updated');
                 setSongs(
@@ -78,7 +74,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function removeSong(songId) {
         const api = new UsersApi();
-        return api.removeSong(songId)
+        return api.deleteSong(songId)
             .then(() => {
                 console.log('Song successfuly removed');
                 setSongs(songs.filter(songItem => songItem.id !== songId))
