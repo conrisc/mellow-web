@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, withRouter, Link } from 'react-router-dom';
-import { UsersApi,
-    // NoteItem
-} from 'mellov_api';
+import { useParams, withRouter } from 'react-router-dom';
+import { UsersApi, NoteItem } from 'mellov_api';
 import { Row, Col, Button } from 'antd';
 
 import { Info } from 'CommonComponents/Info';
@@ -14,7 +12,7 @@ function NotepadN(props) {
     const [ notes, setNotes ] = useState([]);
     const [ note, setNote ] = useState(null);
     const [ shouldShowSpinner, setSpinnerState ] = useState(true);
-    const prevNote = useRef(null);
+    const prevNoteRef = useRef(null);
 
     useEffect(() => {
         initActionButton();
@@ -28,22 +26,21 @@ function NotepadN(props) {
     }, [noteId, notes]);
 
     useEffect(() => {
-        if (prevNote.current && (!note || prevNote.current.id !== note.id))
-            validateNote(prevNote.current);
-        prevNote.current = note;
+        removePrevNoteIfEmpty(prevNoteRef.current);
+        prevNoteRef.current = note;
     }, [note])
 
 	useEffect(() => cleanup, []);
 	
 	function cleanup() {
-        if (prevNote.current && (!note || prevNote.current.id !== note.id))
-            validateNote(prevNote.current);
+        removePrevNoteIfEmpty(prevNoteRef.current);
     }
 
-    function validateNote(n) {
-        console.log('validate note', n);
-        if (n.text === '')
-            removeNote(n.id);
+    function removePrevNoteIfEmpty(n) {
+        const previousNote = prevNoteRef.current;
+        const previousNotSelected = previousNote && (!note || previousNote.id !== note.id);
+        if (previousNotSelected && previousNote.text === '')
+            removeNote(previousNote.id);
     }
 
     function onNoteChange(noteId, text) {
@@ -58,21 +55,18 @@ function NotepadN(props) {
         setNotes(newNotes);
     }
 
-    // function getNote() {
-    //     const api = new UsersApi();
-    //     const opts = { 
-    //         id: noteId
-    //     };
-    //     api.searchNote(opts, (error, data, response) => {
-    //         if (error) {
-    //             console.error(error);
-    //         } else {
-    //             console.log('Found some notes', data, response);
-    //             if (data.length > 0)
-    //                 setNote(data[0])
-    //         }
-    //     });
-    // }
+    function getNote() {
+        const api = new UsersApi();
+        api.searchNote(noteId, (error, data, response) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log('Found some notes', data, response);
+                if (data.length > 0)
+                    setNote(data[0])
+            }
+        });
+    }
 
     function displayNote() {
         const newNote = notes.find(noteItem => noteItem.id === noteId) || null;
@@ -83,9 +77,9 @@ function NotepadN(props) {
         return new Promise((resolve, reject) => {
             const api = new UsersApi();
 
-            api.searchNote({})
+            api.searchNotes({})
                 .then(data => {
-                    console.log('getNotes: ', data);
+                    console.log('Fetched notes');
                     setNotes(data);
                     setSpinnerState(false);
                     resolve();
@@ -101,11 +95,8 @@ function NotepadN(props) {
 
     function removeNote(nId) {
         const api = new UsersApi();
-        const opts = {
-            id: nId
-        };
 
-        api.removeNote(nId)
+        api.deleteNote(nId)
             .then(() => {
                 getNotes();
                 if (noteId === nId)
@@ -119,15 +110,13 @@ function NotepadN(props) {
 
         const api = new UsersApi();
 
-        const opts = {
-            // noteItem: new NoteItem(Date(), '') // {NoteItem} Note item to add
-        };
+        const noteItem = new NoteItem(new Date().toISOString(), '');
 
-        api.addNote(opts)
+        api.addNote(noteItem)
             .then(data => {
                 console.log('API called successfully.', data);
                 getNotes();
-                props.history.push(`/notepad/${data}`);
+                props.history.push(`/notepad/${data.id}`);
             }, error => {
                 console.error(error);
             });

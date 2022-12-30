@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { UsersApi,
-	// NoteItem
-} from 'mellov_api';
+import { UsersApi, NoteItem } from 'mellov_api';
 import { Input } from 'antd';
 
 const { TextArea } = Input;
 
 function saveNote(noteId, text) {
-	const opts = { 
-		// noteItem: new NoteItem(Date(), text) // {NoteItem} Note item to add
-	};
-	opts.noteItem.id = noteId;
+	const noteItem = new NoteItem(new Date().toISOString(), text);
+	noteItem.id = noteId;
 
 	const api = new UsersApi();
-	api.updateNote(opts)
+	api.updateNote(noteId, noteItem)
 		.then(() => {
 			console.log('Note updated');
 		 }, error => {
