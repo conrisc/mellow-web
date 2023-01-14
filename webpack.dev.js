@@ -13,6 +13,7 @@ module.exports = merge(common, {
 	devtool: 'inline-source-map',
 	devServer: {
 		static: './dist',
+		host: '0.0.0.0',
 		historyApiFallback: true,
 		// https: true,
 		client: {
@@ -27,4 +28,7 @@ module.exports = merge(common, {
 		new CleanWebpackPlugin(),
 		new CopyWebpackPlugin([{ from: 'public' }]),
 	],
+	watchOptions: {
+		poll: true,
+	},
 });
