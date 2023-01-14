@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { signOutUser } from '../services/auth.service';
 
 function HomeX(props) {
 
     function signOut() {
-        sessionStorage.removeItem('mellov_api_auth_token');
+        signOutUser();
         props.setUnauthenticated();
     }
 

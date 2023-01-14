@@ -1,6 +1,6 @@
 console.log('This is the pre loader');
 
-// const API_KEY = 'AIzaSyBS6s9-nwxzxCfS0Uazv1-tedGwWwo9CZs';
+// const API_KEY = 'some key';
 
 // Youtube API
 // gapi.load("client");

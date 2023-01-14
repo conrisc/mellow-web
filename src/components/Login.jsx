@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ApiClient } from 'mellov_api';
 import { Form, Input, Button } from 'antd';
 import { signInUser } from '../services/auth.service';
+import { setApiKey } from '../services/apiConfig.service';
 
 function LoginX(props) {
     const [email, setEmail] = useState('');
@@ -15,10 +15,7 @@ function LoginX(props) {
     function loginUser() {
         signInUser(email, password)
             .then((accessToken) => {
-                const AuthorizationHeader = ApiClient.instance.authentications['MellovAuthorizer'];
-                const authToken = `Bearer ${accessToken}`
-                AuthorizationHeader.apiKey = authToken;
-                sessionStorage.setItem('mellov_api_auth_token', authToken);
+                setApiKey(accessToken);
                 props.setAuthenticated();
                 history.replace(from);
             }, error => {

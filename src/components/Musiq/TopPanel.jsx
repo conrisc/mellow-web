@@ -6,6 +6,7 @@ import { Row, Col, Button, Slider } from 'antd';
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { DeviceListController } from './DeviceListController';
+import { Link } from 'react-router-dom';
 
 function TopPanelX(props) {
     const webSocket = musiqWebsocket.getInstance();
@@ -70,7 +71,8 @@ function TopPanelX(props) {
                     </Button>
                 </Col>
                 <Col>
-                    <Button type="text" href='/'>Go Back</Button>
+                    {/* <Button type="text" href='/'>Go Back</Button> */}
+                    <Link to="/">Go back</Link>
                 </Col>
             </Row>
             <Button type="primary" className="remote-btn hide-on-lg pos-absolute lighten-1" onClick={() => panelRef.current.classList.toggle('transform-top-100')}>Remote</Button>

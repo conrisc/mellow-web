@@ -4,13 +4,33 @@ const userPoolId = 'eu-central-1_6DPW3zDLR';
 const clientId = '6ov1c2mh20ea2go0nlvue6fqb0';
 const region = 'eu-central-1';
 
-export async function signInUser(username, password) {
-    const poolData = {
-        UserPoolId: userPoolId,
-        ClientId: clientId,
-    };
-    const userPool = new CognitoUserPool(poolData);
+const poolData = {
+    UserPoolId: userPoolId,
+    ClientId: clientId,
+};
+const userPool = new CognitoUserPool(poolData);
 
+
+export function isLoggedIn() {
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) {
+        return new Promise((resolve) => {
+            // getSession automatically refreshes session using RefreshToken if Id/Access token expire
+            cognitoUser.getSession((error, session) => {
+                if (error) {
+                    console.warn(`Retriving session failed: ${error.message | error}`);
+                    resolve(false);
+                }
+                console.log(`Session validity: ${session.isValid()}`);
+                resolve(session.isValid());
+            });
+        });
+    }
+
+    return Promise.resolve(false);
+}
+
+export function signInUser(username, password) {
     const userData = {
         Username: username,
         Pool: userPool,
@@ -36,4 +56,31 @@ export async function signInUser(username, password) {
             }
         });
     });
+}
+
+export function signOutUser() {
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) cognitoUser.signOut();
+}
+
+export function getAccessToken() {
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) {
+        return new Promise((resolve, reject) => {
+            cognitoUser.getSession((error, session) => {
+                if (error) {
+                    console.error(`Retriving session failed: ${error.message | error}`);
+                    reject(Error('Failed to get session'));
+                }
+
+                if (session.isValid()) {
+                    resolve(session.getAccessToken().getJwtToken());
+                } else {
+                    reject(Error('Session is not valid')); // TODO: Should refresh the token?
+                }
+            });
+        });
+    }
+
+    return Promise.reject(Error('No user logged in'));
 }
