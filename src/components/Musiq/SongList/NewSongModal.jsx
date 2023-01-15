@@ -42,7 +42,7 @@ export function NewSongModal(props) {
     return (
         <Modal
             title="Add song"
-            visible={props.isVisible}
+            open={props.isOpen}
             onOk={addSong}
             onCancel={props.closeModal}
         >

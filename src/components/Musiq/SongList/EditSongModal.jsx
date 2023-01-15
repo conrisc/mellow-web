@@ -47,7 +47,7 @@ export function EditSongModal(props) {
     return (
         <Modal
             title="Edit song"
-            visible={props.isVisible}
+            open={props.isOpen}
             onOk={updateSong}
             onCancel={props.closeModal}
         >

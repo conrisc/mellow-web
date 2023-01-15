@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import React from 'react';
 import { Button, Row, Col } from 'antd';
 
 import { NoteCard } from './NoteCard';
 
 
-function NoteListN(props) {
+export function NoteList(props) {
     const noteId = props.noteId;
     const notes = props.notes;
 
@@ -36,10 +35,4 @@ function NoteListN(props) {
             </Row>
         </div>
     );
-}
-
-let NoteList = withRouter(NoteListN);
-
-export {
-    NoteList
 }

@@ -37,7 +37,7 @@ function TopPanelX(props) {
 
     return (
         <div ref={panelRef} className="top-panel smooth-transform transform-top-100 white z-depth-1 z-depth-2-sm center-align">
-            <DeviceListController isVisible={isDeviceListVisible} closeModal={() => setIsDeviceListVisible(false)} />
+            <DeviceListController isOpen={isDeviceListVisible} closeModal={() => setIsDeviceListVisible(false)} />
             <Row gutter={[16, 8]} justify="center">
                 <Col>
                     <Button type="text" disabled={props.isOnline ? true : false} onClick={() => webSocket.open()}>Connect</Button>

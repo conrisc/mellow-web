@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { Home } from './Home';
 import { Notepad } from './Notepad/Notepad';
@@ -9,46 +9,27 @@ import { Register } from './Register';
 import { useAuth } from 'Hooks/useAuth';
 
 export function Content() {
-    return (
-        <Switch>
-            <Route exact path="/">
-                <Home />
+	return (
+		<Routes>
+			<Route index element={<Home />} />
+			<Route path="login" element={<Login />} />
+			<Route path="register" element={<Register />} />
+
+            <Route element={<ProtectedRoute />}>
+                <Route path="notepad/:noteId?" element={<Notepad />} />
+                <Route path="musiq" element={<Musiq />} />
             </Route>
-            <PrivateRoute exact path="/notepad/:noteId?">
-                <Notepad />
-            </PrivateRoute>
-            <PrivateRoute exact path="/musiq">
-                <Musiq />
-            </PrivateRoute>
-            <Route exact path="/login">
-                <Login />
-            </Route>
-            <Route exact path="/register">
-                <Register />
-            </Route>
-        </Switch>
-    );
+		</Routes>
+	);
 }
 
-export function PrivateRoute({ children, ...rest }) {
-    const { checkingAuth, isAuthenticated } = useAuth();
+export function ProtectedRoute() {
+	const { checkingAuth, isAuthenticated } = useAuth();
+	const location = useLocation();
 
+    if (checkingAuth) return null;
 
-    return checkingAuth ? null : (
-        <Route
-            {...rest}
-            render={({ location }) =>
-                isAuthenticated ? (
-                    children
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: "/login",
-                            state: { from: location }
-                        }}
-                    />
-                )
-            }
-        />
-    );
+    return isAuthenticated ?
+        <Outlet /> :
+        <Navigate to="/login" state={{ from: location }} />;
 }

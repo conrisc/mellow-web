@@ -66,7 +66,7 @@ function SongListX(props) {
     const { songs, getSongs, loadMoreSongs, addSong, updateSong, removeSong } = useSongs(tags, songFilters);
     const [isLoadingSongs, setIsLoadingSongs] = useState(true);
     const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
-    const [isTagDrawerVisible, setIsTagDrawerVisible] = useState(false);
+    const [isTagDrawerOpen, setIsTagDrawerOpen] = useState(false);
     const [editedSong, setEditedSong] = useState(null);
     const { scrollPosition, scrollHeight } = useScroll();
     const songsLoaderRef = useRef(null);
@@ -230,13 +230,13 @@ function SongListX(props) {
         <Row>
             <Col xs={0} lg={6}>
                 <TagList
-                    isVisible={isTagDrawerVisible}
-                    setIsVisible={(i) => setIsTagDrawerVisible(i)}
+                    isOpen={isTagDrawerOpen}
+                    setIsOpen={(i) => setIsTagDrawerOpen(i)}
                 />
             </Col>
             <Col xs={24} lg={18}>
                 {editedSong && <EditSongModal
-                    isVisible={!!editedSong}
+                    isOpen={!!editedSong}
                     closeModal={() => setEditedSong(null)}
                     songItem={editedSong}
                     updateSong={updateSong}
@@ -245,12 +245,13 @@ function SongListX(props) {
                     addSong={addSong}
                     songFilters={songFilters}
                     setSongFilters={setSongFilters}
-                    showTagsDrawer={() => setIsTagDrawerVisible(true)}
+                    showTagsDrawer={() => setIsTagDrawerOpen(true)}
                     showNewSongModal={() => setIsNewSongModalVisible(true)}
                 />
                 <List
                     className="song-list"
                     rowKey="id"
+                    size="small"
                     loading={isLoadingSongs}
                     dataSource={songs}
                     renderItem={(songItem, index) => {

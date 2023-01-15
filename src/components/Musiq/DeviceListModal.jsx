@@ -40,7 +40,7 @@ function DeviceListModalX(props) {
     return (
         <Modal
             title="Device list"
-            visible={props.isVisible}
+            open={props.isOpen}
             onCancel={props.closeModal}
             footer={
                 <Button onClick={props.closeModal}>

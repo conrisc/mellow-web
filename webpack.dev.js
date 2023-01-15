@@ -22,7 +22,11 @@ module.exports = merge(common, {
 			path: `./.env.development`,
 		}),
 		new CleanWebpackPlugin(),
-		new CopyWebpackPlugin([{ from: 'public' }]),
+		new CopyWebpackPlugin({
+			patterns: [{
+				from: 'public'
+			}]
+		}),
 	],
 	watchOptions: {
 		poll: true,

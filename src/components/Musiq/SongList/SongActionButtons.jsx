@@ -32,20 +32,29 @@ export function SongActionButtons(props) {
         });
     }
 
-    const menu = (
-        <Menu>
-            <Menu.Item onClick={searchOnYoutube}>
-                Find
-            </Menu.Item>
-            <Menu.Item>
+    const menuItems = [
+        {
+            key: '0',
+            label: (
+                <div onClick={searchOnYoutube}>
+                    Find
+                </div>
+            ),
+        },
+        {
+            key: '1',
+            label: (
                 <a
                     href={"https://www.youtube.com/results?search_query=" + encodedTitle}
                     target="_blank" rel="noopener noreferrer"
                     title="Search song in youtube">
                     Search YT
                 </a>
-            </Menu.Item>
-            <Menu.Item>
+            ),
+        },
+        {
+            key: '2',
+            label: (
                 <a
                     href={songItem.url}
                     className={songItem.url ? '' : ' disabled'}
@@ -53,16 +62,27 @@ export function SongActionButtons(props) {
                     title="Open song in youtube">
                     Open in YT
                 </a>
-            </Menu.Item>
-            <Menu.Item onClick={props.editSong}>
-                Edit
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item danger onClick={showRemoveConfirmation}>
-                Remove
-            </Menu.Item>
-        </Menu>
-    );
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <div onClick={props.editSong}>Edit</div>
+            ),
+        },
+        {
+            type: 'divider',
+        },
+        {
+            key: '5',
+            label: (
+                <div onClick={showRemoveConfirmation}>
+                    Remove
+                </div>
+            ),
+            danger: true
+        }
+    ];
 
     return (
         <Space onClick={(e) => e.stopPropagation()}>
@@ -71,7 +91,7 @@ export function SongActionButtons(props) {
                 title="Play song on other devices">
                     <i className="fas fa-tv"></i>
             </Button>
-            <Dropdown overlay={menu} placement="bottomCenter" arrow trigger={["click"]}>
+            <Dropdown menu={{ items: menuItems }} placement="bottom" arrow trigger={["click"]}>
                 <Button>
                     <i className="fas fa-ellipsis-v"></i>
                 </Button>

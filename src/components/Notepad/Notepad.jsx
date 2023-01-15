@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, withRouter } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { UsersApi, NoteItem } from 'mellov_api';
 import { Row, Col, Button } from 'antd';
 
@@ -8,7 +8,7 @@ import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
 import { authorizedRequest } from 'Services/apiConfig.service';
 
-function NotepadN(props) {
+export function Notepad(props) {
     const { noteId } = useParams();
     const [ notes, setNotes ] = useState([]);
     const [ note, setNote ] = useState(null);
@@ -140,10 +140,4 @@ function NotepadN(props) {
             </Row>
         </div>
     );
-}
-
-let Notepad = withRouter(NotepadN);
-
-export {
-    Notepad
 }

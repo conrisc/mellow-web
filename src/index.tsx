@@ -1,9 +1,10 @@
-import ReactDOM from 'react-dom';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { ConfigProvider } from 'antd';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
-import 'antd/dist/antd.less';
 
 import './index.css';
 
@@ -39,12 +40,21 @@ function reducer(state = initialState, action) {
 
 const store = createStore(reducer);
 
-const appContainer = document.querySelector('#app');
-ReactDOM.render(
-	<Provider store={store}>
-		<App />
-	</Provider>,
-	appContainer
+const appContainer = document.getElementById('app');
+const root = createRoot(appContainer);
+root.render(
+	<ConfigProvider
+		theme={{
+			token: {
+				colorPrimary: '#00b96b',
+				colorLink: '#6158c4',
+			}
+		}}
+	>
+		<Provider store={store}>
+				<App />
+		</Provider>
+	</ConfigProvider>
 );
 
 // @ts-ignore

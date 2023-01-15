@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { signInUser } from 'Services/auth.service';
 import { setApiKey } from 'Services/apiConfig.service';
@@ -8,7 +8,7 @@ import { setApiKey } from 'Services/apiConfig.service';
 function LoginX(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const { from } = location.state || { from: { pathname: "/" } };
 
@@ -17,7 +17,7 @@ function LoginX(props) {
             .then((accessToken) => {
                 setApiKey(accessToken);
                 props.setAuthenticated();
-                history.replace(from);
+                navigate(from);
             }, error => {
                 console.warn('Error while signing in', error);
                 props.setUnauthenticated();

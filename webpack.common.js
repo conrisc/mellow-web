@@ -1,9 +1,8 @@
-
 const path = require('path');
 
 module.exports = {
 	entry: {
-		app: ['./src/index.ts'],
+		app: ['./src/index.tsx'],
 		preLoader: './src/preLoader.js',
 	},
     output: {
@@ -13,63 +12,27 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        root: path.resolve(__dirname),
+        roots: [__dirname],
         alias: {
-            Hooks: 'src/hooks/',
-            Services: 'src/services/',
-            Constants: 'src/constants/',
-            CommonComponents: 'src/components/common/'
+            Hooks: path.resolve(__dirname, 'src/hooks/'),
+            Services: path.resolve(__dirname, 'src/services/'),
+            Constants: path.resolve(__dirname, 'src/constants/'),
+            CommonComponents: path.resolve(__dirname, 'src/components/common/'),
         }
     },
     module: {
         rules: [
             {
-                test: /\.less$/,
+                test: /\.(less|css)$/,
                 use: [
                     { loader: 'style-loader' },
                     { loader: 'css-loader' },
-                    {
-                        loader: 'less-loader',
-                        options: {
-                            lessOptions: {
-                                modifyVars: {
-                                    'primary-color': '#6158c4',
-                                    'link-color': '#6158c4',
-                                    // 'border-radius-base': '2px',
-                                },
-                                javascriptEnabled: true,
-                            },
-                        },
-                    }
                 ],
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
             },
             {
                 test: /\.(woff(2)?|ttf|eot|svg)$/,
                 use: 'file-loader'
             },
-            // {
-            //     test: /\.js$/,
-            //     loader: 'babel-loader',
-            //     exclude: /node_modules/,
-            //     query: {
-            //         presets: ['@babel/preset-env']
-            //     }
-            // },
-            // {
-            //     test: /\.jsx$/,
-            //     loader: 'babel-loader',
-            //     exclude: /node_modules/,
-            //     query: {
-            //         presets: ['@babel/react']
-            //     }
-            // }
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,

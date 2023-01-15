@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useHistory } from "react-router-dom";
-import { Drawer, List, Button, Input, Modal, Typography, Row, Col } from 'antd';
+import { useLocation, useSearchParams } from "react-router-dom";
+import { Drawer, List, Button, Input, Modal, Row, Col } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
 
@@ -19,13 +19,13 @@ function RemoveTagButton(props) {
 const TAGS_QUERY_PARAM = 'tags';
 
 export function TagList(props) {
-    const { isVisible, setIsVisible } = props;
+    const { isOpen, setIsOpen } = props;
     const { tags } = useTagsState();
     const { toggleTag, addTag, removeTag } = useTagsDispatch();
     const [tagName, setTagName] = useState('');
     const [hoveredTag, setHoveredTag] = useState();
     const searchQuery = useLocation().search;
-    const history = useHistory();
+    const [serachParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         const searchParams = new URLSearchParams(searchQuery);
@@ -80,14 +80,11 @@ export function TagList(props) {
         } else {
             searchParams.append(TAGS_QUERY_PARAM, tagElement.tagItem.name);
         }
-        history.push({
-            search: searchParams.toString()
-        });
+        setSearchParams(searchParams);
         toggleTag(tagElement);
     }
 
     const content = <>
-            <Typography.Title level={4}>Tag list</Typography.Title>
             <Row justify="center">
                 <Col flex={'auto'} style={{ marginBottom: 8 }}>
                     <Input value={tagName} onChange={handleTagNameChange} />
@@ -124,12 +121,12 @@ export function TagList(props) {
     return (
         <>
             <Drawer
-                className="hide-on-lg"
+                title="Tag List"
                 placement="bottom"
                 height={'80%'}
                 closable={true}
-                onClose={() => setIsVisible(false)}
-                visible={isVisible}
+                onClose={() => setIsOpen(false)}
+                open={isOpen}
             >
                 {content}
             </Drawer>

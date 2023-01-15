@@ -45,7 +45,7 @@ export function SongFilterPanel(props) {
         <>
             <NewSongModal
                 addSong={addSong}
-                isVisible={isNewSongModalVisible}
+                isOpen={isNewSongModalVisible}
                 closeModal={() => setIsNewSongModalVisible(false)}
             />
             <Row

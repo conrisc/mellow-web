@@ -36,6 +36,7 @@ function YtListX(props) {
                     :
                         <List
                             rowKey="key"
+                            size="small"
                             dataSource={props.ytItems}
                             renderItem={
                                 (el) => (

@@ -10,6 +10,10 @@ module.exports = merge(common, {
 	plugins: [
 		new webpack.EnvironmentPlugin(['MELLOV_API_URL', 'MELLOV_WEBSOCKET_URI']),
 		new CleanWebpackPlugin(),
-		new CopyWebpackPlugin([{ from: 'public' }]),
+		new CopyWebpackPlugin({
+			patterns: [{
+				from: 'public'
+			}]
+		}),
 	],
 });

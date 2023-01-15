@@ -50,7 +50,7 @@ export function DeviceListController(props) {
 
     return (
         <DeviceListModal
-            isVisible={props.isVisible}
+            isOpen={props.isOpen}
             closeModal={props.closeModal}
             onlineDevices={onlineDevices}
             toggleCheck={toggleCheck}
