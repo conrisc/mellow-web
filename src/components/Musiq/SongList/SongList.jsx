@@ -12,9 +12,9 @@ import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
 import { TagsProvider, useTagsState } from './TagsContext';
 
-import { useScroll } from 'CommonComponents/useScroll';
-import { useSongs } from './useSongs';
-import { usePlayerStatus } from './usePlayerStatus';
+import { useScroll } from 'Hooks/useScroll';
+import { useSongs } from 'Hooks/useSongs';
+import { usePlayerStatus } from 'Hooks/usePlayerStatus';
 
 function switchSong({ currentlyPlaying }, action) {
     switch (action.type) {

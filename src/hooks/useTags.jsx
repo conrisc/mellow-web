@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UsersApi, TagItem } from 'mellov_api';
-import { authorizedRequest } from '../../../services/apiConfig.service';
+import { authorizedRequest } from 'Services/apiConfig.service';
 
 export function useTags() {
     const [tags, setTags] = useState([]);

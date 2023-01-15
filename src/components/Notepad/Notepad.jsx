@@ -6,7 +6,7 @@ import { Row, Col, Button } from 'antd';
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
-import { authorizedRequest } from '../../services/apiConfig.service';
+import { authorizedRequest } from 'Services/apiConfig.service';
 
 function NotepadN(props) {
     const { noteId } = useParams();

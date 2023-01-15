@@ -9,7 +9,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
 import { ViewSwitch } from './ViewSwitch';
-import { authorizedRequest } from '../../services/apiConfig.service';
+import { authorizedRequest } from 'Services/apiConfig.service';
 
 export class MainView extends React.Component {
 

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
-import { signInUser } from '../services/auth.service';
-import { setApiKey } from '../services/apiConfig.service';
+import { signInUser } from 'Services/auth.service';
+import { setApiKey } from 'Services/apiConfig.service';
 
 function LoginX(props) {
     const [email, setEmail] = useState('');

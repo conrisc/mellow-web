@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
 import { UsersApi, NoteItem } from 'mellov_api';
 import { Input } from 'antd';
-import { authorizedRequest } from '../../services/apiConfig.service';
+import { authorizedRequest } from 'Services/apiConfig.service';
 
 const { TextArea } = Input;
 

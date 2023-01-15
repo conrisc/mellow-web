@@ -10,6 +10,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
         alias: {
+            Hooks: path.resolve(__dirname, 'src/hooks/'),
             Services: path.resolve(__dirname, 'src/services/'),
             Constants: path.resolve(__dirname, 'src/constants/'),
             CommonComponents: path.resolve(__dirname, 'src/components/common/')

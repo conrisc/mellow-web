@@ -7,8 +7,8 @@ import { Notepad } from './Notepad/Notepad';
 import { Musiq } from './Musiq/Musiq';
 import { Login } from './Login';
 import { Register } from './Register';
-import { getAccessToken, isLoggedIn } from '../services/auth.service';
-import { setApiKey } from '../services/apiConfig.service';
+import { getAccessToken, isLoggedIn } from 'Services/auth.service';
+import { setApiKey } from 'Services/apiConfig.service';
 
 export function Content() {
     return (

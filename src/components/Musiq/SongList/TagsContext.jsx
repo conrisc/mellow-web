@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 
-import { useTags } from './useTags';
+import { useTags } from 'Hooks/useTags';
 
 const TagsStateContext = createContext();
 const TagsDispatchContext = createContext();

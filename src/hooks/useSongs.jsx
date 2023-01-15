@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UsersApi } from 'mellov_api';
-import { authorizedRequest } from '../../../services/apiConfig.service';
+import { authorizedRequest } from 'Services/apiConfig.service';
 
 export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', tags: [], sort: 'none' }) {
     const [songs, setSongs] = useState([]);
