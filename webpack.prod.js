@@ -6,10 +6,6 @@ const webpack = require('webpack');
 
 module.exports = merge(common, {
 	mode: 'production',
-	entry: {
-		app: './src/index.js',
-		preLoader: './src/preLoader.js',
-	},
 	devtool: 'source-map',
 	plugins: [
 		new webpack.EnvironmentPlugin(['MELLOV_API_URL', 'MELLOV_WEBSOCKET_URI']),

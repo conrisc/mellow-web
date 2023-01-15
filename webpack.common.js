@@ -2,18 +2,23 @@
 const path = require('path');
 
 module.exports = {
+	entry: {
+		app: ['./src/index.ts'],
+		preLoader: './src/preLoader.js',
+	},
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/'
     },
     resolve: {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        root: path.resolve(__dirname),
         alias: {
-            Hooks: path.resolve(__dirname, 'src/hooks/'),
-            Services: path.resolve(__dirname, 'src/services/'),
-            Constants: path.resolve(__dirname, 'src/constants/'),
-            CommonComponents: path.resolve(__dirname, 'src/components/common/')
+            Hooks: 'src/hooks/',
+            Services: 'src/services/',
+            Constants: 'src/constants/',
+            CommonComponents: 'src/components/common/'
         }
     },
     module: {
@@ -78,7 +83,12 @@ module.exports = {
                         ]
                     }
                 },
-            }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ]
     }
 };

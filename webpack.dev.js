@@ -6,10 +6,6 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = merge(common, {
 	mode: 'development',
-	entry: {
-		app: ['./src/index.js'],
-		preLoader: './src/preLoader.js',
-	},
 	devtool: 'inline-source-map',
 	devServer: {
 		static: './dist',
