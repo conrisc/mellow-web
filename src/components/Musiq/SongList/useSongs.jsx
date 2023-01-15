@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UsersApi } from 'mellov_api';
+import { authorizedRequest } from '../../../services/apiConfig.service';
 
 export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', tags: [], sort: 'none' }) {
     const [songs, setSongs] = useState([]);
@@ -7,7 +8,8 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function fetchSongs(opts, callback) {
         const api = new UsersApi();
-        return api.searchSongs(opts)
+
+        return authorizedRequest(() => api.searchSongs(opts))
             .then(data => {
                 callback(data);
 				return { fetched: data.length }
@@ -43,7 +45,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function addSong(songItem) {
         const api = new UsersApi();
-        return api.addSong(songItem)
+        return authorizedRequest(() => api.addSong(songItem))
             .then(data => {
                 console.log('Song successfully added');
                 getSongs();     // temporary?
@@ -55,7 +57,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function updateSong(songItem) {
         const api = new UsersApi();
-        return api.updateSong(songItem.id, songItem)
+        return authorizedRequest(() => api.updateSong(songItem.id, songItem))
             .then(updatedSongItem => {
                 console.log('Song successfuly updated');
                 setSongs(
@@ -74,7 +76,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', ta
 
     function removeSong(songId) {
         const api = new UsersApi();
-        return api.deleteSong(songId)
+        return authorizedRequest(() => api.deleteSong(songId))
             .then(() => {
                 console.log('Song successfuly removed');
                 setSongs(songs.filter(songItem => songItem.id !== songId))

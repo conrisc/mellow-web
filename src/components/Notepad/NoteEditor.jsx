@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
 import { UsersApi, NoteItem } from 'mellov_api';
 import { Input } from 'antd';
+import { authorizedRequest } from '../../services/apiConfig.service';
 
 const { TextArea } = Input;
 
@@ -10,7 +11,7 @@ function saveNote(noteId, text) {
 	noteItem.id = noteId;
 
 	const api = new UsersApi();
-	api.updateNote(noteId, noteItem)
+	authorizedRequest(() => api.updateNote(noteId, noteItem))
 		.then(() => {
 			console.log('Note updated');
 		 }, error => {

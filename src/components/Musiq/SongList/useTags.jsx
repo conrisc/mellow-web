@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UsersApi, TagItem } from 'mellov_api';
+import { authorizedRequest } from '../../../services/apiConfig.service';
 
 export function useTags() {
     const [tags, setTags] = useState([]);
@@ -37,7 +38,7 @@ export function useTags() {
             limit: 300
         };
 
-        api.searchTags(opts)
+        return authorizedRequest(() => api.searchTags(opts))
             .then(data => {
 				setTags(data.map(tagItem => ({ tagItem, selected: false })))
             }, error => {
@@ -66,7 +67,7 @@ export function useTags() {
         const tagItem = new TagItem(tagName);
         const api = new UsersApi();
 
-        return api.addTag(tagItem)
+        return authorizedRequest(() => api.addTag(tagItem))
             .then(data => {
                 console.log('API called successfully.');
                 getTags(); // temporary?
@@ -80,7 +81,7 @@ export function useTags() {
 
     function removeTag(tagId) {
         const api = new UsersApi();
-        return api.deleteTag(tagId)
+        return authorizedRequest(() => api.deleteTag(tagId))
             .then(() => {
                 console.log('Tag successfuly removed');
                 getTags(); // temporary?

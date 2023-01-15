@@ -9,6 +9,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
 import { ViewSwitch } from './ViewSwitch';
+import { authorizedRequest } from '../../services/apiConfig.service';
 
 export class MainView extends React.Component {
 
@@ -48,7 +49,7 @@ export class MainView extends React.Component {
         this.setState({
             isFetchingYtItems: true
         });
-        return api.searchYtItems(encodedTitle, opts)
+        return authorizedRequest(() => api.searchYtItems(encodedTitle, opts))
             .then(ytItems => {
                 this.setState({
                     ytItems,

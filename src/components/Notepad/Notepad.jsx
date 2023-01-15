@@ -6,6 +6,7 @@ import { Row, Col, Button } from 'antd';
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
+import { authorizedRequest } from '../../services/apiConfig.service';
 
 function NotepadN(props) {
     const { noteId } = useParams();
@@ -57,14 +58,14 @@ function NotepadN(props) {
 
     function getNote() {
         const api = new UsersApi();
-        api.searchNote(noteId, (error, data, response) => {
-            if (error) {
-                console.error(error);
-            } else {
-                console.log('Found some notes', data, response);
-                if (data.length > 0)
-                    setNote(data[0])
-            }
+        api.searchNote(noteId)
+        .then(data => {
+            console.log('Found the note', data, response);
+            if (data.length > 0)
+                setNote(data[0])
+        })
+        .catch((error) => {
+            console.error(error);
         });
     }
 
@@ -74,20 +75,17 @@ function NotepadN(props) {
     }
 
     function getNotes() {
-        return new Promise((resolve, reject) => {
-            const api = new UsersApi();
+        const api = new UsersApi();
 
-            api.searchNotes({})
-                .then(data => {
-                    console.log('Fetched notes');
-                    setNotes(data);
-                    setSpinnerState(false);
-                    resolve();
-                }, error => {
-                    console.error(error);
-                    resolve();
-                });
-        });
+        return authorizedRequest(() => api.searchNotes({}))
+            .then(data => {
+                console.log('Fetched notes');
+                setNotes(data);
+                setSpinnerState(false);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
 
     function initActionButton() {
@@ -96,12 +94,13 @@ function NotepadN(props) {
     function removeNote(nId) {
         const api = new UsersApi();
 
-        api.deleteNote(nId)
+        authorizedRequest(() => api.deleteNote(nId))
             .then(() => {
                 getNotes();
                 if (noteId === nId)
                     props.history.push('/notepad');
-            }, error => {
+            })
+            .catch(error => {
                 console.error(error);
             });
     }
@@ -112,12 +111,13 @@ function NotepadN(props) {
 
         const noteItem = new NoteItem(new Date().toISOString(), '');
 
-        api.addNote(noteItem)
+        authorizedRequest(() => api.addNote(noteItem))
             .then(data => {
                 console.log('API called successfully.', data);
                 getNotes();
                 props.history.push(`/notepad/${data.id}`);
-            }, error => {
+            }).
+            catch(error => {
                 console.error(error);
             });
     }
