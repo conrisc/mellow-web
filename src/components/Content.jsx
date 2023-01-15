@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { Home } from './Home';
@@ -7,8 +6,7 @@ import { Notepad } from './Notepad/Notepad';
 import { Musiq } from './Musiq/Musiq';
 import { Login } from './Login';
 import { Register } from './Register';
-import { getAccessToken, isLoggedIn } from 'Services/auth.service';
-import { setApiKey } from 'Services/apiConfig.service';
+import { useAuth } from 'Hooks/useAuth';
 
 export function Content() {
     return (
@@ -32,26 +30,11 @@ export function Content() {
     );
 }
 
-function PrivateRouteX({ children, setAuthenticated, setUnauthenticated, isAuthenticated, ...rest }) {
-    const [checking, setChecking] = useState(true);
+export function PrivateRoute({ children, ...rest }) {
+    const { checkingAuth, isAuthenticated } = useAuth();
 
-    useEffect(() => {
-        checkIfAuthorized();
-    }, []);
 
-    async function checkIfAuthorized() {
-        if (await isLoggedIn()) {
-            const accessToken = await getAccessToken();
-            setApiKey(accessToken);
-            setAuthenticated();
-        } else {
-            setUnauthenticated();
-        }
-
-        setChecking(false);
-    }
-
-    return checking ? null : (
+    return checkingAuth ? null : (
         <Route
             {...rest}
             render={({ location }) =>
@@ -69,18 +52,3 @@ function PrivateRouteX({ children, setAuthenticated, setUnauthenticated, isAuthe
         />
     );
 }
-
-const mapStateToProps = state => {
-    return {
-        isAuthenticated: state.isAuthenticated
-    };
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setAuthenticated: () => dispatch({ type: 'SET_AUTHENTICATED' }),
-        setUnauthenticated: () => dispatch({ type: 'SET_UNAUTHENTICATED' }),
-    };
-}
-
-const PrivateRoute = connect(mapStateToProps, mapDispatchToProps)(PrivateRouteX);
