@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { throttle } from 'throttle-debounce';
-import { UsersApi, NoteItem } from 'mellov_api';
+import { NoteItem } from 'mellov_api';
 import { Input } from 'antd';
-import { authorizedRequest } from 'Services/apiConfig.service';
 
 const { TextArea } = Input;
 
-function saveNote(noteId, text) {
+async function saveNote(noteId, text) {
 	const noteItem = new NoteItem(new Date().toISOString(), text);
 	noteItem.id = noteId;
 
-	const api = new UsersApi();
-	authorizedRequest(() => api.updateNote(noteId, noteItem))
+	const api = await getUsersApi();
+	api.updateNote(noteId, noteItem)
 		.then(() => {
 			console.log('Note updated');
 		 }, error => {

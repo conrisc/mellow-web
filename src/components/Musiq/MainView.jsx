@@ -1,6 +1,5 @@
 import React from 'react';
 import { debounce } from 'throttle-debounce';
-import { UsersApi } from 'mellov_api';
 import { Row, Col } from 'antd';
 
 import { dataTypes } from 'Constants/wsConstants';
@@ -9,7 +8,7 @@ import { musiqWebsocket } from 'Services/musiqWebsocket';
 import { SongList } from './SongList/SongList';
 import { YtList } from './YtList';
 import { ViewSwitch } from './ViewSwitch';
-import { authorizedRequest } from 'Services/apiConfig.service';
+import { getUsersApi } from 'Services/mellowApi';
 
 export class MainView extends React.Component {
 
@@ -33,23 +32,21 @@ export class MainView extends React.Component {
         }
     }
 
-    getYtItems(title) {
+    async getYtItems(title) {
         if (!title || title === '') {
             console.log('getYtItems: title is empty');
             return;
         }
-        const api = new UsersApi();
+        const api = await getUsersApi();
 
         const encodedTitle = encodeURIComponent(title);
-        const opts = {
-            limit: 10
-        }
+        const limit = 10;
 
         console.log('Fetching yt items...');
         this.setState({
             isFetchingYtItems: true
         });
-        return authorizedRequest(() => api.searchYtItems(encodedTitle, opts))
+        return api.searchYtItems(encodedTitle, limit)
             .then(ytItems => {
                 this.setState({
                     ytItems,

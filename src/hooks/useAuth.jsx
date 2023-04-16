@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getAccessToken, isLoggedIn } from 'Services/auth.service';
-import { setApiKey } from 'Services/apiConfig.service';
+import { isLoggedIn } from 'Services/auth.service';
 
 export function useAuth() {
 	const [checkingAuth, setCheckingAuth] = useState(true);
@@ -15,8 +14,6 @@ export function useAuth() {
 
 	async function checkIfAuthorized() {
 		if (await isLoggedIn()) {
-			const accessToken = await getAccessToken();
-			setApiKey(accessToken);
 			setAuthenticated();
 		} else {
 			setUnauthenticated();

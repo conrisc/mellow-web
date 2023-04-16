@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { UsersApi, NoteItem } from 'mellov_api';
+import { NoteItem } from 'mellov_api';
 import { Row, Col, Button } from 'antd';
 
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
-import { authorizedRequest } from 'Services/apiConfig.service';
+import { getUsersApi } from 'Services/mellowApi';
 
 export function Notepad(props) {
     const { noteId } = useParams();
@@ -56,8 +56,8 @@ export function Notepad(props) {
         setNotes(newNotes);
     }
 
-    function getNote() {
-        const api = new UsersApi();
+    async function getNote() {
+        const api = await getUsersApi();
         api.searchNote(noteId)
         .then(data => {
             console.log('Found the note', data, response);
@@ -74,10 +74,10 @@ export function Notepad(props) {
         setNote(newNote);
     }
 
-    function getNotes() {
-        const api = new UsersApi();
+    async function getNotes() {
+        const api = await getUsersApi();
 
-        return authorizedRequest(() => api.searchNotes({}))
+        return api.searchNotes()
             .then(data => {
                 console.log('Fetched notes');
                 setNotes(data);
@@ -91,10 +91,10 @@ export function Notepad(props) {
     function initActionButton() {
     }
 
-    function removeNote(nId) {
-        const api = new UsersApi();
+    async function removeNote(nId) {
+        const api = await getUsersApi();
 
-        authorizedRequest(() => api.deleteNote(nId))
+        api.deleteNote(nId)
             .then(() => {
                 getNotes();
                 if (noteId === nId)
@@ -105,13 +105,12 @@ export function Notepad(props) {
             });
     }
 
-    function createEmptyNote() {
-
-        const api = new UsersApi();
+    async function createEmptyNote() {
+        const api = await getUsersApi();
 
         const noteItem = new NoteItem(new Date().toISOString(), '');
 
-        authorizedRequest(() => api.addNote(noteItem))
+        api.addNote(noteItem)
             .then(data => {
                 console.log('API called successfully.', data);
                 getNotes();

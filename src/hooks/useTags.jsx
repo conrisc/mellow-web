@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { UsersApi, TagItem } from 'mellov_api';
-import { authorizedRequest } from 'Services/apiConfig.service';
+import { TagItem } from 'mellov_api';
+import { getUsersApi } from 'Services/mellowApi';
 
 export function useTags() {
     const [tags, setTags] = useState([]);
@@ -30,15 +30,15 @@ export function useTags() {
         setTagsIdToNameMap(newTagsIdToNameMap);
     }, [tags]);
 
-    function getTags() {
-        const api = new UsersApi();
+    async function getTags() {
+        const api = await getUsersApi();
 
         const opts = {
             skip: 0,
             limit: 300
         };
 
-        return authorizedRequest(() => api.searchTags(opts))
+        return api.searchTags(opts)
             .then(data => {
 				setTags(data.map(tagItem => ({ tagItem, selected: false })))
             }, error => {
@@ -58,16 +58,16 @@ export function useTags() {
 		setTags(newTags);
     }
 
-    function addTag(tagName) {
+    async function addTag(tagName) {
         if (typeof tagName !== 'string' || !tagName.match(/^\w[\w\s-]*\w$/)) {
             console.warn('Tag name does not match criteria!')
             return Promise.resolve(false);
         }
 
         const tagItem = new TagItem(tagName);
-        const api = new UsersApi();
+        const api = await getUsersApi();
 
-        return authorizedRequest(() => api.addTag(tagItem))
+        return api.addTag(tagItem)
             .then(data => {
                 console.log('API called successfully.');
                 getTags(); // temporary?
@@ -79,9 +79,9 @@ export function useTags() {
             });
     }
 
-    function removeTag(tagId) {
-        const api = new UsersApi();
-        return authorizedRequest(() => api.deleteTag(tagId))
+    async function removeTag(tagId) {
+        const api = await getUsersApi();
+        return api.deleteTag(tagId)
             .then(() => {
                 console.log('Tag successfuly removed');
                 getTags(); // temporary?

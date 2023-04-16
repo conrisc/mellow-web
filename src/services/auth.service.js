@@ -20,9 +20,10 @@ export function isLoggedIn() {
                 if (error) {
                     console.warn(`Retriving session failed: ${error.message | error}`);
                     resolve(false);
+                } else {
+                    console.log(`Session validity: ${session.isValid()}`);
+                    resolve(session.isValid());
                 }
-                console.log(`Session validity: ${session.isValid()}`);
-                resolve(session.isValid());
             });
         });
     }
@@ -67,6 +68,7 @@ export function getAccessToken() {
     const cognitoUser = userPool.getCurrentUser();
     if (cognitoUser) {
         return new Promise((resolve, reject) => {
+            // getSession automatically refreshes session using RefreshToken if Id/Access token expire
             cognitoUser.getSession((error, session) => {
                 if (error) {
                     console.error(`Retriving session failed: ${error.message | error}`);
@@ -76,7 +78,7 @@ export function getAccessToken() {
                 if (session.isValid()) {
                     resolve(session.getAccessToken().getJwtToken());
                 } else {
-                    reject(Error('Session is not valid')); // TODO: Should refresh the token?
+                    reject(Error('Session is not valid'));
                 }
             });
         });

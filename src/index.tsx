@@ -10,10 +10,6 @@ import './index.css';
 
 import './exampleScript';
 import { App } from './components/App';
-import { ApiClient } from 'mellov_api';
-import { MELLOV_API_URL } from 'Constants/environment';
-
-ApiClient.instance.basePath = MELLOV_API_URL;
 
 const initialState = {
 	isAuthenticated: false,

@@ -3723,7 +3723,7 @@ es-module-lexer@^1.2.1:
 
 es6-promise@^4.2.4:
   version "4.2.8"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.2.8.tgz#4eb21594c972bc40553d276e510539143db53e0a"
+  resolved "https://conrisc-118101356080.d.codeartifact.eu-central-1.amazonaws.com/npm/npm-store/es6-promise/-/es6-promise-4.2.8.tgz#4eb21594c972bc40553d276e510539143db53e0a"
   integrity sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==
 
 escalade@^3.1.1:
@@ -5443,9 +5443,10 @@ media-typer@0.3.0:
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
 
-"mellov_api@https://github.com/conrisc/mellov-api-client":
+mellov_api@^1.1.0:
   version "1.1.0"
-  resolved "https://github.com/conrisc/mellov-api-client#a52b4f775f44c959746c749062136554931e38ad"
+  resolved "https://conrisc-118101356080.d.codeartifact.eu-central-1.amazonaws.com/npm/npm-store/mellov_api/-/mellov_api-1.1.0.tgz#9b78e7d3713a008c6209cc034f2cb474a845f20f"
+  integrity sha512-UV15w6CrVb4VicSEL4e4y1G1Qh4OADGJ+f5jtAG3u+k6Nrca8RYSAvzC9J9c6c+iEMy5shXIqvP+18xdT6PxpA==
   dependencies:
     es6-promise "^4.2.4"
     url-parse "^1.4.3"
@@ -6088,7 +6089,7 @@ querystring@0.2.1:
 
 querystringify@^2.1.1:
   version "2.2.0"
-  resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
+  resolved "https://conrisc-118101356080.d.codeartifact.eu-central-1.amazonaws.com/npm/npm-store/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
   integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
 
 queue-microtask@^1.2.2:
@@ -7527,7 +7528,7 @@ urix@^0.1.0:
 
 url-parse@^1.4.3:
   version "1.5.10"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
+  resolved "https://conrisc-118101356080.d.codeartifact.eu-central-1.amazonaws.com/npm/npm-store/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
   integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
   dependencies:
     querystringify "^2.1.1"
@@ -7750,9 +7751,9 @@ websocket-extensions@>=0.1.1:
   integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-fetch@^3.0.0:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz#dced24f37f2624ed0281725d51d0e2e3fe677f8c"
-  integrity sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==
+  version "3.6.17"
+  resolved "https://conrisc-118101356080.d.codeartifact.eu-central-1.amazonaws.com/npm/npm-store/whatwg-fetch/-/whatwg-fetch-3.6.17.tgz#009bbbfc122b227b74ba1ff31536b3a1a0e0e212"
+  integrity sha512-c4ghIvG6th0eudYwKZY5keb81wtFz9/WeAHAoy8+r18kcWlitUIrmGFQ2rWEl4UCKUilD3zCLHOIPheHx5ypRQ==
 
 whatwg-url@^5.0.0:
   version "5.0.0"

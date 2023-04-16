@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { signInUser } from 'Services/auth.service';
-import { setApiKey } from 'Services/apiConfig.service';
 
 function LoginX(props) {
     const [email, setEmail] = useState('');
@@ -14,8 +13,7 @@ function LoginX(props) {
 
     function loginUser() {
         signInUser(email, password)
-            .then((accessToken) => {
-                setApiKey(accessToken);
+            .then(() => {
                 props.setAuthenticated();
                 navigate(from);
             }, error => {

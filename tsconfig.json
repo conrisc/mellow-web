@@ -1,21 +1,21 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "module": "es6",
-    "target": "es5",
-    "jsx": "react",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports" : true,
-    "esModuleInterop" : true,
-    "baseUrl": ".",
-    "paths": {
-        "Hooks/*": ["src/hooks/*"],
-        "Services/*": ["src/services/*"],
-        "Constants/*": ["src/constants/*"],
-        "CommonComponents/*": ["src/components/common/*"]
-    }
-  },
-  "exclude": ["node_modules"],
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"sourceMap": true,
+		"module": "es6",
+		"target": "es5",
+		"jsx": "react",
+		"allowJs": true,
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"baseUrl": ".",
+		"paths": {
+			"Hooks/*": ["src/hooks/*"],
+			"Services/*": ["src/services/*"],
+			"Constants/*": ["src/constants/*"],
+			"CommonComponents/*": ["src/components/common/*"]
+		}
+	},
+	"include": ["src"],
 }
