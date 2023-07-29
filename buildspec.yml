@@ -4,13 +4,13 @@ phases:
   install:
     commands:
       - npm install -g yarn
-      - yarn install --network-concurrency 1
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - aws codeartifact login --tool npm --repository npm-store --domain conrisc --domain-owner 118101356080
   build:
     commands:
       - echo Build started on `date`
+      - yarn install --network-concurrency 1
       - yarn build
   post_build:
     commands:
