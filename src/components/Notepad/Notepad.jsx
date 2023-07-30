@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import './Notepad.css';
+import { useParams, useNavigate } from 'react-router-dom';
 import { NoteItem } from 'mellov_api';
 import { Row, Col, Button } from 'antd';
 
@@ -7,13 +8,16 @@ import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
 import { getUsersApi } from 'Services/mellowApi';
+import { useMatchMedia } from 'Hooks/useMatchMedia';
 
 export function Notepad(props) {
 	const { noteId } = useParams();
 	const [notes, setNotes] = useState([]);
 	const [note, setNote] = useState(null);
 	const [shouldShowSpinner, setSpinnerState] = useState(true);
+	const navigate = useNavigate();
 	const prevNoteRef = useRef(null);
+	const isLargeScreen = useMatchMedia('(min-width: 992px)');
 
 	useEffect(() => {
 		initActionButton();
@@ -96,7 +100,7 @@ export function Notepad(props) {
 		api.deleteNote(nId)
 			.then(() => {
 				getNotes();
-				if (noteId === nId) props.history.push('/notepad');
+				if (noteId === nId) redirectToList();
 			})
 			.catch((error) => {
 				console.error(error);
@@ -112,40 +116,76 @@ export function Notepad(props) {
 			.then((data) => {
 				console.log('API called successfully.', data);
 				getNotes();
-				props.history.push(`/notepad/${data.id}`);
+				navigateToNote(data.id);
 			})
 			.catch((error) => {
 				console.error(error);
 			});
 	}
 
+	function redirectToList() {
+		navigate('/notepad');
+	}
+
+	function navigateToNote(noteId) {
+		navigate(`/notepad/${noteId}`);
+	}
+
 	return (
 		<div className="notepad">
-			<Row
-				className={'smooth-transform width-2x-sm' + (noteId ? ' transform-left-50' : '')}
-				gutter={16}
-			>
-				<Col span={12}>
-					<NoteList
-						noteId={noteId}
-						notes={notes}
-						updateNotes={getNotes}
-						removeNote={removeNote}
-						createEmptyNote={createEmptyNote}
-					/>
-				</Col>
-				<Col span={noteId ? 12 : 0}>
+			<Row className="notepad-row" gutter={8}>
+				<Col span={isLargeScreen ? 12 : noteId ? 0 : 24}>
 					<Button
-						href="/notepad"
-						type="primary"
-						icon={<i className="fas fa-angle-left"></i>}
-						className="hide-on-lg"
+						style={{ marginBottom: '8px' }}
+						type="default"
+						onClick={createEmptyNote}
+						icon={<i className="fas fa-plus-circle"></i>}
 					/>
-					{note ? (
-						<NoteEditor note={note} onNoteChange={onNoteChange} />
-					) : (
-						<Info shouldShowSpinner={shouldShowSpinner} msg={'Note not found! :('} />
+					<div
+						style={{
+							height: 'calc(100vh - 80px)',
+							overflowY: 'auto',
+							overflowX: 'hidden',
+						}}
+					>
+						<NoteList
+							noteId={noteId}
+							notes={notes}
+							updateNotes={getNotes}
+							removeNote={removeNote}
+							createEmptyNote={createEmptyNote}
+						/>
+					</div>
+				</Col>
+				<Col
+					span={isLargeScreen && noteId ? 12 : noteId ? 24 : 0}
+					style={{
+						paddingTop: isLargeScreen ? 32 : 0,
+					}}
+				>
+					{!isLargeScreen && (
+						<Button
+							style={{ marginBottom: '8px' }}
+							onClick={redirectToList}
+							type="primary"
+							icon={<i className="fas fa-angle-left"></i>}
+						/>
 					)}
+					<div
+						style={{
+							height: 'calc(100vh - 80px)',
+							overflowY: 'auto',
+						}}
+					>
+						{note ? (
+							<NoteEditor note={note} onNoteChange={onNoteChange} />
+						) : (
+							<Info
+								shouldShowSpinner={shouldShowSpinner}
+								msg={'Note not found! :('}
+							/>
+						)}
+					</div>
 				</Col>
 			</Row>
 		</div>

@@ -12,7 +12,7 @@ export function NoteCard(props) {
         props.removeNote(note.id);
     }
 
-    const lines = note.text.split('\n');
+    const lines = note.text?.split('\n') ?? [];
 
     return (
         <Link to={`/notepad/${note.id}`}>

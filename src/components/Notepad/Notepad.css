@@ -1,0 +1,9 @@
+.notepad {
+    background-image: linear-gradient(to right, #141e30, #243b55);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.notepad-row {
+    padding: 8px;
+}

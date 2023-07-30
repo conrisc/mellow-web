@@ -15,13 +15,6 @@ body, p {
     font-size: 20px;
 }
 
-.notepad {
-    background-image: linear-gradient(to right, #141e30, #243b55);
-    min-height: 100vh;
-    overflow: hidden;
-    padding: 8px;
-}
-
 .note-rm-btn {
     position: absolute;
     top: 4px;
@@ -49,10 +42,6 @@ body, p {
 
 .mt-1 {
     margin-top: 8px;
-}
-
-.mt-3 {
-    margin-top: 30px;
 }
 
 .m-auto {
@@ -219,14 +208,14 @@ body, p {
     font-size: 16px;
 }
 
-@media only screen and (min-width: 993px) {
+@media only screen and (min-width: 992px) {
     .hide-on-lg {
         display: none;
     }
 }
 
-/* It should be mobile first: @media only screen and (min-width: 993px)*/
-@media only screen and (max-width: 992px) {
+/* It should be mobile first: @media only screen and (min-width: 992px)*/
+@media only screen and (max-width: 991px) {
     .control-panel {
         bottom: 50px;
     }
@@ -263,16 +252,8 @@ body, p {
         width: 100%;
     }
 
-    .transform-left-50 {
-        transform: translateX(-50%);
-    }
-
     .transform-top-100 {
         transform: translateY(-100%);
-    }
-
-    .width-2x-sm {
-        width: 200%;
     }
 
     .pos-fixed-sm {

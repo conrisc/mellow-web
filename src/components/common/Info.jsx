@@ -3,7 +3,7 @@ import { Spinner } from './Spinner';
 
 export function Info(props) {
     return (
-        <div className="mt-3">
+        <div>
             {
                 props.shouldShowSpinner ?
                     <Spinner /> :

@@ -31,7 +31,7 @@ export function NoteEditor(props) {
 	}, [noteId]);
 
     return (
-        <div className="mt-3">
+        <div>
 			<TextArea
 				ref={textRef}
 				autoFocus
