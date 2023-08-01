@@ -14,7 +14,6 @@ export function NoteList(props) {
 					<NoteCard
 						note={noteItem}
 						key={index}
-						updateNotes={props.updateNotes}
 						removeNote={props.removeNote}
 						active={noteId === noteItem.id}
 					/>

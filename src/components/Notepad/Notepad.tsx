@@ -13,17 +13,16 @@ import { Spinner } from 'CommonComponents/Spinner';
 
 export function Notepad(props) {
 	const { noteId } = useParams();
-	const [notes, setNotes] = useState([]);
-	const [note, setNote] = useState(null);
-	const [noteForDeletion, setNoteForDeletion] = useState(null);
+	const [notes, setNotes] = useState<NoteItem[]>([]);
+	const [note, setNote] = useState<NoteItem | null>(null);
+	const [noteForDeletion, setNoteForDeletion] = useState<NoteItem | null>(null);
 	const [isLoadingNote, setIsLoadingNote] = useState(false);
 	const [isLoadingNotes, setIsLoadingNotes] = useState(false);
 	const navigate = useNavigate();
-	const prevNoteRef = useRef(null);
+	const prevNoteRef = useRef<NoteItem | null>(null);
 	const isLargeScreen = useMatchMedia('(min-width: 992px)');
 
 	useEffect(() => {
-		initActionButton();
 		getNotes();
 		document
 			.querySelector('#manifest-placeholder')
@@ -35,25 +34,25 @@ export function Notepad(props) {
 	}, [noteId, notes]);
 
 	useEffect(() => {
-		removePrevNoteIfEmpty(prevNoteRef.current);
+		removePrevNoteIfEmpty();
 		prevNoteRef.current = note;
 	}, [note]);
 
 	useEffect(() => cleanup, []);
 
 	function cleanup() {
-		removePrevNoteIfEmpty(prevNoteRef.current);
+		removePrevNoteIfEmpty();
 	}
 
-	function removePrevNoteIfEmpty(n) {
+	function removePrevNoteIfEmpty(): void {
 		const previousNote = prevNoteRef.current;
 		const previousNotSelected = previousNote && (!note || previousNote.id !== note.id);
 		if (previousNotSelected && previousNote.text === '') deleteNote(previousNote.id);
 	}
 
-	function onNoteChange(noteId, text) {
+	function onNoteChange(nId: string, text: string): void {
 		const newNotes = notes.map((el) => {
-			if (el.id === noteId) {
+			if (el.id === nId) {
 				const updatedNote = new NoteItem();
 				updatedNote.id = el.id;
 				updatedNote.creationDate = el.creationDate;
@@ -65,29 +64,25 @@ export function Notepad(props) {
 		setNotes(newNotes);
 	}
 
-	async function getNote() {
+	async function getNote(nId: string): Promise<NoteItem | null> {
 		const api = await getUsersApi();
-		api.searchNote(noteId)
-			.then((data) => {
-				console.log('Found the note', data, response);
-				if (data.length > 0) setNote(data[0]);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+		try {
+			return await api.searchNote(nId);
+		} catch (error) {
+			console.error(`Failed to fetch note with id ${nId}. Error: ${error.message}`);
+		}
 	}
 
-	function displayNote() {
+	function displayNote(): void {
 		const newNote = notes.find((noteItem) => noteItem.id === noteId) || null;
 		setNote(newNote);
 	}
 
-	async function getNotes() {
+	async function getNotes(): Promise<void> {
 		const api = await getUsersApi();
 
 		setIsLoadingNotes(true);
-		return api
-			.searchNotes()
+		api.searchNotes()
 			.then((data) => {
 				console.log('Fetched notes');
 				setNotes(data);
@@ -99,62 +94,64 @@ export function Notepad(props) {
 			});
 	}
 
-	function initActionButton() {}
-
-	async function deleteNote(noteId) {
-		console.log('Deleting note', noteForDeletion.id);
+	async function deleteNote(nId: string): Promise<void> {
+		console.log('Deleting note', nId);
 		const api = await getUsersApi();
 
-		api.deleteNote(noteId)
+		api.deleteNote(nId)
 			.then(() => {
-				getNotes();
-				if (noteId === noteId) redirectToList();
+				if (noteId === nId) navigateToList();
+				const filteredNotes = notes.filter((it) => it.id !== nId);
+				setNotes(filteredNotes);
 			})
 			.catch((error) => {
 				console.error(error);
 			});
 	}
 
-	async function createEmptyNote() {
+	async function createEmptyNote(): Promise<void> {
 		const api = await getUsersApi();
 
-		const noteItem = new NoteItem();
-		noteItem.creationDate = new Date().toISOString();
-		noteItem.text = '';
+		const newNoteItem = new NoteItem();
+		newNoteItem.creationDate = new Date().toISOString();
+		newNoteItem.text = '';
 
+		console.log('Adding new note', newNoteItem);
 		setIsLoadingNote(true);
-		api.addNote(noteItem)
-			.then((data) => {
-				console.log('API called successfully.', data);
-				getNotes();
-				navigateToNote(data.id);
-				setIsLoadingNote(false);
-			})
-			.catch((error) => {
-				console.error(error);
-				setIsLoadingNote(false);
-			});
+
+		let nId: string | undefined;
+		try {
+			const result = await api.addNote(newNoteItem);
+			console.log('Got response from API', result);
+			nId = result.id;
+		} catch (error) {
+			console.error('Failed to create note. Got error:', error.message);
+		}
+		const addedNoteItem = await getNote(nId);
+		setNotes([...notes, addedNoteItem]);
+		navigateToNote(nId);
+		setIsLoadingNote(false);
 	}
 
-	function onDeleteNoteClick(noteId) {
-		const noteForDeletion = notes.find((it) => it.id === noteId);
+	function onDeleteNoteClick(nId: string): void {
+		const noteForDeletion = notes.find((it) => it.id === nId);
 		if (!noteForDeletion) {
-			console.warn(`Cannot find note with id ${noteId}`);
+			console.warn(`Cannot find note with id ${nId}`);
 			return;
 		}
 
 		setNoteForDeletion(noteForDeletion);
 	}
 
-	function redirectToList() {
+	function navigateToList(): void {
 		navigate('/notepad');
 	}
 
-	function navigateToNote(noteId) {
-		navigate(`/notepad/${noteId}`);
+	function navigateToNote(nId: string): void {
+		navigate(`/notepad/${nId}`);
 	}
 
-	function getNotePreviewLanes() {
+	function getNotePreviewLanes(): string[] {
 		const lanes = noteForDeletion?.text?.split('\n') ?? [];
 		const previewLanes = lanes.slice(0, 5);
 		return previewLanes.length < lanes.length ? [...previewLanes, '...'] : previewLanes;
@@ -176,12 +173,7 @@ export function Notepad(props) {
 						overflowX: 'hidden',
 					}}
 				>
-					<NoteList
-						noteId={noteId}
-						notes={notes}
-						updateNotes={getNotes}
-						removeNote={onDeleteNoteClick}
-					/>
+					<NoteList noteId={noteId} notes={notes} removeNote={onDeleteNoteClick} />
 				</div>
 			</Col>
 			<Col
@@ -193,7 +185,7 @@ export function Notepad(props) {
 				{!isLargeScreen && (
 					<Button
 						style={{ marginBottom: '8px' }}
-						onClick={redirectToList}
+						onClick={navigateToList}
 						type="primary"
 						icon={<i className="fas fa-angle-left"></i>}
 					/>
@@ -204,7 +196,7 @@ export function Notepad(props) {
 						overflowY: 'auto',
 					}}
 				>
-					{note ? (
+					{!isLoadingNote && note ? (
 						<NoteEditor note={note} onNoteChange={onNoteChange} />
 					) : (
 						<Info showSpinner={isLoadingNote} msg={'Note not found :('} />
