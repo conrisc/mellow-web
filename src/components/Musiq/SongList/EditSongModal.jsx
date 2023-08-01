@@ -30,8 +30,13 @@ export function EditSongModal(props) {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
 
-        const updatedSongItem = new SongItem(title.trim(), url.trim(), songItem.dateAdded, songTagsIds);
+        const updatedSongItem = new SongItem();
         updatedSongItem.id = songItem.id;
+        updatedSongItem.title = title.trim();
+        updatedSongItem.url = url.trim();
+        updatedSongItem.dateAdded = songItem.dateAdded;
+        updatedSongItem.tags = songTagsIds;
+
 
         props.updateSong(updatedSongItem)
             .catch(() => {

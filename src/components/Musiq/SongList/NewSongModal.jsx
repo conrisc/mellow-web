@@ -28,7 +28,11 @@ export function NewSongModal(props) {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
 
-        const newSongItem = new SongItem(title.trim(), url.trim(), new Date().toISOString(), songTagsIds);
+        const newSongItem = new SongItem();
+        newSongItem.title = title.trim();
+        newSongItem.url = url.trim();
+        newSongItem.dateAdded = new Date().toISOString();
+        newSongItem.tags = songTagsIds;
 
         props.addSong(newSongItem)
             .then(() => {

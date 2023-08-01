@@ -64,7 +64,8 @@ export function useTags() {
             return Promise.resolve(false);
         }
 
-        const tagItem = new TagItem(tagName);
+        const tagItem = new TagItem();
+        tagItem.name = tagName;
         const api = await getUsersApi();
 
         return api.addTag(tagItem)

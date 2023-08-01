@@ -51,8 +51,10 @@ export function Notepad(props) {
 	function onNoteChange(noteId, text) {
 		const newNotes = notes.map((el) => {
 			if (el.id === noteId) {
-				const updatedNote = new NoteItem(el.creationDate, text);
+				const updatedNote = new NoteItem();
 				updatedNote.id = el.id;
+				updatedNote.creationDate = el.creationDate;
+				updatedNote.text = text;
 				return updatedNote;
 			}
 			return el;
@@ -110,7 +112,9 @@ export function Notepad(props) {
 	async function createEmptyNote() {
 		const api = await getUsersApi();
 
-		const noteItem = new NoteItem(new Date().toISOString(), '');
+		const noteItem = new NoteItem();
+		noteItem.creationDate = new Date().toISOString();
+		noteItem.text = '';
 
 		api.addNote(noteItem)
 			.then((data) => {
