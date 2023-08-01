@@ -48,11 +48,6 @@ body, p {
     font-weight: bold;
 }
 
-.msg-info {
-    font-size: 18px;
-    color: #EEE;
-}
-
 .top-panel {
     background-image: linear-gradient(to right, #7e649e, #6870ab, #4e7cb1, #3486b1, #238eac);
     position: sticky;

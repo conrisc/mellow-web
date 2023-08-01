@@ -207,7 +207,7 @@ export function Notepad(props) {
 					{note ? (
 						<NoteEditor note={note} onNoteChange={onNoteChange} />
 					) : (
-						<Info showSpinner={isLoadingNote} msg={'Note not found! :('} />
+						<Info showSpinner={isLoadingNote} msg={'Note not found :('} />
 					)}
 				</div>
 			</Col>

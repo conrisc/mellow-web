@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'antd';
 import { Spinner } from './Spinner';
 
 export function Info(props) {
@@ -7,7 +8,7 @@ export function Info(props) {
             {
                 props.showSpinner ?
                     <Spinner size="large" center={true} /> :
-                    <span className="msg-info">{props.msg}</span>
+                    <Alert message={props.msg} type="error" showIcon />
             }
         </div>
     );
