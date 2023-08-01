@@ -5,8 +5,8 @@ export function Info(props) {
     return (
         <div>
             {
-                props.shouldShowSpinner ?
-                    <Spinner /> :
+                props.showSpinner ?
+                    <Spinner size="large" center={true} /> :
                     <span className="msg-info">{props.msg}</span>
             }
         </div>

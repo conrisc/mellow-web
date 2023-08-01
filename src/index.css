@@ -144,11 +144,6 @@ body, p {
     height: 50px;
 }
 
-.spinner {
-    height: 53px;
-    margin: 2px;
-}
-
 .smooth-bg {
     transition: background-color 0.1s linear;
 }

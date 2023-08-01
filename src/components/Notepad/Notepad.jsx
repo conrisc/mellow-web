@@ -9,13 +9,15 @@ import { NoteList } from './NoteList';
 import { NoteEditor } from './NoteEditor';
 import { getUsersApi } from 'Services/mellowApi';
 import { useMatchMedia } from 'Hooks/useMatchMedia';
+import { Spinner } from 'CommonComponents/Spinner';
 
 export function Notepad(props) {
 	const { noteId } = useParams();
 	const [notes, setNotes] = useState([]);
 	const [note, setNote] = useState(null);
 	const [noteForDeletion, setNoteForDeletion] = useState(null);
-	const [shouldShowSpinner, setSpinnerState] = useState(true);
+	const [isLoadingNote, setIsLoadingNote] = useState(false);
+	const [isLoadingNotes, setIsLoadingNotes] = useState(false);
 	const navigate = useNavigate();
 	const prevNoteRef = useRef(null);
 	const isLargeScreen = useMatchMedia('(min-width: 992px)');
@@ -83,15 +85,17 @@ export function Notepad(props) {
 	async function getNotes() {
 		const api = await getUsersApi();
 
+		setIsLoadingNotes(true);
 		return api
 			.searchNotes()
 			.then((data) => {
 				console.log('Fetched notes');
 				setNotes(data);
-				setSpinnerState(false);
+				setIsLoadingNotes(false);
 			})
 			.catch((error) => {
 				console.error(error);
+				setIsLoadingNotes(false);
 			});
 	}
 
@@ -118,14 +122,17 @@ export function Notepad(props) {
 		noteItem.creationDate = new Date().toISOString();
 		noteItem.text = '';
 
+		setIsLoadingNote(true);
 		api.addNote(noteItem)
 			.then((data) => {
 				console.log('API called successfully.', data);
 				getNotes();
 				navigateToNote(data.id);
+				setIsLoadingNote(false);
 			})
 			.catch((error) => {
 				console.error(error);
+				setIsLoadingNote(false);
 			});
 	}
 
@@ -153,63 +160,69 @@ export function Notepad(props) {
 		return previewLanes.length < lanes.length ? [...previewLanes, '...'] : previewLanes;
 	}
 
-	return (
-		<div className="notepad">
-			<Row className="notepad-row" gutter={8}>
-				<Col span={isLargeScreen ? 12 : noteId ? 0 : 24}>
-					<Button
-						style={{ marginBottom: '8px' }}
-						type="default"
-						onClick={createEmptyNote}
-						icon={<i className="fas fa-plus-circle"></i>}
-					/>
-					<div
-						style={{
-							height: 'calc(100vh - 80px)',
-							overflowY: 'auto',
-							overflowX: 'hidden',
-						}}
-					>
-						<NoteList
-							noteId={noteId}
-							notes={notes}
-							updateNotes={getNotes}
-							removeNote={onDeleteNoteClick}
-							createEmptyNote={createEmptyNote}
-						/>
-					</div>
-				</Col>
-				<Col
-					span={isLargeScreen && noteId ? 12 : noteId ? 24 : 0}
+	const NotepadRow = (
+		<Row className="notepad-row" gutter={8}>
+			<Col span={isLargeScreen ? 12 : noteId ? 0 : 24}>
+				<Button
+					style={{ marginBottom: '8px' }}
+					type="default"
+					onClick={createEmptyNote}
+					icon={<i className="fas fa-plus-circle"></i>}
+				/>
+				<div
 					style={{
-						paddingTop: isLargeScreen ? 32 : 0,
+						height: 'calc(100vh - 80px)',
+						overflowY: 'auto',
+						overflowX: 'hidden',
 					}}
 				>
-					{!isLargeScreen && (
-						<Button
-							style={{ marginBottom: '8px' }}
-							onClick={redirectToList}
-							type="primary"
-							icon={<i className="fas fa-angle-left"></i>}
-						/>
+					<NoteList
+						noteId={noteId}
+						notes={notes}
+						updateNotes={getNotes}
+						removeNote={onDeleteNoteClick}
+					/>
+				</div>
+			</Col>
+			<Col
+				span={isLargeScreen && noteId ? 12 : noteId ? 24 : 0}
+				style={{
+					paddingTop: isLargeScreen ? 32 : 0,
+				}}
+			>
+				{!isLargeScreen && (
+					<Button
+						style={{ marginBottom: '8px' }}
+						onClick={redirectToList}
+						type="primary"
+						icon={<i className="fas fa-angle-left"></i>}
+					/>
+				)}
+				<div
+					style={{
+						height: 'calc(100vh - 80px)',
+						overflowY: 'auto',
+					}}
+				>
+					{note ? (
+						<NoteEditor note={note} onNoteChange={onNoteChange} />
+					) : (
+						<Info showSpinner={isLoadingNote} msg={'Note not found! :('} />
 					)}
-					<div
-						style={{
-							height: 'calc(100vh - 80px)',
-							overflowY: 'auto',
-						}}
-					>
-						{note ? (
-							<NoteEditor note={note} onNoteChange={onNoteChange} />
-						) : (
-							<Info
-								shouldShowSpinner={shouldShowSpinner}
-								msg={'Note not found! :('}
-							/>
-						)}
-					</div>
-				</Col>
-			</Row>
+				</div>
+			</Col>
+		</Row>
+	);
+
+	return (
+		<div className="notepad">
+			{isLoadingNotes ? (
+				<div style={{ margin: 16 }}>
+					<Spinner center={true} size="large" />
+				</div>
+			) : (
+				NotepadRow
+			)}
 
 			<Modal
 				title="Confirm delete"
