@@ -13,15 +13,17 @@ async function saveNote(noteId, text) {
 	noteItem.text = text;
 
 	const api = await getUsersApi();
-	api.updateNote(noteId, noteItem)
-		.then(() => {
+	api.updateNote(noteId, noteItem).then(
+		() => {
 			console.log('Note updated');
-		 }, error => {
+		},
+		(error) => {
 			console.warn('Error while saving note: ', error);
-		 });
+		}
+	);
 }
 
-const handleNoteUpdate = throttle(2000, saveNote);
+const handleNoteUpdate = throttle(3000, saveNote);
 
 export function NoteEditor(props) {
 	const noteId = props.note.id;
@@ -33,8 +35,8 @@ export function NoteEditor(props) {
 		textRef.current.focus();
 	}, [noteId]);
 
-    return (
-        <div>
+	return (
+		<div>
 			<TextArea
 				ref={textRef}
 				autoFocus
@@ -45,10 +47,8 @@ export function NoteEditor(props) {
 					setText(t);
 					props.onNoteChange(noteId, t);
 					handleNoteUpdate(noteId, t);
-				}} 
+				}}
 			/>
-        </div>
-    );
+		</div>
+	);
 }
-
-

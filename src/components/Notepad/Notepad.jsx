@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Notepad.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { NoteItem } from 'mellov_api';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, Modal } from 'antd';
 
 import { Info } from 'CommonComponents/Info';
 import { NoteList } from './NoteList';
@@ -14,6 +14,7 @@ export function Notepad(props) {
 	const { noteId } = useParams();
 	const [notes, setNotes] = useState([]);
 	const [note, setNote] = useState(null);
+	const [noteForDeletion, setNoteForDeletion] = useState(null);
 	const [shouldShowSpinner, setSpinnerState] = useState(true);
 	const navigate = useNavigate();
 	const prevNoteRef = useRef(null);
@@ -45,7 +46,7 @@ export function Notepad(props) {
 	function removePrevNoteIfEmpty(n) {
 		const previousNote = prevNoteRef.current;
 		const previousNotSelected = previousNote && (!note || previousNote.id !== note.id);
-		if (previousNotSelected && previousNote.text === '') removeNote(previousNote.id);
+		if (previousNotSelected && previousNote.text === '') deleteNote(previousNote.id);
 	}
 
 	function onNoteChange(noteId, text) {
@@ -96,13 +97,14 @@ export function Notepad(props) {
 
 	function initActionButton() {}
 
-	async function removeNote(nId) {
+	async function deleteNote(noteId) {
+		console.log('Deleting note', noteForDeletion.id);
 		const api = await getUsersApi();
 
-		api.deleteNote(nId)
+		api.deleteNote(noteId)
 			.then(() => {
 				getNotes();
-				if (noteId === nId) redirectToList();
+				if (noteId === noteId) redirectToList();
 			})
 			.catch((error) => {
 				console.error(error);
@@ -127,12 +129,28 @@ export function Notepad(props) {
 			});
 	}
 
+	function onDeleteNoteClick(noteId) {
+		const noteForDeletion = notes.find((it) => it.id === noteId);
+		if (!noteForDeletion) {
+			console.warn(`Cannot find note with id ${noteId}`);
+			return;
+		}
+
+		setNoteForDeletion(noteForDeletion);
+	}
+
 	function redirectToList() {
 		navigate('/notepad');
 	}
 
 	function navigateToNote(noteId) {
 		navigate(`/notepad/${noteId}`);
+	}
+
+	function getNotePreviewLanes() {
+		const lanes = noteForDeletion?.text?.split('\n') ?? [];
+		const previewLanes = lanes.slice(0, 5);
+		return previewLanes.length < lanes.length ? [...previewLanes, '...'] : previewLanes;
 	}
 
 	return (
@@ -156,7 +174,7 @@ export function Notepad(props) {
 							noteId={noteId}
 							notes={notes}
 							updateNotes={getNotes}
-							removeNote={removeNote}
+							removeNote={onDeleteNoteClick}
 							createEmptyNote={createEmptyNote}
 						/>
 					</div>
@@ -192,6 +210,25 @@ export function Notepad(props) {
 					</div>
 				</Col>
 			</Row>
+
+			<Modal
+				title="Confirm delete"
+				open={!!noteForDeletion}
+				onOk={() => {
+					deleteNote(noteForDeletion.id);
+					setNoteForDeletion(null);
+				}}
+				onCancel={() => {
+					setNoteForDeletion(null);
+				}}
+			>
+				<p>Are you sure you want to delete this note?</p>
+				<div className="note-preview">
+					{getNotePreviewLanes().map((it, index) => (
+						<p key={index}>{it}</p>
+					))}
+				</div>
+			</Modal>
 		</div>
 	);
 }

@@ -1,9 +1,17 @@
 .notepad {
-    background-image: linear-gradient(to right, #141e30, #243b55);
-    min-height: 100vh;
-    overflow: hidden;
+	background-image: linear-gradient(to right, #141e30, #243b55);
+	min-height: 100vh;
+	overflow: hidden;
 }
 
 .notepad-row {
-    padding: 8px;
+	padding: 8px;
+}
+
+.note-preview {
+	background-color: #343536;
+	color: rgb(255, 255, 255);
+	padding: 8px;
+	margin-top: 4px;
+	border-radius: 4px;
 }
