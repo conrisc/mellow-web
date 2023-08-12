@@ -56,21 +56,21 @@ function YtPlayerX(props) {
         };
     }, [props.ytPlayer]);
 
-    useEffect(() => {
-        if (!props.ytPlayer) return;
+    // useEffect(() => {
+    //     if (!props.ytPlayer) return;
 
-        const webSocket = musiqWebsocket.getInstance();
-        const sendDataDebounced = debounce(1200, webSocket.sendData.bind(webSocket));
-        props.ytPlayer.addEventListener('onStateChange', state => {
-            const playerState = {
-                state: state.data,
-                videoId: props.ytPlayer.getVideoData().video_id || '',
-                title: props.ytPlayer.getVideoData().title || '',
-                time: Math.floor(props.ytPlayer.getCurrentTime()) || 0
-            };
-            sendDataDebounced(dataTypes.PLAYER_STATE, playerState);
-        });
-    }, [props.ytPlayer]);
+    //     const webSocket = musiqWebsocket.getInstance();
+    //     const sendDataDebounced = debounce(1200, webSocket.sendData.bind(webSocket));
+    //     props.ytPlayer.addEventListener('onStateChange', state => {
+    //         const playerState = {
+    //             state: state.data,
+    //             videoId: props.ytPlayer.getVideoData().video_id || '',
+    //             title: props.ytPlayer.getVideoData().title || '',
+    //             time: Math.floor(props.ytPlayer.getCurrentTime()) || 0
+    //         };
+    //         sendDataDebounced(dataTypes.PLAYER_STATE, playerState);
+    //     });
+    // }, [props.ytPlayer]);
 
     function pushNotification(text) {
         notification.open({
