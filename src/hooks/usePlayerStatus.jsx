@@ -9,8 +9,9 @@ export function usePlayerStatus(ytPlayer) {
 		let currentVideoId = '';
 		let retrier = null;
 		function stateListener({ data, target }) {
-			if (currentVideoId !== target.getVideoData().video_id) {
-				currentVideoId = target.getVideoData().video_id;
+			const videoId = target.getVideoData().video_id;
+			if (currentVideoId !== videoId) {
+				currentVideoId = videoId;
 				setStatus('INITIALIZED');
 			}
 
@@ -24,7 +25,7 @@ export function usePlayerStatus(ytPlayer) {
 					setStatus('RETRYING');
 					retrier = setTimeout(() => {
 						setStatus('FAILED');
-					}, 1500);
+					}, 2000);
 					break;
 				case 0:			// ENDED
 					setStatus('ENDED')
@@ -33,6 +34,7 @@ export function usePlayerStatus(ytPlayer) {
 					setStatus('PAUSED')
 					break;
 				case 3:	// LOADING
+					clearTimeout(retrier);
 				case 5:	// CUED
 				default:
 			}
