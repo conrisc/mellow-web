@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useReducer, useRef } from 'react';
+import React, { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { List, Row, Col, notification } from 'antd';
+import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
@@ -15,11 +16,10 @@ import { useScroll } from 'Hooks/useScroll';
 import { useSongs } from 'Hooks/useSongs';
 import { usePlayerStatus } from 'Hooks/usePlayerStatus';
 
-
 class CancelledActionError extends Error {
 	constructor(message) {
 		super(message ?? 'Action cancelled');
-		this.name = "CancelledActionError";
+		this.name = 'CancelledActionError';
 	}
 }
 
@@ -78,6 +78,13 @@ function SongListX(props) {
 	const songsReloaderRef = useRef(null);
 	const hasMoreSongs = useRef(true);
 	const allowedRetries = useRef(0);
+	const loadSongByVideoIdDebounced = useCallback(
+		debounce(500, (videoId, title) => {
+			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
+			ytPlayer.loadVideoById(videoId);
+		}),
+		[ytPlayer]
+	);
 
 	useEffect(() => {
 		const webSocket = musiqWebsocket.getInstance();
@@ -126,8 +133,8 @@ function SongListX(props) {
 		switch (playerStatus) {
 			case 'FAILED':
 				if (allowedRetries.current > 0) {
-					if (allowedRetries.current === 1) playSongFromYT(1);
-					else playSongFromYT();
+					if (allowedRetries.current === 1) playSong(true, 1);
+					else playSong(true);
 
 					allowedRetries.current--;
 				}
@@ -148,44 +155,43 @@ function SongListX(props) {
 		}
 	}, [currentlyPlaying]);
 
-	function playSong() {
-		const songItem = songs[currentlyPlaying];
-
+	async function playSong(fromYT = false, ytIndex = 0) {
 		songLoaderRef.current?.cancel();
+		const songItem = songs[currentlyPlaying];
 		if (songItem) {
-			const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
-			if (videoIdMatch) ytPlayer.loadVideoById(videoIdMatch[1]);
-			else playSongFromYT();
+			try {
+				const videoId = await new Promise((resolve, reject) => {
+					songLoaderRef.current = {
+						cancel() {
+							songLoaderRef.current = null;
+							reject(new CancelledActionError());
+						},
+					};
+					getSongVideoId(songItem, fromYT, ytIndex).then(resolve).catch(reject);
+				});
+				loadSongByVideoIdDebounced(videoId, songItem.title);
+			} catch (error) {
+				if (!(error instanceof CancelledActionError)) {
+					console.warn(
+						`Failed to get video id for the song: ${songItem.title}. Error: ${error.message}`
+					);
+					loadSongByVideoIdDebounced('fakeVideoId'); // workaround for retrying mechanism
+				}
+			}
 		}
 	}
 
-	function playSongFromYT(index = 0) {
-		const songItem = songs[currentlyPlaying];
+	async function getSongVideoId(songItem, fromYT, index) {
+		const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
-		songLoaderRef.current?.cancel();
-		if (songItem) {
-			new Promise(async (resolve, reject) => {
-				songLoaderRef.current = {
-					cancel() {
-						reject(new CancelledActionError());
-					},
-				};
+		if (videoIdMatch && !fromYT) return videoIdMatch[1];
 
-				const ytItems = await props.getYtItems(songItem.title);
-				resolve(ytItems);
-			})
-				.then((ytItems) => {
-					songLoaderRef.current = null;
-					const videoId = ytItems.length > index ? ytItems[index].videoId : 'fakeVideoId'; // workaround for autoretry
-					ytPlayer.loadVideoById(videoId);
-				})
-				.catch((error) => {
-					songLoaderRef.current = null;
-					if (!(error instanceof CancelledActionError)) {
-						console.error(`Failed to get yt items for song: ${songItem.title}. Error: ${error.message}`);
-					}
-				});
-		}
+		const ytItems = await props.getYtItems(songItem.title);
+		if (ytItems.length > index) return ytItems[index].videoId;
+		else
+			throw Error(
+				`Asked for ${index + 1} item on the list, but got only ${ytItems.length} items.`
+			);
 	}
 
 	function pushNotification(text) {
@@ -226,7 +232,7 @@ function SongListX(props) {
 					ytPlayer.playVideo();
 					break;
 				case 'FAILED':
-					playSongFromYT();
+					playSong(true);
 					break;
 			}
 		} else {

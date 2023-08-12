@@ -42,7 +42,7 @@ export class MainView extends React.Component {
         const encodedTitle = encodeURIComponent(title);
         const limit = 10;
 
-        console.log('Fetching yt items for song: ', title);
+        console.log('Fetching yt items for song:', title);
         this.setState({
             isFetchingYtItems: true
         });
