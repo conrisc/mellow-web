@@ -39,6 +39,10 @@ export function usePlayerStatus(ytPlayer) {
 		}
 
 		ytPlayer.addEventListener('onStateChange', stateListener);
+
+		return () => {
+			ytPlayer.removeEventListener('onStateChange', stateListener);
+		}
 	}, [ytPlayer]);
 
 	return status; // INITIALIZED, LOADED, RETRYING, FAILED, ENDED

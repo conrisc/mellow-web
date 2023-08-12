@@ -135,7 +135,7 @@ function SongListX(props) {
     // Play a song with index equal to the currentlyPlaying
     useEffect(() => {
         allowedRetries.current = 3;
-        if (typeof currentplyPlaying === 'number' && currentlyPlaying >= songs.length) {
+        if (typeof currentlyPlaying === 'number' && currentlyPlaying >= songs.length) {
             loadMore()
                 .then(playSong);
         } else {
