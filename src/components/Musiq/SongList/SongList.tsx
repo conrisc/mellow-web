@@ -239,6 +239,7 @@ function SongListX(props) {
 					break;
 			}
 		} else {
+			ytPlayer.pauseVideo();
 			dispatch({ type: 'PLAY_BY_INDEX', songIndex });
 		}
 	}
