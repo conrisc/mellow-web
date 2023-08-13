@@ -172,18 +172,6 @@ p {
 	margin: 6px 0;
 }
 
-.song-item {
-	padding: 8px 12px;
-	transition: margin 0.2s linear;
-	cursor: pointer;
-	flex-wrap: nowrap;
-}
-
-.song-item:hover {
-	background-color: #f9f9f9;
-	box-shadow: 0 1px 5px -2px #aaa;
-}
-
 .yt-image {
 	flex: 0 0 120px;
 	align-self: center;

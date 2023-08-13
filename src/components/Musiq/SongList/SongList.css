@@ -1,0 +1,24 @@
+.song-item {
+	padding: 8px 12px;
+	cursor: pointer;
+	flex-wrap: nowrap;
+}
+
+.song-item:not(.selected-song):hover {
+	background-color: #f9f9f9;
+	box-shadow: 0 1px 5px -2px #aaa;
+}
+
+.selected-song {
+    background-color: #d7d7f7;
+	box-shadow: 0 1px 5px -2px #6e5ebf;
+}
+
+.selected-song .status-indicator {
+    color: #fff;
+}
+
+.status-indicator {
+    font-size: 32px;
+    color: #6158c4;
+}

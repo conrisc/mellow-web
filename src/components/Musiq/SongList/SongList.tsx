@@ -17,6 +17,8 @@ import { useSongs } from 'Hooks/useSongs';
 import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
 import { SongItem } from 'mellov_api';
 
+import './SongList.css';
+
 class CancelledActionError extends Error {
 	constructor(message: string = 'Action cancelled') {
 		super(message);
@@ -306,7 +308,7 @@ function SongListX(props) {
 								onClick={() => onSongClick(index)}
 								className={
 									'song-item f-size-medium' +
-									(index === currentlyPlaying ? ' item-selected' : '')
+									(index === currentlyPlaying ? ' selected-song' : '')
 								}
 								extra={
 									<SongActionButtons
@@ -321,7 +323,7 @@ function SongListX(props) {
 								}
 							>
 								<Row gutter={16} style={{ flexWrap: 'nowrap' }}>
-									<Col style={{ fontSize: 32, color: '#6158c4' }}>
+									<Col className="status-indicator">
 										{index === currentlyPlaying ? (
 											<div>{getIconForCurrentSong()}</div> // icon needs to be wrapped up so React could hold a reference to it
 										) : (

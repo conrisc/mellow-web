@@ -3,6 +3,8 @@ import { Tag, Tooltip } from 'antd';
 
 import { useTagsState } from './TagsContext';
 
+import './SongInfoContainer.css';
+
 export function SongInfoContainer(props) {
     const { songItem, } = props;
     const [songTags, setTags] = useState([]);
@@ -16,7 +18,7 @@ export function SongInfoContainer(props) {
 
     return (
         <>
-            <h4 className="bold">{songItem.title}</h4>
+            <div className="song-title">{songItem.title}</div>
             <div>
                 {songTags.map((tagName, index) =>
                     <Tag key={index} color="geekblue">
