@@ -150,12 +150,12 @@ function SongListX(props) {
 
 	// Play a song with index equal to the currentlyPlaying
 	useEffect(() => {
-		allowedRetries.current = 3;
-		if (typeof currentlyPlaying === 'number' && currentlyPlaying >= songs.length) {
-			loadMore().then(() => playSong());
-		} else {
-			playSong();
+		if (typeof currentlyPlaying === 'number' && currentlyPlaying === songs.length - 1) {
+			loadMore();
 		}
+
+		allowedRetries.current = 3;
+		playSong();
 	}, [currentlyPlaying]);
 
 	async function playSong(fromYT = false, ytIndex = 0): Promise<void> {
