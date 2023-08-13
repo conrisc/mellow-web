@@ -4,6 +4,8 @@ const { Option } = Select;
 
 import { NewSongModal } from './NewSongModal';
 
+import './SongFilterPanel.css';
+
 export function SongFilterPanel(props) {
     const { songFilters, setSongFilters, showTagsDrawer, addSong } = props;
     const [isNewSongModalVisible, setIsNewSongModalVisible] = useState(false);
@@ -51,7 +53,7 @@ export function SongFilterPanel(props) {
             <Row
                 justify="space-between"
                 gutter={[8, 4]}
-                className="song-filter"
+                className="filter-panel"
             >
                 <Col lg={0}>
                     <Button onClick={showTagsDrawer}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer, useRef, useCallback, ReactElement } from 'react';
 import { connect } from 'react-redux';
-import { List, Row, Col, notification } from 'antd';
+import { List, Row, Col, notification, Alert, Space, Button } from 'antd';
 import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
@@ -15,6 +15,7 @@ import { TagsProvider, useTagsState } from './TagsContext';
 import { useScroll } from 'Hooks/useScroll';
 import { useSongs } from 'Hooks/useSongs';
 import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
+import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
 
 import './SongList.css';
@@ -59,7 +60,7 @@ function switchSong({ currentlyPlaying }, action) {
 
 function SongListX(props) {
 	const { ytPlayer } = props;
-	const playerStatus = usePlayerStatus(ytPlayer);
+	const { status: playerStatus, videoData } = usePlayerStatus(ytPlayer);
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState({
 		title: '',
@@ -88,6 +89,7 @@ function SongListX(props) {
 		}),
 		[ytPlayer]
 	);
+	const [urlBannerHidden, setUrlBannerHidden] = useState(false);
 
 	useEffect(() => {
 		const webSocket = musiqWebsocket.getInstance();
@@ -156,6 +158,7 @@ function SongListX(props) {
 
 		allowedRetries.current = 3;
 		playSong();
+		setUrlBannerHidden(false);
 	}, [currentlyPlaying]);
 
 	async function playSong(fromYT = false, ytIndex = 0): Promise<void> {
@@ -184,7 +187,11 @@ function SongListX(props) {
 		}
 	}
 
-	async function getSongVideoId(songItem: SongItem, fromYT: boolean, index: number): Promise<string> {
+	async function getSongVideoId(
+		songItem: SongItem,
+		fromYT: boolean,
+		index: number
+	): Promise<string> {
 		const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
 		if (videoIdMatch && !fromYT) return videoIdMatch[1];
@@ -244,6 +251,33 @@ function SongListX(props) {
 		}
 	}
 
+	function shouldShowUrlBanner(): boolean {
+		const songItem = songs[currentlyPlaying];
+		return !!(
+			!urlBannerHidden &&
+			playerStatus !== PlayerStatus.FAILED &&
+			songItem &&
+			!songItem.url &&
+			videoData?.videoId
+		);
+	}
+
+	function updateSongUrl(videoId: string): void {
+		const songItem = songs[currentlyPlaying];
+		if (!songItem) return;
+
+		const updatedSongItem = new SongItem();
+		updatedSongItem.id = songItem.id;
+		updatedSongItem.title = songItem.title;
+		updatedSongItem.url = createVideoLink(videoId);
+		updatedSongItem.dateAdded = songItem.dateAdded;
+		updatedSongItem.tags = songItem.tags.slice();
+
+		updateSong(updatedSongItem).catch((error) => {
+			console.warn(`Failed to update song's url. Error: ${error?.message}`);
+		});
+	}
+
 	function getIconForCurrentSong(): ReactElement {
 		switch (playerStatus) {
 			case PlayerStatus.PAUSED:
@@ -289,12 +323,45 @@ function SongListX(props) {
 						updateSong={updateSong}
 					/>
 				)}
-				<SongFilterPanel
-					addSong={addSong}
-					songFilters={songFilters}
-					setSongFilters={setSongFilters}
-					showTagsDrawer={() => setIsTagDrawerOpen(true)}
-				/>
+				<div className="songs-toolbar">
+					<SongFilterPanel
+						addSong={addSong}
+						songFilters={songFilters}
+						setSongFilters={setSongFilters}
+						showTagsDrawer={() => setIsTagDrawerOpen(true)}
+					/>
+					{shouldShowUrlBanner() && (
+						<Alert
+							message={
+								<span>
+									Add missing url to <b>{songs[currentlyPlaying].title}</b> ?
+									<br />
+									Playing: <b>{videoData.title}</b> ({videoData.videoId})
+								</span>
+							}
+							type="info"
+							banner
+							action={
+								<Space>
+									<Button
+										size="small"
+										type="primary"
+										onClick={() => updateSongUrl(videoData.videoId)}
+									>
+										Yes
+									</Button>
+									<Button
+										size="small"
+										danger
+										onClick={() => setUrlBannerHidden(true)}
+									>
+										No
+									</Button>
+								</Space>
+							}
+						/>
+					)}
+				</div>
 				<List
 					className="song-list"
 					rowKey="id"

@@ -4,6 +4,7 @@ import { Input, List, Row, Col, Button, Space } from 'antd';
 
 import { YtPlayer } from './YtPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
+import { createVideoLink } from 'Utils/yt';
 
 function YtListX(props) {
 	const { ytPlayer } = props;
@@ -49,7 +50,7 @@ function YtListX(props) {
 										style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
 									>
 										<a
-											href={`https://youtube.com/watch?v=${el.videoId}`}
+											href={createVideoLink(el.videoId)}
 											target="_blank"
 											rel="noopener noreferrer"
 											title="Open song in youtube"

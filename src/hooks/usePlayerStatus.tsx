@@ -10,8 +10,14 @@ export enum PlayerStatus {
 	LOADING,
 }
 
+export interface VideoData {
+	videoId: string;
+	title: string;
+}
+
 export function usePlayerStatus(ytPlayer) {
-	const [status, setStatus] = useState<PlayerStatus | null>(null)
+	const [status, setStatus] = useState<PlayerStatus | null>(null);
+	const [videoData, setVideoData] = useState<VideoData | null>(null);
 
 	useEffect(() => {
 		if (!ytPlayer) return;
@@ -49,6 +55,8 @@ export function usePlayerStatus(ytPlayer) {
 				case 5:	// CUED
 				default:
 			}
+
+			updateVideoData(target.getVideoData());
 		}
 
 		ytPlayer.addEventListener('onStateChange', stateListener);
@@ -58,5 +66,16 @@ export function usePlayerStatus(ytPlayer) {
 		}
 	}, [ytPlayer]);
 
-	return status;
+
+	function updateVideoData(playerData?: { video_id: string, title: string }) {
+		if (!playerData) setVideoData(null);
+		else if (videoData?.videoId !== playerData.video_id) {
+			setVideoData({
+				videoId: playerData.video_id,
+				title: playerData.title,
+			});
+		}
+	}
+
+	return { status, videoData };
 }

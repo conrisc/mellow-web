@@ -14,6 +14,7 @@
 			"Hooks/*": ["src/hooks/*"],
 			"Services/*": ["src/services/*"],
 			"Constants/*": ["src/constants/*"],
+			"Utils/*": ["src/utils/*"],
 			"CommonComponents/*": ["src/components/common/*"]
 		}
 	},

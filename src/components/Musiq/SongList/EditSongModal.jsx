@@ -4,6 +4,7 @@ import { Modal, Select, Input } from 'antd';
 const { Option } = Select;
 
 import { useTagsState } from './TagsContext';
+import { createVideoLink } from 'Utils/yt';
 
 export function EditSongModal(props) {
     const { songItem } = props;
@@ -17,7 +18,7 @@ export function EditSongModal(props) {
         const url = event.target.value;
         const videoIdMatch = url.match(/[\\?&]v=([^&]*)/);
         if (videoIdMatch && videoIdMatch[1])
-            setUrl('https://www.youtube.com/watch?v='+videoIdMatch[1]);
+            setUrl(createVideoLink(videoIdMatch[1]));
         else
             setUrl(url);
 	}
