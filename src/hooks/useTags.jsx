@@ -40,7 +40,9 @@ export function useTags() {
 
         return api.searchTags(opts)
             .then(data => {
-				setTags(data.map(tagItem => ({ tagItem, selected: false })))
+                const tags = data.map(tagItem => ({ tagItem, selected: false }));
+                tags.sort((t1, t2) => t1.tagItem.name < t2.tagItem.name ? -1 : 1);
+                setTags(tags);
             }, error => {
                 console.error(error);
             });
