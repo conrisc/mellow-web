@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useReducer, useRef, useCallback, ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { List, Row, Col, notification } from 'antd';
 import { debounce } from 'throttle-debounce';
@@ -14,11 +14,12 @@ import { TagsProvider, useTagsState } from './TagsContext';
 
 import { useScroll } from 'Hooks/useScroll';
 import { useSongs } from 'Hooks/useSongs';
-import { usePlayerStatus } from 'Hooks/usePlayerStatus';
+import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
+import { SongItem } from 'mellov_api';
 
 class CancelledActionError extends Error {
-	constructor(message) {
-		super(message ?? 'Action cancelled');
+	constructor(message: string = 'Action cancelled') {
+		super(message);
 		this.name = 'CancelledActionError';
 	}
 }
@@ -72,14 +73,14 @@ function SongListX(props) {
 	const [isLoadingSongs, setIsLoadingSongs] = useState(true);
 	const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
 	const [isTagDrawerOpen, setIsTagDrawerOpen] = useState(false);
-	const [editedSong, setEditedSong] = useState(null);
+	const [editedSong, setEditedSong] = useState<SongItem | null>(null);
 	const { scrollPosition, scrollHeight } = useScroll();
 	const songLoaderRef = useRef(null);
 	const songsReloaderRef = useRef(null);
 	const hasMoreSongs = useRef(true);
 	const allowedRetries = useRef(0);
 	const loadSongByVideoIdDebounced = useCallback(
-		debounce(500, (videoId, title) => {
+		debounce(500, (videoId: string, title: string = '') => {
 			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
 			ytPlayer.loadVideoById(videoId);
 		}),
@@ -131,7 +132,7 @@ function SongListX(props) {
 	// Handle player's status change
 	useEffect(() => {
 		switch (playerStatus) {
-			case 'FAILED':
+			case PlayerStatus.FAILED:
 				if (allowedRetries.current > 0) {
 					if (allowedRetries.current === 1) playSong(true, 1);
 					else playSong(true);
@@ -139,7 +140,7 @@ function SongListX(props) {
 					allowedRetries.current--;
 				}
 				break;
-			case 'ENDED':
+			case PlayerStatus.ENDED:
 				dispatch({ type: 'PLAY_NEXT' });
 				break;
 		}
@@ -149,13 +150,13 @@ function SongListX(props) {
 	useEffect(() => {
 		allowedRetries.current = 3;
 		if (typeof currentlyPlaying === 'number' && currentlyPlaying >= songs.length) {
-			loadMore().then(playSong);
+			loadMore().then(() => playSong());
 		} else {
 			playSong();
 		}
 	}, [currentlyPlaying]);
 
-	async function playSong(fromYT = false, ytIndex = 0) {
+	async function playSong(fromYT = false, ytIndex = 0): Promise<void> {
 		songLoaderRef.current?.cancel();
 		const songItem = songs[currentlyPlaying];
 		if (songItem) {
@@ -181,7 +182,7 @@ function SongListX(props) {
 		}
 	}
 
-	async function getSongVideoId(songItem, fromYT, index) {
+	async function getSongVideoId(songItem: SongItem, fromYT: boolean, index: number): Promise<string> {
 		const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
 
 		if (videoIdMatch && !fromYT) return videoIdMatch[1];
@@ -194,14 +195,14 @@ function SongListX(props) {
 			);
 	}
 
-	function pushNotification(text) {
+	function pushNotification(text: string): void {
 		notification.open({
 			message: 'Song list notification',
 			description: text,
 		});
 	}
 
-	function reloadSongs() {
+	function reloadSongs(): void {
 		document.documentElement.scrollTo(0, 0);
 		setIsLoadingSongs(true);
 		getSongs().finally(() => {
@@ -211,7 +212,7 @@ function SongListX(props) {
 		});
 	}
 
-	function loadMore() {
+	function loadMore(): Promise<void> {
 		if (!hasMoreSongs.current || isLoadingSongs) return Promise.resolve();
 
 		setIsLoadingSongs(true);
@@ -221,17 +222,17 @@ function SongListX(props) {
 		});
 	}
 
-	function onSongClick(songIndex) {
+	function onSongClick(songIndex: number): void {
 		if (songIndex === currentlyPlaying) {
 			switch (playerStatus) {
-				case 'LOADED':
+				case PlayerStatus.LOADED:
 					ytPlayer.pauseVideo();
 					break;
-				case 'PAUSED':
-				case 'ENDED':
+				case PlayerStatus.PAUSED:
+				case PlayerStatus.ENDED:
 					ytPlayer.playVideo();
 					break;
-				case 'FAILED':
+				case PlayerStatus.FAILED:
 					playSong(true);
 					break;
 			}
@@ -240,27 +241,28 @@ function SongListX(props) {
 		}
 	}
 
-	function getIconForCurrentSong() {
+	function getIconForCurrentSong(): ReactElement {
 		switch (playerStatus) {
-			case 'PAUSED':
+			case PlayerStatus.PAUSED:
 				return (
 					<div>
 						<i className="fas fa-pause-circle"></i>
 					</div>
 				);
-			case 'ENDED':
+			case PlayerStatus.ENDED:
 				return (
 					<div>
 						<i className="fas fa-play-circle"></i>
 					</div>
 				);
-			case 'FAILED':
+			case PlayerStatus.FAILED:
 				return (
 					<p>
 						<i className="fas fa-exclamation-circle"></i>
 					</p>
 				);
-			case 'LOADED':
+			case PlayerStatus.LOADING:
+			case PlayerStatus.LOADED:
 			default:
 				return (
 					<span>
@@ -289,7 +291,6 @@ function SongListX(props) {
 					songFilters={songFilters}
 					setSongFilters={setSongFilters}
 					showTagsDrawer={() => setIsTagDrawerOpen(true)}
-					showNewSongModal={() => setIsNewSongModalVisible(true)}
 				/>
 				<List
 					className="song-list"
