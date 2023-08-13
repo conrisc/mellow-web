@@ -3,8 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
-import '@fortawesome/fontawesome-free/css/all.css';
-import '@fortawesome/fontawesome-free/js/all.js';
+
+import '@fortawesome/fontawesome-free/js/brands.js';
+import '@fortawesome/fontawesome-free/js/solid.js';
+import '@fortawesome/fontawesome-free/js/fontawesome.js';
+import '@fortawesome/fontawesome-free/js/regular.js';
 
 import './index.css';
 
