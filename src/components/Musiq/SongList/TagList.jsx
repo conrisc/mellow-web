@@ -4,6 +4,8 @@ import { Drawer, List, Button, Input, Modal, Row, Col } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
 
+import './TagList.css';
+
 function RemoveTagButton(props) {
     return (
         <Button
@@ -106,12 +108,14 @@ export function TagList(props) {
                                     : []
                             }
                             key={tagElement.tagItem.id}
-                            className={tagElement.selected ? 'item-selected' : ''}
+                            className={tagElement.selected ? 'selected-tag' : ''}
                             onClick={() => handleClickTag(tagElement)}
                             onMouseEnter={() => setHoveredTag(tagElement)}
                             onMouseLeave={() => setHoveredTag()}
                         >
-                                {tagElement.tagItem.name}
+                                <div style={{ lineHeight: '24px' }}>
+                                    {tagElement.tagItem.name}
+                                </div>
                         </List.Item>
 
                 }

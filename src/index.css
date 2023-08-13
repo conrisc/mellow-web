@@ -154,12 +154,6 @@ p {
 	border-bottom: 1px solid #9e9e9e;
 }
 
-.item-selected {
-	background-color: #f9f9f9;
-	box-shadow: 0 1px 5px -2px #666;
-	margin: 6px 0;
-}
-
 .yt-image {
 	flex: 0 0 120px;
 	align-self: center;
