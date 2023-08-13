@@ -21,7 +21,6 @@ export function isLoggedIn() {
                     console.warn(`Retriving session failed: ${error.message | error}`);
                     resolve(false);
                 } else {
-                    console.log(`Session validity: ${session.isValid()}`);
                     resolve(session.isValid());
                 }
             });

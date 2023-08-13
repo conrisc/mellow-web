@@ -15,7 +15,7 @@ export async function getUsersApi(): Promise<UsersApi | null>{
 		});
 		return new UsersApi(apiConfiguration);
 	} else {
-		console.log('Redirecting to login page');
+		console.log('User is not logged in. Redirecting to login page');
 		window.location.assign('/login');
 		return null;
 	}
