@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Drawer, List, Button, Input, Modal, Row, Col } from 'antd';
 
 import { useTagsState, useTagsDispatch } from './TagsContext';
@@ -26,11 +26,9 @@ export function TagList(props) {
     const { toggleTag, addTag, removeTag } = useTagsDispatch();
     const [tagName, setTagName] = useState('');
     const [hoveredTag, setHoveredTag] = useState();
-    const searchQuery = useLocation().search;
-    const [serachParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(searchQuery);
         searchParams.getAll(TAGS_QUERY_PARAM)
             .map(tagName =>
                 tags.find(tagElement => tagElement.tagItem.name === tagName)
@@ -71,18 +69,20 @@ export function TagList(props) {
     }
 
     function handleClickTag(tagElement) {
-        const searchParams = new URLSearchParams(searchQuery);
+        const newSearchParams = new URLSearchParams(searchParams);
+
         if (tagElement.selected) {
-            const selectedTags = searchParams.getAll(TAGS_QUERY_PARAM)
-                .filter(tagName => tagName !== tagElement.tagItem.name);
-            searchParams.delete(TAGS_QUERY_PARAM);
-            selectedTags.forEach(tagName =>
-                searchParams.append(TAGS_QUERY_PARAM, tagName)
-            );
+            newSearchParams.delete(TAGS_QUERY_PARAM);
+
+            searchParams.getAll(TAGS_QUERY_PARAM)
+                .filter(tagName => tagName !== tagElement.tagItem.name)
+                .forEach(tagName =>
+                    newSearchParams.append(TAGS_QUERY_PARAM, tagName)
+                );
         } else {
-            searchParams.append(TAGS_QUERY_PARAM, tagElement.tagItem.name);
+            newSearchParams.append(TAGS_QUERY_PARAM, tagElement.tagItem.name);
         }
-        setSearchParams(searchParams);
+        setSearchParams(newSearchParams);
         toggleTag(tagElement);
     }
 
