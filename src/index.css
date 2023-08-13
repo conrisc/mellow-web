@@ -81,10 +81,6 @@ p {
 	margin: 0;
 }
 
-.song-list {
-	padding: 12px;
-}
-
 .side-bar {
 	overflow-y: auto;
 	position: sticky;
@@ -186,10 +182,6 @@ p {
 	.top-panel {
 		position: fixed;
 		top: 0;
-	}
-
-	.song-list {
-		margin-bottom: 50px;
 	}
 
 	.side-bar {

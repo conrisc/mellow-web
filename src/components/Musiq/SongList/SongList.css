@@ -1,3 +1,7 @@
+.song-list {
+	margin-bottom: 50px;
+}
+
 .song-item {
 	padding: 8px 12px;
 	cursor: pointer;
@@ -21,4 +25,13 @@
 .status-indicator {
     font-size: 32px;
     color: #6158c4;
+}
+
+@media only screen and (min-width: 992px) {
+
+	.song-list {
+		padding: 12px;
+		margin-bottom: 0;
+	}
+
 }
