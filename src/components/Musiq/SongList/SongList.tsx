@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer, useRef, useCallback, ReactElement } from 'react';
 import { connect } from 'react-redux';
-import { List, Row, Col, notification, Alert, Space, Button } from 'antd';
+import { List, Row, Col, notification, Alert, Space, Button, Switch } from 'antd';
 import { debounce } from 'throttle-debounce';
 
 import { dataTypes } from 'Constants/wsConstants';
@@ -61,8 +61,11 @@ function switchSong({ currentlyPlaying }, action) {
 
 function SongListX(props) {
 	const { ytPlayer, audioPlayer } = props;
-	// const { status: playerStatus, videoData } = usePlayerStatus(ytPlayer);
-	const { status: playerStatus, videoData } = useAudioPlayerStatus(audioPlayer);
+	const [playerType, setPlayerType] = useState<'audio' | 'yt'>('audio');
+
+	// Conditionally use the appropriate player hook based on playerType
+	const { status: playerStatus, videoData } =
+		playerType === 'audio' ? useAudioPlayerStatus(audioPlayer) : usePlayerStatus(ytPlayer);
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState({
 		title: '',
@@ -84,19 +87,16 @@ function SongListX(props) {
 	const songsReloaderRef = useRef(null);
 	const hasMoreSongs = useRef(true);
 	const allowedRetries = useRef(0);
-	// const loadSongByVideoIdDebounced = useCallback(
-	// 	debounce(500, (videoId: string, title: string = '') => {
-	// 		console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
-	// 		ytPlayer.loadVideoById(videoId);
-	// 	}),
-	// 	[ytPlayer]
-	// );
 	const loadSongByVideoIdDebounced = useCallback(
 		debounce(500, (videoId: string, title: string = '') => {
 			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
-			audioPlayer.loadAudioByVideoId(videoId);
+			if (playerType === 'audio') {
+				audioPlayer.loadAudioByVideoId(videoId);
+			} else {
+				ytPlayer.loadVideoById(videoId);
+			}
 		}),
-		[audioPlayer]
+		[audioPlayer, ytPlayer, playerType]
 	);
 	const [urlBannerHidden, setUrlBannerHidden] = useState(false);
 
@@ -157,7 +157,9 @@ function SongListX(props) {
 				dispatch({ type: 'PLAY_NEXT' });
 				break;
 			case PlayerStatus.LOADING:
-				audioPlayer.element.play(); // autoplay after loading starts
+				if (playerType === 'audio') {
+					audioPlayer.element.play(); // autoplay after loading starts
+				}
 				break;
 		}
 	}, [playerStatus]);
@@ -247,21 +249,30 @@ function SongListX(props) {
 		if (songIndex === currentlyPlaying) {
 			switch (playerStatus) {
 				case PlayerStatus.LOADED:
-					ytPlayer.pauseVideo();
-					audioPlayer.element.pause();
+					if (playerType === 'audio') {
+						audioPlayer.element.pause();
+					} else {
+						ytPlayer.pauseVideo();
+					}
 					break;
 				case PlayerStatus.PAUSED:
 				case PlayerStatus.ENDED:
-					ytPlayer.playVideo();
-					audioPlayer.element.play();
+					if (playerType === 'audio') {
+						audioPlayer.element.play();
+					} else {
+						ytPlayer.playVideo();
+					}
 					break;
 				case PlayerStatus.FAILED:
 					playSong(true);
 					break;
 			}
 		} else {
-			ytPlayer.pauseVideo();
-			audioPlayer.element.pause();
+			if (playerType === 'audio') {
+				audioPlayer.element.pause();
+			} else {
+				ytPlayer.pauseVideo();
+			}
 			dispatch({ type: 'PLAY_BY_INDEX', songIndex });
 		}
 	}
@@ -339,6 +350,14 @@ function SongListX(props) {
 					/>
 				)}
 				<div className="songs-toolbar">
+					<div style={{ textAlign: 'right', marginTop: '8px', marginRight: '16px' }}>
+						<Switch
+							checked={playerType === 'yt'}
+							onChange={(checked) => setPlayerType(checked ? 'yt' : 'audio')}
+							checkedChildren="YT"
+							unCheckedChildren="Audio"
+						/>
+					</div>
 					<SongFilterPanel
 						addSong={addSong}
 						songFilters={songFilters}
