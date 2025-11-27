@@ -19,6 +19,7 @@ import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
 
 import './SongList.css';
+import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
 
 class CancelledActionError extends Error {
 	constructor(message: string = 'Action cancelled') {
@@ -59,8 +60,9 @@ function switchSong({ currentlyPlaying }, action) {
 // reload songs only on tag selection change
 
 function SongListX(props) {
-	const { ytPlayer } = props;
-	const { status: playerStatus, videoData } = usePlayerStatus(ytPlayer);
+	const { ytPlayer, audioPlayer } = props;
+	// const { status: playerStatus, videoData } = usePlayerStatus(ytPlayer);
+	const { status: playerStatus, videoData } = useAudioPlayerStatus(audioPlayer);
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState({
 		title: '',
@@ -82,12 +84,19 @@ function SongListX(props) {
 	const songsReloaderRef = useRef(null);
 	const hasMoreSongs = useRef(true);
 	const allowedRetries = useRef(0);
+	// const loadSongByVideoIdDebounced = useCallback(
+	// 	debounce(500, (videoId: string, title: string = '') => {
+	// 		console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
+	// 		ytPlayer.loadVideoById(videoId);
+	// 	}),
+	// 	[ytPlayer]
+	// );
 	const loadSongByVideoIdDebounced = useCallback(
 		debounce(500, (videoId: string, title: string = '') => {
 			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
-			ytPlayer.loadVideoById(videoId);
+			audioPlayer.loadAudioByVideoId(videoId);
 		}),
-		[ytPlayer]
+		[audioPlayer]
 	);
 	const [urlBannerHidden, setUrlBannerHidden] = useState(false);
 
@@ -146,6 +155,9 @@ function SongListX(props) {
 				break;
 			case PlayerStatus.ENDED:
 				dispatch({ type: 'PLAY_NEXT' });
+				break;
+			case PlayerStatus.LOADING:
+				audioPlayer.element.play(); // autoplay after loading starts
 				break;
 		}
 	}, [playerStatus]);
@@ -236,10 +248,12 @@ function SongListX(props) {
 			switch (playerStatus) {
 				case PlayerStatus.LOADED:
 					ytPlayer.pauseVideo();
+					audioPlayer.element.pause();
 					break;
 				case PlayerStatus.PAUSED:
 				case PlayerStatus.ENDED:
 					ytPlayer.playVideo();
+					audioPlayer.element.play();
 					break;
 				case PlayerStatus.FAILED:
 					playSong(true);
@@ -247,6 +261,7 @@ function SongListX(props) {
 			}
 		} else {
 			ytPlayer.pauseVideo();
+			audioPlayer.element.pause();
 			dispatch({ type: 'PLAY_BY_INDEX', songIndex });
 		}
 	}
@@ -415,6 +430,7 @@ function SongListX(props) {
 
 const mapStateToProps = (state) => ({
 	ytPlayer: state.ytPlayer,
+	audioPlayer: state.audioPlayer,
 });
 
 const mapDispatchToProps = (dispatch) => ({});

@@ -5,6 +5,7 @@ import { Input, List, Row, Col, Button, Space } from 'antd';
 import { YtPlayer } from './YtPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 import { createVideoLink } from 'Utils/yt';
+import { AudioPlayer } from './AudioPlayer';
 
 function YtListX(props) {
 	const { ytPlayer } = props;
@@ -21,6 +22,7 @@ function YtListX(props) {
 	return (
 		<div className="yt-list side-bar">
 			<YtPlayer />
+			<AudioPlayer />
 			<div style={{ padding: 12 }}>
 				<Input
 					className="yt-search"

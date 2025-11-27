@@ -7,12 +7,12 @@ import { dataTypes } from 'Constants/wsConstants';
 import { musiqWebsocket } from 'Services/musiqWebsocket';
 
 function YtPlayerX(props) {
-    const playerRef = useRef();
+    const ytPlayerRef = useRef();
 
     useEffect(() => {
         loadYT.then(YT => {
             props.setYtPlayer(
-                new YT.Player(playerRef.current, {
+                new YT.Player(ytPlayerRef.current, {
                     playerVars: { controls: 2, modestbranding: 1 }
                 })
             );
@@ -81,7 +81,7 @@ function YtPlayerX(props) {
 
     return (
         <div className={"yt-player-container"} >
-            <div ref={playerRef} className="w-100" style={{ height: 300 }} />
+            <div ref={ytPlayerRef} className="w-100" style={{ height: 300 }} />
         </div>
     );
 }
@@ -94,7 +94,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setYtPlayer: ytPlayer => dispatch({ type: 'SET_YT_PLAYER', ytPlayer })
+        setYtPlayer: ytPlayer => dispatch({ type: 'SET_YT_PLAYER', ytPlayer }),
     };
 }
 

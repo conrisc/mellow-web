@@ -17,6 +17,7 @@ import { App } from './components/App';
 const initialState = {
 	isAuthenticated: false,
 	ytPlayer: null,
+	audioPlayer: null,
 	isOnline: false,
 };
 
@@ -28,6 +29,8 @@ function reducer(state = initialState, action) {
 			return { ...state, isOnline: false };
 		case 'SET_YT_PLAYER':
 			return { ...state, ytPlayer: action.ytPlayer };
+		case 'SET_AUDIO_PLAYER':
+			return { ...state, audioPlayer: action.audioPlayer };
 		case 'SET_AUTHENTICATED':
 			return { ...state, isAuthenticated: true };
 		case 'SET_UNAUTHENTICATED':
