@@ -1,27 +1,33 @@
-import React, { useState, useEffect, useReducer, useRef, useCallback } from 'react';
-import { List, Row, Col, Switch } from 'antd';
+import React, { useState, useEffect, useReducer, useRef, useCallback, ReactElement } from 'react';
+import { List, Row, Col, notification, Alert, Space, Button, Switch } from 'antd';
+import { debounce } from 'throttle-debounce';
 
+import { dataTypes } from 'Constants/wsConstants';
+import { musiqWebsocket } from 'Services/musiqWebsocket';
+import { SongInfoContainer } from './SongInfoContainer';
+import { SongActionButtons } from './SongActionButtons';
 import { SongFilterPanel } from './SongFilterPanel';
 import { TagList } from './TagList';
 import { EditSongModal } from './EditSongModal';
 import { TagsProvider, useTagsState } from './TagsContext';
-import { SongListItem } from './SongListItem';
-import { SongListUrlBanner } from './SongListUrlBanner';
 
 import { useScroll } from 'Hooks/useScroll';
 import { useSongs } from 'Hooks/useSongs';
 import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
-import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
-import { useSongPlayer } from 'Hooks/useSongPlayer';
-import { useWebSocketControls } from 'Hooks/useWebSocketControls';
-import { useInfiniteScroll } from 'Hooks/useInfiniteScroll';
-import { useSongAutoload } from 'Hooks/useSongAutoload';
 import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
 import { SongFilters } from 'Types/song.types';
 import { usePlayer } from 'Contexts/PlayerContext';
 
 import './SongList.css';
+import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
+
+class CancelledActionError extends Error {
+	constructor(message: string = 'Action cancelled') {
+		super(message);
+		this.name = 'CancelledActionError';
+	}
+}
 
 function switchSong({ currentlyPlaying }, action) {
 	switch (action.type) {
@@ -60,7 +66,6 @@ function SongListX(props) {
 	// Conditionally use the appropriate player hook based on playerType
 	const { status: playerStatus, videoData } =
 		playerType === 'audio' ? useAudioPlayerStatus(audioPlayer) : usePlayerStatus(ytPlayer);
-
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState<SongFilters>({
 		title: '',
@@ -78,81 +83,47 @@ function SongListX(props) {
 	const [isTagDrawerOpen, setIsTagDrawerOpen] = useState(false);
 	const [editedSong, setEditedSong] = useState<SongItem | null>(null);
 	const { scrollPosition, scrollHeight } = useScroll();
+	const songLoaderRef = useRef(null);
 	const songsReloaderRef = useRef(null);
 	const hasMoreSongs = useRef(true);
-	const isLoadingSongsRef = useRef(isLoadingSongs);
+	const allowedRetries = useRef(0);
+	const loadSongByVideoIdDebounced = useCallback(
+		debounce(500, (videoId: string, title: string = '') => {
+			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
+			if (playerType === 'audio') {
+				audioPlayer.loadAudioByVideoId(videoId);
+			} else {
+				ytPlayer.loadVideoById(videoId);
+			}
+		}),
+		[audioPlayer, ytPlayer, playerType]
+	);
+	const [urlBannerHidden, setUrlBannerHidden] = useState(false);
 
-	// Keep ref in sync with state
 	useEffect(() => {
-		isLoadingSongsRef.current = isLoadingSongs;
-	}, [isLoadingSongs]);
-
-	// Memoize callbacks
-	const handlePlayNext = useCallback(() => {
-		dispatch({ type: 'PLAY_NEXT' });
+		const webSocket = musiqWebsocket.getInstance();
+		const wsListeners = {
+			message: (message) => {
+				const dataFromServer = JSON.parse(message.data);
+				switch (dataFromServer.type) {
+					case dataTypes.NEXT_SONG:
+						dispatch({ type: 'PLAY_NEXT' });
+						pushNotification('Play next song');
+						break;
+					case dataTypes.PREV_SONG:
+						dispatch({ type: 'PLAY_PREVIOUS' });
+						pushNotification('Play previous song');
+						break;
+				}
+			},
+		};
+		webSocket.addListeners(wsListeners);
 	}, []);
-
-	const handlePlayPrevious = useCallback(() => {
-		dispatch({ type: 'PLAY_PREVIOUS' });
-	}, []);
-
-	const loadMore = useCallback((): Promise<void> => {
-		if (!hasMoreSongs.current || isLoadingSongsRef.current) return Promise.resolve();
-
-		setIsLoadingSongs(true);
-		return loadMoreSongs().then(({ fetched }) => {
-			if (fetched === 0) hasMoreSongs.current = false;
-			setIsLoadingSongs(false);
-		});
-	}, [loadMoreSongs]);
-
-	const reloadSongs = useCallback((): void => {
-		document.documentElement.scrollTo(0, 0);
-		setIsLoadingSongs(true);
-		getSongs().finally(() => {
-			hasMoreSongs.current = true;
-			setIsLoadingSongs(false);
-			dispatch({ type: 'RESET' });
-		});
-	}, [getSongs]);
-
-	// Custom hooks for extracted functionality
-	const { playSong, handleSongClick, getIconForCurrentSong, urlBannerHidden, setUrlBannerHidden } =
-		useSongPlayer({
-			songs,
-			currentlyPlaying,
-			playerType,
-			audioPlayer,
-			ytPlayer,
-			playerStatus,
-			getYtItems: props.getYtItems,
-			onPlayNext: handlePlayNext,
-			loadMore,
-		});
-
-	useWebSocketControls({
-		onPlayNext: handlePlayNext,
-		onPlayPrevious: handlePlayPrevious,
-	});
-
-	useInfiniteScroll({
-		isActive: props.isActive,
-		songsCount: songs.length,
-		scrollPosition,
-		scrollHeight,
-		onLoadMore: loadMore,
-	});
-
-	useSongAutoload({
-		currentlyPlaying,
-		playSong,
-	});
 
 	// Refetch songs without a delay
 	useEffect(() => {
 		clearTimeout(songsReloaderRef.current);
 		reloadSongs();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [songFilters.limit, songFilters.sort]);
 
 	// Refetch songs with a delay (debounced)
@@ -162,10 +133,151 @@ function SongListX(props) {
 		return () => {
 			clearTimeout(songsReloaderRef.current);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tags, songFilters.skip, songFilters.title]);
 
-	const shouldShowUrlBanner = useCallback((): boolean => {
+	// Load more songs on scroll to bottom
+	useEffect(() => {
+		if (props.isActive && songs.length > 0 && scrollHeight - scrollPosition < 100) {
+			loadMore();
+		}
+	}, [scrollPosition]);
+
+	// Handle player's status change
+	useEffect(() => {
+		switch (playerStatus) {
+			case PlayerStatus.FAILED:
+				if (allowedRetries.current > 0) {
+					if (allowedRetries.current === 1) playSong(true, 1);
+					else playSong(true);
+
+					allowedRetries.current--;
+				}
+				break;
+			case PlayerStatus.ENDED:
+				dispatch({ type: 'PLAY_NEXT' });
+				break;
+			case PlayerStatus.LOADING:
+				if (playerType === 'audio') {
+					audioPlayer.element.play(); // autoplay after loading starts
+				}
+				break;
+		}
+	}, [playerStatus]);
+
+	// Play a song with index equal to the currentlyPlaying
+	useEffect(() => {
+		if (typeof currentlyPlaying === 'number' && currentlyPlaying === songs.length - 1) {
+			loadMore();
+		}
+
+		allowedRetries.current = 3;
+		playSong();
+		setUrlBannerHidden(false);
+	}, [currentlyPlaying]);
+
+	async function playSong(fromYT = false, ytIndex = 0): Promise<void> {
+		songLoaderRef.current?.cancel();
+		const songItem = songs[currentlyPlaying];
+		if (songItem) {
+			try {
+				const videoId = await new Promise((resolve, reject) => {
+					songLoaderRef.current = {
+						cancel() {
+							songLoaderRef.current = null;
+							reject(new CancelledActionError());
+						},
+					};
+					getSongVideoId(songItem, fromYT, ytIndex).then(resolve).catch(reject);
+				});
+				loadSongByVideoIdDebounced(videoId, songItem.title);
+			} catch (error) {
+				if (!(error instanceof CancelledActionError)) {
+					console.warn(
+						`Failed to get video id for the song: ${songItem.title}. Error: ${error.message}`
+					);
+					loadSongByVideoIdDebounced('fakeVideoId'); // workaround for retrying mechanism
+				}
+			}
+		}
+	}
+
+	async function getSongVideoId(
+		songItem: SongItem,
+		fromYT: boolean,
+		index: number
+	): Promise<string> {
+		const videoIdMatch = songItem.url.match(/[?&]v=([^&]*)/);
+
+		if (videoIdMatch && !fromYT) return videoIdMatch[1];
+
+		const ytItems = await props.getYtItems(songItem.title);
+		if (ytItems.length > index) return ytItems[index].videoId;
+		else
+			throw Error(
+				`Asked for ${index + 1} item on the list, but got only ${ytItems.length} items.`
+			);
+	}
+
+	function pushNotification(text: string): void {
+		notification.open({
+			message: 'Song list notification',
+			description: text,
+		});
+	}
+
+	function reloadSongs(): void {
+		document.documentElement.scrollTo(0, 0);
+		setIsLoadingSongs(true);
+		getSongs().finally(() => {
+			hasMoreSongs.current = true;
+			setIsLoadingSongs(false);
+			dispatch({ type: 'RESET' });
+		});
+	}
+
+	function loadMore(): Promise<void> {
+		if (!hasMoreSongs.current || isLoadingSongs) return Promise.resolve();
+
+		setIsLoadingSongs(true);
+		return loadMoreSongs().then(({ fetched }) => {
+			if (fetched === 0) hasMoreSongs.current = false;
+			setIsLoadingSongs(false);
+		});
+	}
+
+	function onSongClick(songIndex: number): void {
+		if (songIndex === currentlyPlaying) {
+			switch (playerStatus) {
+				case PlayerStatus.LOADED:
+					if (playerType === 'audio') {
+						audioPlayer.element.pause();
+					} else {
+						ytPlayer.pauseVideo();
+					}
+					break;
+				case PlayerStatus.PAUSED:
+				case PlayerStatus.ENDED:
+					if (playerType === 'audio') {
+						audioPlayer.element.play();
+					} else {
+						ytPlayer.playVideo();
+					}
+					break;
+				case PlayerStatus.FAILED:
+					playSong(true);
+					break;
+			}
+		} else {
+			if (playerType === 'audio') {
+				audioPlayer.element.pause();
+			} else {
+				ytPlayer.pauseVideo();
+			}
+			dispatch({ type: 'PLAY_BY_INDEX', songIndex });
+		}
+	}
+
+	function shouldShowUrlBanner(): boolean {
 		const songItem = songs[currentlyPlaying];
 		return !!(
 			!urlBannerHidden &&
@@ -174,36 +286,54 @@ function SongListX(props) {
 			!songItem.url &&
 			videoData?.videoId
 		);
-	}, [songs, currentlyPlaying, urlBannerHidden, playerStatus, videoData]);
+	}
 
-	const updateSongUrl = useCallback(
-		(videoId: string): void => {
-			const songItem = songs[currentlyPlaying];
-			if (!songItem) return;
+	function updateSongUrl(videoId: string): void {
+		const songItem = songs[currentlyPlaying];
+		if (!songItem) return;
 
-			const updatedSongItem = new SongItem();
-			updatedSongItem.id = songItem.id;
-			updatedSongItem.title = songItem.title;
-			updatedSongItem.url = createVideoLink(videoId);
-			updatedSongItem.dateAdded = songItem.dateAdded;
-			updatedSongItem.tags = songItem.tags.slice();
+		const updatedSongItem = new SongItem();
+		updatedSongItem.id = songItem.id;
+		updatedSongItem.title = songItem.title;
+		updatedSongItem.url = createVideoLink(videoId);
+		updatedSongItem.dateAdded = songItem.dateAdded;
+		updatedSongItem.tags = songItem.tags.slice();
 
-			updateSong(updatedSongItem).catch((error) => {
-				console.warn(`Failed to update song's url. Error: ${error?.message}`);
-			});
-		},
-		[songs, currentlyPlaying, updateSong]
-	);
+		updateSong(updatedSongItem).catch((error) => {
+			console.warn(`Failed to update song's url. Error: ${error?.message}`);
+		});
+	}
 
-	const onSongClickWithDispatch = useCallback(
-		(songIndex: number): void => {
-			handleSongClick(songIndex);
-			if (songIndex !== currentlyPlaying) {
-				dispatch({ type: 'PLAY_BY_INDEX', songIndex });
-			}
-		},
-		[handleSongClick, currentlyPlaying]
-	);
+	function getIconForCurrentSong(): ReactElement {
+		switch (playerStatus) {
+			case PlayerStatus.PAUSED:
+				return (
+					<div>
+						<i className="fas fa-pause-circle"></i>
+					</div>
+				);
+			case PlayerStatus.ENDED:
+				return (
+					<div>
+						<i className="fas fa-play-circle"></i>
+					</div>
+				);
+			case PlayerStatus.FAILED:
+				return (
+					<p>
+						<i className="fas fa-exclamation-circle"></i>
+					</p>
+				);
+			case PlayerStatus.LOADING:
+			case PlayerStatus.LOADED:
+			default:
+				return (
+					<span>
+						<i className="fas fa-compact-disc fa-spin"></i>
+					</span>
+				);
+		}
+	}
 
 	return (
 		<Row>
@@ -235,11 +365,34 @@ function SongListX(props) {
 						showTagsDrawer={() => setIsTagDrawerOpen(true)}
 					/>
 					{shouldShowUrlBanner() && (
-						<SongListUrlBanner
-							songTitle={songs[currentlyPlaying].title}
-							videoData={videoData}
-							onUpdate={updateSongUrl}
-							onDismiss={() => setUrlBannerHidden(true)}
+						<Alert
+							message={
+								<span>
+									Add missing url to <b>{songs[currentlyPlaying].title}</b> ?
+									<br />
+									Playing: <b>{videoData.title}</b> ({videoData.videoId})
+								</span>
+							}
+							type="info"
+							banner
+							action={
+								<Space>
+									<Button
+										size="small"
+										type="primary"
+										onClick={() => updateSongUrl(videoData.videoId)}
+									>
+										Yes
+									</Button>
+									<Button
+										size="small"
+										danger
+										onClick={() => setUrlBannerHidden(true)}
+									>
+										No
+									</Button>
+								</Space>
+							}
 						/>
 					)}
 				</div>
@@ -249,21 +402,45 @@ function SongListX(props) {
 					size="small"
 					loading={isLoadingSongs}
 					dataSource={songs}
-					renderItem={(songItem, index) => (
-						<SongListItem
-							key={songItem.id}
-							songItem={songItem}
-							index={index}
-							isPlaying={index === currentlyPlaying}
-							playIcon={getIconForCurrentSong()}
-							onSongClick={onSongClickWithDispatch}
-							editSong={setEditedSong}
-							removeSong={removeSong}
-							getYtItems={props.getYtItems}
-							showYtTab={props.showYtTab}
-							loadVideo={props.loadVideo}
-						/>
-					)}
+					renderItem={(songItem, index) => {
+						const videoIdMatch = songItem.url.match(/[?&]v=([^&?]*)/);
+						const videoId = videoIdMatch ? videoIdMatch[1] : '';
+						return (
+							<List.Item
+								onClick={() => onSongClick(index)}
+								className={
+									'song-item f-size-medium' +
+									(index === currentlyPlaying ? ' selected-song' : '')
+								}
+								extra={
+									<SongActionButtons
+										songItem={songItem}
+										videoId={videoId}
+										getYtItems={props.getYtItems}
+										showYtTab={props.showYtTab}
+										loadVideo={props.loadVideo}
+										editSong={() => setEditedSong(songItem)}
+										removeSong={(id) => removeSong(id)}
+									/>
+								}
+							>
+								<Row gutter={16} style={{ flexWrap: 'nowrap' }}>
+									<Col className="status-indicator">
+										{index === currentlyPlaying ? (
+											<div>{getIconForCurrentSong()}</div> // icon needs to be wrapped up so React could hold a reference to it
+										) : (
+											<span>
+												<i className="fas fa-play-circle"></i>
+											</span>
+										)}
+									</Col>
+									<Col>
+										<SongInfoContainer songItem={songItem} />
+									</Col>
+								</Row>
+							</List.Item>
+						);
+					}}
 				/>
 			</Col>
 		</Row>
