@@ -1,12 +1,40 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { SongItem } from 'mellov_api';
 import { getUsersApi } from 'Services/mellowApi';
+import { SongFilters, TagElement, SongSortOption } from 'Types/song.types';
 
-export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', sort: 'none' }) {
-	const [songs, setSongs] = useState([]);
+interface FetchResult {
+	fetched: number;
+}
+
+interface UseSongsReturn {
+	songs: SongItem[];
+	getSongs: () => Promise<FetchResult>;
+	loadMoreSongs: () => Promise<FetchResult>;
+	addSong: (songItem: SongItem) => Promise<void>;
+	updateSong: (songItem: SongItem) => Promise<void>;
+	removeSong: (songId: string) => Promise<void>;
+}
+
+export function useSongs(
+	tags: TagElement[],
+	songFilters: SongFilters = { skip: 0, limit: 30, title: '', sort: 'none' }
+): UseSongsReturn {
+	const [songs, setSongs] = useState<SongItem[]>([]);
 	const selectedTagIds = getSelectedTagIds();
 
-	async function fetchSongs(opts, callback) {
+	async function fetchSongs(
+		opts: {
+			skip: number;
+			limit: number;
+			title: string;
+			tags?: string[];
+			sort: SongSortOption;
+		},
+		callback: (data: SongItem[]) => void
+	): Promise<FetchResult> {
 		const api = await getUsersApi();
+		if (!api) return { fetched: 0 };
 
 		return api
 			.searchSongs(opts.skip, opts.limit, opts.title, opts.tags, opts.sort)
@@ -20,7 +48,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 			});
 	}
 
-	function getSongs() {
+	function getSongs(): Promise<FetchResult> {
 		const opts = {
 			...songFilters,
 			tags: selectedTagIds,
@@ -29,7 +57,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 		return fetchSongs(opts, setSongs);
 	}
 
-	function loadMoreSongs() {
+	function loadMoreSongs(): Promise<FetchResult> {
 		const opts = {
 			...songFilters,
 			skip: songFilters.skip + songs.length,
@@ -41,11 +69,13 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 		});
 	}
 
-	async function addSong(songItem) {
+	async function addSong(songItem: SongItem): Promise<void> {
 		const api = await getUsersApi();
+		if (!api) return;
+
 		return api
 			.addSong(songItem)
-			.then((data) => {
+			.then(() => {
 				console.log('Song successfully added');
 				getSongs(); // temporary?
 			})
@@ -54,12 +84,14 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 			});
 	}
 
-	async function updateSong(songItem) {
+	async function updateSong(songItem: SongItem): Promise<void> {
 		const api = await getUsersApi();
+		if (!api) return;
+
 		return api
 			.updateSong(songItem.id, songItem)
 			.then((updatedSongItem) => {
-				console.log('Song successfuly updated');
+				console.log('Song successfully updated');
 				setSongs(
 					songs.map((songItem) => {
 						return songItem.id === updatedSongItem.id ? updatedSongItem : songItem;
@@ -72,12 +104,14 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 			});
 	}
 
-	async function removeSong(songId) {
+	async function removeSong(songId: string): Promise<void> {
 		const api = await getUsersApi();
+		if (!api) return;
+
 		return api
 			.deleteSong(songId)
 			.then(() => {
-				console.log('Song successfuly removed');
+				console.log('Song successfully removed');
 				setSongs(songs.filter((songItem) => songItem.id !== songId));
 			})
 			.catch((error) => {
@@ -85,7 +119,7 @@ export function useSongs(tags, songFilters = { skip: 0, limit: 30, title: '', so
 			});
 	}
 
-	function getSelectedTagIds() {
+	function getSelectedTagIds(): string[] | undefined {
 		const tagIds = tags
 			.filter((tagElement) => tagElement.selected)
 			.map((tagElement) => tagElement.tagItem.id);

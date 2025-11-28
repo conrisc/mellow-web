@@ -17,6 +17,7 @@ import { useSongs } from 'Hooks/useSongs';
 import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
 import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
+import { SongFilters } from 'Types/song.types';
 
 import './SongList.css';
 import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
@@ -67,7 +68,7 @@ function SongListX(props) {
 	const { status: playerStatus, videoData } =
 		playerType === 'audio' ? useAudioPlayerStatus(audioPlayer) : usePlayerStatus(ytPlayer);
 	const { tags } = useTagsState();
-	const [songFilters, setSongFilters] = useState({
+	const [songFilters, setSongFilters] = useState<SongFilters>({
 		title: '',
 		skip: 0,
 		limit: 30,

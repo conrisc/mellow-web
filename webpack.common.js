@@ -19,6 +19,7 @@ module.exports = {
 			Constants: path.resolve(__dirname, 'src/constants/'),
 			Utils: path.resolve(__dirname, 'src/utils/'),
 			CommonComponents: path.resolve(__dirname, 'src/components/common/'),
+			Types: path.resolve(__dirname, 'src/types/'),
 		},
 	},
 	module: {
