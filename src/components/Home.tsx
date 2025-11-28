@@ -1,15 +1,14 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { signOutUser } from 'Services/auth.service';
-import { useAuth } from 'Hooks/useAuth';
+import { useAuth } from 'Contexts/AuthContext';
 
-function HomeX(props) {
-	const { checkingAuth, isAuthenticated } = useAuth();
+export function Home() {
+	const { checkingAuth, isAuthenticated, setIsAuthenticated } = useAuth();
 
 	function signOut() {
 		signOutUser();
-		props.setUnauthenticated();
+		setIsAuthenticated(false);
 	}
 
 	return (
@@ -41,15 +40,3 @@ function HomeX(props) {
 		</div>
 	);
 }
-
-const mapStateToProps = (state) => {
-	return {};
-};
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setUnauthenticated: () => dispatch({ type: 'SET_UNAUTHENTICATED' }),
-	};
-};
-
-export const Home = connect(mapStateToProps, mapDispatchToProps)(HomeX);

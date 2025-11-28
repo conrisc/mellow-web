@@ -6,7 +6,7 @@ import { Notepad } from './Notepad/Notepad';
 import { Musiq } from './Musiq/Musiq';
 import { Login } from './Login';
 import { Register } from './Register';
-import { useAuth } from 'Hooks/useAuth';
+import { useAuth } from 'Contexts/AuthContext';
 
 export function Content() {
 	return (

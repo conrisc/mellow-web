@@ -16,7 +16,8 @@
 			"Constants/*": ["src/constants/*"],
 			"Utils/*": ["src/utils/*"],
 			"CommonComponents/*": ["src/components/common/*"],
-			"Types/*": ["src/types/*"]
+			"Types/*": ["src/types/*"],
+			"Contexts/*": ["src/contexts/*"]
 		}
 	},
 	"include": ["src"],

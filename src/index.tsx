@@ -1,7 +1,5 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 
 import '@fortawesome/fontawesome-free/js/brands.js';
@@ -13,34 +11,7 @@ import './index.css';
 
 import './exampleScript';
 import { App } from './components/App';
-
-const initialState = {
-	isAuthenticated: false,
-	ytPlayer: null,
-	audioPlayer: null,
-	isOnline: false,
-};
-
-function reducer(state = initialState, action) {
-	switch (action.type) {
-		case 'SET_ONLINE':
-			return { ...state, isOnline: true };
-		case 'SET_OFFLINE':
-			return { ...state, isOnline: false };
-		case 'SET_YT_PLAYER':
-			return { ...state, ytPlayer: action.ytPlayer };
-		case 'SET_AUDIO_PLAYER':
-			return { ...state, audioPlayer: action.audioPlayer };
-		case 'SET_AUTHENTICATED':
-			return { ...state, isAuthenticated: true };
-		case 'SET_UNAUTHENTICATED':
-			return { ...state, isAuthenticated: false };
-		default:
-			return state;
-	}
-}
-
-const store = createStore(reducer);
+import { AuthProvider } from './contexts/AuthContext';
 
 const appContainer = document.getElementById('app');
 const root = createRoot(appContainer);
@@ -53,9 +24,9 @@ root.render(
 			}
 		}}
 	>
-		<Provider store={store}>
-				<App />
-		</Provider>
+		<AuthProvider>
+			<App />
+		</AuthProvider>
 	</ConfigProvider>
 );
 

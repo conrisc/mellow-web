@@ -31,6 +31,10 @@ export interface YTPlayer {
 	setVolume: (volume: number) => void;
 	getPlayerState: () => number;
 	getVideoData: () => VideoData;
+	getCurrentTime: () => number;
+	getDuration: () => number;
+	seekTo: (seconds: number) => void;
+	addEventListener: (event: string, listener: (state: any) => void) => void;
 }
 
 /**

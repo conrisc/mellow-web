@@ -1,22 +1,30 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Input, List, Row, Col, Button, Space } from 'antd';
 
 import { YtPlayer } from './YtPlayer';
 import { Spinner } from 'CommonComponents/Spinner';
 import { createVideoLink } from 'Utils/yt';
 import { AudioPlayer } from './AudioPlayer';
+import { usePlayer } from 'Contexts/PlayerContext';
+import { YTItem } from 'Types/youtube.types';
 
-function YtListX(props) {
-	const { ytPlayer } = props;
+interface YtListProps {
+	ytItems: YTItem[];
+	isFetchingYtItems: boolean;
+	getYtItemsDebounced: (title: string) => void;
+	loadVideo: (videoId: string) => void;
+}
 
-	function loadVideoById(videoId) {
-		ytPlayer.loadVideoById(videoId);
+export function YtList({ ytItems, isFetchingYtItems, getYtItemsDebounced, loadVideo }: YtListProps) {
+	const { ytPlayer } = usePlayer();
+
+	function loadVideoById(videoId: string) {
+		ytPlayer?.loadVideoById(videoId);
 	}
 
-	function handleSearchChange(event) {
+	function handleSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const title = event.target.value;
-		props.getYtItemsDebounced(title);
+		getYtItemsDebounced(title);
 	}
 
 	return (
@@ -31,26 +39,20 @@ function YtListX(props) {
 					prefix={<i className="fas fa-search"></i>}
 					placeholder="Search youtube"
 				/>
-				{props.isFetchingYtItems ? (
+				{isFetchingYtItems ? (
 					<Spinner center={true} padding={16} />
 				) : (
 					<List
-						rowKey="key"
+						rowKey="videoId"
 						size="small"
-						dataSource={props.ytItems}
+						dataSource={ytItems}
 						renderItem={(el) => (
 							<List.Item
 								className="f-size-medium"
 								style={{ borderBottom: '1px solid #555959' }}
 							>
-								<Row
-									justify="space-between"
-									style={{ width: '100%', flexWrap: 'nowrap' }}
-								>
-									<Col
-										flex="1 1 auto"
-										style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
-									>
+								<Row justify="space-between" style={{ width: '100%', flexWrap: 'nowrap' }}>
+									<Col flex="1 1 auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
 										<a
 											href={createVideoLink(el.videoId)}
 											target="_blank"
@@ -69,21 +71,16 @@ function YtListX(props) {
 											</h4>
 										</a>
 										<Space className="mt-1">
-											<Button onClick={() => props.loadVideo(el.videoId)}>
+											<Button onClick={() => loadVideo(el.videoId)}>
 												<i className="fas fa-tv"></i>
 											</Button>
-											<Button
-												type="primary"
-												onClick={() => loadVideoById(el.videoId)}
-											>
+											<Button type="primary" onClick={() => loadVideoById(el.videoId)}>
 												<i className="fas fa-play"></i>
 											</Button>
 										</Space>
 									</Col>
 									<Col className="yt-image">
-										<img
-											src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}
-										></img>
+										<img src={`https://i.ytimg.com/vi/${el.videoId}/default.jpg`}></img>
 										{/* <img src={el.thumbnailUrl}></img> */}
 									</Col>
 								</Row>
@@ -95,14 +92,3 @@ function YtListX(props) {
 		</div>
 	);
 }
-const mapStateToProps = (state) => {
-	return {
-		ytPlayer: state.ytPlayer,
-	};
-};
-
-const mapDispatchToProps = (dispatch) => {
-	return {};
-};
-
-export const YtList = connect(mapStateToProps, mapDispatchToProps)(YtListX);

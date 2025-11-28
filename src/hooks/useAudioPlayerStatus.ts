@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PlayerStatus, VideoData } from './usePlayerStatus';
-import { AudioPlayer } from 'src/components/Musiq/AudioPlayer';
+import { AudioPlayer } from 'Types/player.types';
 
 const AUDIO_ELEMENT_EVENTS = [
 	'abort', // Fired when the resource was not fully loaded, but not as the result of an error.
@@ -42,8 +42,8 @@ export function useAudioPlayerStatus(audioPlayer: AudioPlayer) {
 		function stateListener({ type, target }) {
 			// console.debug('Audio Player Event:', type);
 			const videoData = audioPlayer.getVideoData();
-			if (currentVideoId !== videoData.ytVideoId) {
-				currentVideoId = videoData.ytVideoId;
+			if (currentVideoId !== videoData.videoId) {
+				currentVideoId = videoData.videoId;
 				setStatus(PlayerStatus.INITIALIZED);
 			}
 
@@ -86,11 +86,11 @@ export function useAudioPlayerStatus(audioPlayer: AudioPlayer) {
 		};
 	}, [audioPlayer]);
 
-	function updateVideoData(playerData?: { ytVideoId: string; title: string }) {
+	function updateVideoData(playerData?: VideoData) {
 		if (!playerData) setVideoData(null);
-		else if (videoData?.videoId !== playerData.ytVideoId) {
+		else if (videoData?.videoId !== playerData.videoId) {
 			setVideoData({
-				videoId: playerData.ytVideoId,
+				videoId: playerData.videoId,
 				title: playerData.title,
 			});
 		}

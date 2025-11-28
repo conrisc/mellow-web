@@ -1,14 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { YELLOW_API_URL } from 'Constants/environment';
+import { usePlayer } from 'Contexts/PlayerContext';
+import { VideoData } from 'Types/player.types';
 
 const mimeCodec = 'audio/webm; codecs="opus"';
-
-export interface AudioPlayer {
-    element: HTMLAudioElement;
-    loadAudioByVideoId: (videoId: string) => Promise<void>;
-    getVideoData: () => { ytVideoId: string; title: string };
-}
 
 function getAudioPlayer(audioContainer: HTMLAudioElement) {
 	let mediaSource: MediaSource;
@@ -85,8 +80,8 @@ function getAudioPlayer(audioContainer: HTMLAudioElement) {
 		});
 	}
 
-    function getVideoData() {
-        return { ytVideoId, title: '-' };
+    function getVideoData(): VideoData {
+        return { videoId: ytVideoId, title: '-' };
     }
 
 	return {
@@ -96,12 +91,15 @@ function getAudioPlayer(audioContainer: HTMLAudioElement) {
 	};
 }
 
-function AudioPlayerX(props) {
-	const audioPlayerRef = useRef();
+export function AudioPlayer() {
+	const { setAudioPlayer } = usePlayer();
+	const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
 	useEffect(() => {
-		props.setAudioPlayer(getAudioPlayer(audioPlayerRef.current));
-	}, []);
+		if (audioPlayerRef.current) {
+			setAudioPlayer(getAudioPlayer(audioPlayerRef.current));
+		}
+	}, [setAudioPlayer]);
 
 	return (
 		<div style={{ textAlign: 'center' }}>
@@ -109,13 +107,3 @@ function AudioPlayerX(props) {
 		</div>
 	);
 }
-
-const mapStateToProps = (state) => ({});
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setAudioPlayer: (audioPlayer) => dispatch({ type: 'SET_AUDIO_PLAYER', audioPlayer }),
-	};
-};
-
-export const AudioPlayer = connect(mapStateToProps, mapDispatchToProps)(AudioPlayerX);

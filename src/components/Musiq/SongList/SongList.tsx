@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useReducer, useRef, useCallback, ReactElement } from 'react';
-import { connect } from 'react-redux';
 import { List, Row, Col, notification, Alert, Space, Button, Switch } from 'antd';
 import { debounce } from 'throttle-debounce';
 
@@ -18,6 +17,7 @@ import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
 import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
 import { SongFilters } from 'Types/song.types';
+import { usePlayer } from 'Contexts/PlayerContext';
 
 import './SongList.css';
 import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
@@ -61,8 +61,7 @@ function switchSong({ currentlyPlaying }, action) {
 // reload songs only on tag selection change
 
 function SongListX(props) {
-	const { ytPlayer, audioPlayer } = props;
-	const [playerType, setPlayerType] = useState<'audio' | 'yt'>('audio');
+	const { ytPlayer, audioPlayer, playerType, setPlayerType } = usePlayer();
 
 	// Conditionally use the appropriate player hook based on playerType
 	const { status: playerStatus, videoData } =
@@ -448,19 +447,10 @@ function SongListX(props) {
 	);
 }
 
-const mapStateToProps = (state) => ({
-	ytPlayer: state.ytPlayer,
-	audioPlayer: state.audioPlayer,
-});
-
-const mapDispatchToProps = (dispatch) => ({});
-
-const SongListConnected = connect(mapStateToProps, mapDispatchToProps)(SongListX);
-
 export function SongList(props) {
 	return (
 		<TagsProvider>
-			<SongListConnected {...props} />
+			<SongListX {...props} />
 		</TagsProvider>
 	);
 }

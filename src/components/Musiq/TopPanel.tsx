@@ -1,37 +1,34 @@
 import React, { useRef, useState } from 'react';
-import { connect } from 'react-redux';
 import { debounce } from 'throttle-debounce';
 import { Row, Col, Button, Slider } from 'antd';
 import { Link } from 'react-router-dom';
 
 import { WS_DATA_TYPES } from 'Types/websocket.types';
-import { musiqWebsocket } from 'Services/musiqWebsocket';
+import { useWebSocket } from 'Contexts/WebSocketContext';
 import { DeviceListController } from './DeviceListController';
 
-interface TopPanelProps {
-	isOnline: boolean;
-}
-
-function TopPanelX({ isOnline }: TopPanelProps) {
-	const webSocket = musiqWebsocket.getInstance();
-	const sendDataDebounced = debounce(800, (t, d) => webSocket.sendDataToTargets(t, d));
+export function TopPanel() {
+	const { isOnline, connect, sendDataToTargets } = useWebSocket();
+	const sendDataDebounced = useRef(
+		debounce(800, (t, d) => sendDataToTargets(t, d))
+	).current;
 	const panelRef = useRef<HTMLDivElement>(null);
 	const [isDeviceListVisible, setIsDeviceListVisible] = useState(false);
 
 	function play() {
-		webSocket.sendDataToTargets(WS_DATA_TYPES.PLAY);
+		sendDataToTargets(WS_DATA_TYPES.PLAY);
 	}
 
 	function pause() {
-		webSocket.sendDataToTargets(WS_DATA_TYPES.PAUSE);
+		sendDataToTargets(WS_DATA_TYPES.PAUSE);
 	}
 
 	function playPrevious() {
-		webSocket.sendDataToTargets(WS_DATA_TYPES.PREV_SONG);
+		sendDataToTargets(WS_DATA_TYPES.PREV_SONG);
 	}
 
 	function playNext() {
-		webSocket.sendDataToTargets(WS_DATA_TYPES.NEXT_SONG);
+		sendDataToTargets(WS_DATA_TYPES.NEXT_SONG);
 	}
 
 	function setVolume(volume: number) {
@@ -49,7 +46,7 @@ function TopPanelX({ isOnline }: TopPanelProps) {
 			/>
 			<Row gutter={[16, 8]} justify="center" style={{ marginLeft: 0, marginRight: 0 }}>
 				<Col>
-					<Button type="text" disabled={isOnline} onClick={() => webSocket.open()}>
+					<Button type="text" disabled={isOnline} onClick={connect}>
 						Connect
 					</Button>
 				</Col>
@@ -95,13 +92,3 @@ function TopPanelX({ isOnline }: TopPanelProps) {
 		</div>
 	);
 }
-
-const mapStateToProps = (state: any) => {
-	return {
-		isOnline: state.isOnline,
-	};
-};
-
-const mapDispatchToProps = () => ({});
-
-export const TopPanel = connect(mapStateToProps, mapDispatchToProps)(TopPanelX);
