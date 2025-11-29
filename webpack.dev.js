@@ -24,7 +24,10 @@ module.exports = merge(common, {
 		new CleanWebpackPlugin(),
 		new CopyWebpackPlugin({
 			patterns: [{
-				from: 'public'
+				from: 'public',
+				globOptions: {
+					ignore: ['**/index.html'], // Exclude index.html (handled by HtmlWebpackPlugin)
+				},
 			}]
 		}),
 	],

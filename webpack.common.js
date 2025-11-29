@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -59,4 +60,13 @@ module.exports = {
 			},
 		],
 	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			template: './public/index.html',
+			filename: 'index.html',
+			chunks: ['app'], // Only include app entry, exclude preLoader
+			scriptLoading: 'blocking',
+			inject: 'body',
+		}),
+	],
 };
