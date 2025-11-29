@@ -5,6 +5,8 @@ const { Option } = Select;
 
 import { useTagsState } from './TagsContext';
 import { createVideoLink } from 'Utils/yt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLink, faMusic } from '@fortawesome/free-solid-svg-icons';
 
 export function EditSongModal(props) {
     const { songItem } = props;
@@ -59,14 +61,14 @@ export function EditSongModal(props) {
         >
             <Input
                 style={{ margin: 8 }}
-                prefix={<i className="fas fa-music prefix"></i>}
+                prefix={<FontAwesomeIcon icon={faMusic} />}
                 placeholder="Song title"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
             />
             <Input
                 style={{ margin: 8 }}
-                prefix={<i className="fas fa-link prefix"></i>}
+                prefix={<FontAwesomeIcon icon={faLink} />}
                 placeholder="Song url"
                 value={url}
                 onChange={handleUrlChange}

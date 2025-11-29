@@ -293,8 +293,8 @@ function SongListX(props) {
 							key={songItem.id}
 							songItem={songItem}
 							index={index}
-							isPlaying={index === currentlyPlaying}
-							playIcon={getIconForCurrentSong()}
+							isSelected={index === currentlyPlaying}
+							currentSongIcon={getIconForCurrentSong()}
 							onSongClick={onSongClick}
 							editSong={setEditedSong}
 							removeSong={removeSong}

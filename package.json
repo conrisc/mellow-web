@@ -61,7 +61,10 @@
 	"author": "Konrad Cielecki",
 	"license": "ISC",
 	"dependencies": {
-		"@fortawesome/fontawesome-free": "^6.2.1",
+		"@fortawesome/fontawesome-svg-core": "^7.1.0",
+		"@fortawesome/free-regular-svg-icons": "^7.1.0",
+		"@fortawesome/free-solid-svg-icons": "^7.1.0",
+		"@fortawesome/react-fontawesome": "^3.1.1",
 		"amazon-cognito-identity-js": "^6.1.1",
 		"antd": "^5.1.5",
 		"express": "^4.17.1",

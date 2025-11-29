@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button, Dropdown, Menu, Modal, Space } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisV, faExclamationCircle, faTv } from '@fortawesome/free-solid-svg-icons';
 
 export function SongActionButtons(props) {
     const { songItem, removeSong } = props;
@@ -20,10 +22,7 @@ export function SongActionButtons(props) {
     function showRemoveConfirmation() {
         Modal.confirm({
             title: 'Do you want to remove that song:',
-            icon: <i
-                    style={{ float: 'left', fontSize: 21, color: '#faad14', marginRight: 16 }}
-                    className="fas fa-exclamation-circle">
-                </i>,
+            icon: <FontAwesomeIcon icon={faExclamationCircle} style={{ float: 'left', fontSize: 21, color: '#faad14', marginRight: 16 }} />,
             content: songItem.title,
             onOk() {
                 removeSong(songItem.id)
@@ -89,11 +88,10 @@ export function SongActionButtons(props) {
             <Button
                 onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
                 title="Play song on other devices">
-                    <i className="fas fa-tv"></i>
+                    <FontAwesomeIcon icon={faTv} />
             </Button>
             <Dropdown menu={{ items: menuItems }} placement="bottom" arrow trigger={["click"]}>
-                <Button>
-                    <i className="fas fa-ellipsis-v"></i>
+                <Button icon={<FontAwesomeIcon icon={faEllipsisV} />}>
                 </Button>
             </Dropdown>
         </Space>

@@ -7,6 +7,8 @@ import { createVideoLink } from 'Utils/yt';
 import { AudioPlayer } from './AudioPlayer';
 import { usePlayer } from 'Contexts/PlayerContext';
 import { YTItem } from 'Types/youtube.types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faSearch, faTv } from '@fortawesome/free-solid-svg-icons';
 
 interface YtListProps {
 	ytItems: YTItem[];
@@ -36,7 +38,7 @@ export function YtList({ ytItems, isFetchingYtItems, getYtItemsDebounced, loadVi
 					className="yt-search"
 					allowClear={true}
 					onChange={handleSearchChange}
-					prefix={<i className="fas fa-search"></i>}
+					prefix={<FontAwesomeIcon icon={faSearch} />}
 					placeholder="Search youtube"
 				/>
 				{isFetchingYtItems ? (
@@ -71,12 +73,12 @@ export function YtList({ ytItems, isFetchingYtItems, getYtItemsDebounced, loadVi
 											</h4>
 										</a>
 										<Space className="mt-1">
-											<Button onClick={() => loadVideo(el.videoId)}>
-												<i className="fas fa-tv"></i>
-											</Button>
-											<Button type="primary" onClick={() => loadVideoById(el.videoId)}>
-												<i className="fas fa-play"></i>
-											</Button>
+											<Button onClick={() => loadVideo(el.videoId)} icon={<FontAwesomeIcon icon={faTv} />} />
+											<Button
+												type="primary"
+												onClick={() => loadVideoById(el.videoId)}
+												icon={<FontAwesomeIcon icon={faPlay} />}
+											/>
 										</Space>
 									</Col>
 									<Col className="yt-image">

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Row, Col, Button, Input, InputNumber, Select } from 'antd';
 const { Option } = Select;
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faSearch, faTags } from '@fortawesome/free-solid-svg-icons';
 import { NewSongModal } from './NewSongModal';
 
 import './SongFilterPanel.css';
+
 
 export function SongFilterPanel(props) {
     const { songFilters, setSongFilters, showTagsDrawer, addSong } = props;
@@ -56,9 +58,7 @@ export function SongFilterPanel(props) {
                 className="filter-panel"
             >
                 <Col lg={0}>
-                    <Button onClick={showTagsDrawer}>
-                        <i className="fas fa-tags"></i>
-                    </Button>
+                    <Button onClick={showTagsDrawer} icon={<FontAwesomeIcon icon={faTags} />} />
                 </Col>
                 <Col flex="auto">
                     <Input
@@ -66,7 +66,7 @@ export function SongFilterPanel(props) {
                         allowClear={true}
                         value={songFilters.title}
                         onChange={handleTitleFilterChange}
-                        prefix={<i className="fas fa-search"></i>}
+                        prefix={<FontAwesomeIcon icon={faSearch} />}
                     />
                 </Col>
                 <Col>
@@ -103,9 +103,9 @@ export function SongFilterPanel(props) {
                     </Select>
                 </Col>
                 <Col>
-                    <Button onClick={() => setIsNewSongModalVisible(true)}>
-                        <i className="fas fa-plus"></i>
-                    </Button>
+                    <Button onClick={() => setIsNewSongModalVisible(true)}
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                    />
                 </Col>
             </Row>
         </>

@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { WS_DATA_TYPES } from 'Types/websocket.types';
 import { useWebSocket } from 'Contexts/WebSocketContext';
 import { DeviceListController } from './DeviceListController';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBackward, faForward, faPause, faPlay, faServer } from '@fortawesome/free-solid-svg-icons';
 
 export function TopPanel() {
 	const { isOnline, connect, sendDataToTargets } = useWebSocket();
@@ -51,32 +53,22 @@ export function TopPanel() {
 					</Button>
 				</Col>
 				<Col>
-					<Button onClick={play}>
-						<i className="fas fa-play"></i>
-					</Button>
+					<Button onClick={play} icon={<FontAwesomeIcon icon={faPlay} />} />
 				</Col>
 				<Col>
-					<Button onClick={pause}>
-						<i className="fas fa-pause"></i>
-					</Button>
+					<Button onClick={pause} icon={<FontAwesomeIcon icon={faPause} />} />
 				</Col>
 				<Col xs={24} lg={3}>
 					<Slider defaultValue={100} onChange={setVolume} />
 				</Col>
 				<Col>
-					<Button onClick={playPrevious}>
-						<i className="fas fa-backward"></i>
-					</Button>
+					<Button onClick={playPrevious} icon={<FontAwesomeIcon icon={faBackward} />} />
 				</Col>
 				<Col>
-					<Button onClick={playNext}>
-						<i className="fas fa-forward"></i>
-					</Button>
+					<Button onClick={playNext} icon={<FontAwesomeIcon icon={faForward} />} />
 				</Col>
 				<Col>
-					<Button type="ghost" onClick={() => setIsDeviceListVisible(true)}>
-						<i className="fas fa-server"></i>
-					</Button>
+					<Button type="ghost" onClick={() => setIsDeviceListVisible(true)} icon={<FontAwesomeIcon icon={faServer} />} />
 				</Col>
 				<Col>
 					<Link to="/">Go back</Link>

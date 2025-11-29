@@ -10,6 +10,8 @@ import { NoteEditor } from './NoteEditor';
 import { getUsersApi } from 'Services/mellowApi';
 import { useMatchMedia } from 'Hooks/useMatchMedia';
 import { Spinner } from 'CommonComponents/Spinner';
+import { faAngleLeft, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export function Notepad(props) {
 	const { noteId } = useParams();
@@ -164,7 +166,7 @@ export function Notepad(props) {
 					style={{ marginBottom: '8px' }}
 					type="default"
 					onClick={createEmptyNote}
-					icon={<i className="fas fa-plus-circle"></i>}
+					icon={<FontAwesomeIcon icon={faPlusCircle} />}
 				/>
 				<div
 					style={{
@@ -187,7 +189,7 @@ export function Notepad(props) {
 						style={{ marginBottom: '8px' }}
 						onClick={navigateToList}
 						type="primary"
-						icon={<i className="fas fa-angle-left"></i>}
+						icon={<FontAwesomeIcon icon={faAngleLeft} />}
 					/>
 				)}
 				<div

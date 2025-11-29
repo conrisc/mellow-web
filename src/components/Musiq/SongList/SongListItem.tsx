@@ -1,14 +1,17 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { List, Row, Col } from 'antd';
 import { SongItem } from 'mellov_api';
 import { SongInfoContainer } from './SongInfoContainer';
 import { SongActionButtons } from './SongActionButtons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface SongListItemProps {
 	songItem: SongItem;
 	index: number;
-	isPlaying: boolean;
-	playIcon: ReactElement;
+	isSelected: boolean;
+	currentSongIcon: IconProp;
 	onSongClick: (index: number) => void;
 	editSong: (song: SongItem) => void;
 	removeSong: (id: string) => void;
@@ -20,8 +23,8 @@ interface SongListItemProps {
 export const SongListItem = React.memo(function SongListItem({
 	songItem,
 	index,
-	isPlaying,
-	playIcon,
+	isSelected,
+	currentSongIcon,
 	onSongClick,
 	editSong,
 	removeSong,
@@ -35,7 +38,7 @@ export const SongListItem = React.memo(function SongListItem({
 	return (
 		<List.Item
 			onClick={() => onSongClick(index)}
-			className={'song-item f-size-medium' + (isPlaying ? ' selected-song' : '')}
+			className={'song-item f-size-medium' + (isSelected ? ' selected-song' : '')}
 			extra={
 				<SongActionButtons
 					songItem={songItem}
@@ -50,13 +53,7 @@ export const SongListItem = React.memo(function SongListItem({
 		>
 			<Row gutter={16} style={{ flexWrap: 'nowrap' }}>
 				<Col className="status-indicator">
-					{isPlaying ? (
-						<div>{playIcon}</div> // icon needs to be wrapped up so React could hold a reference to it
-					) : (
-						<span>
-							<i className="fas fa-play-circle"></i>
-						</span>
-					)}
+					<FontAwesomeIcon icon={isSelected ? currentSongIcon : faPlayCircle} />
 				</Col>
 				<Col>
 					<SongInfoContainer songItem={songItem} />

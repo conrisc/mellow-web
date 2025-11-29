@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { Drawer, List, Button, Input, Modal, Row, Col } from 'antd';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { useTagsState, useTagsDispatch } from './TagsContext';
 
 import './TagList.css';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 function RemoveTagButton(props) {
     return (
@@ -12,7 +14,7 @@ function RemoveTagButton(props) {
             size="small"
             type="text"
             danger
-            icon={<i className="far fa-trash-alt"></i>}
+            icon={<FontAwesomeIcon icon={faTrashAlt} />}
             {...props}
         />
     );
@@ -48,10 +50,10 @@ export function TagList(props) {
         Modal.confirm({
             title: `Are you sure you want to remove tag "${tagElement.tagItem.name}"?`,
             content: 'This tag will be removed from all the songs!',
-            icon: <i
-                    style={{ float: 'left', fontSize: 21, color: '#faad14', marginRight: 16 }}
-                    className="fas fa-exclamation-circle">
-                </i>,
+            icon: <FontAwesomeIcon
+                style={{ float: 'left', fontSize: 21, color: '#faad14', marginRight: 16 }}
+                icon={faExclamationCircle}
+            />,
             onOk() {
                 console.log('Removing tag ', tagElement.tagItem.name);
                 removeTag(tagElement.tagItem.id);

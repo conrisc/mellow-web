@@ -2,6 +2,9 @@ import React, { useCallback, useRef, useEffect, ReactElement } from 'react';
 import { debounce } from 'throttle-debounce';
 import { SongItem } from 'mellov_api';
 import { PlayerStatus } from './usePlayerStatus';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompactDisc, faExclamationCircle, faPauseCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 class CancelledActionError extends Error {
 	constructor(message: string = 'Action cancelled') {
@@ -24,7 +27,7 @@ interface UseSongPlayerProps {
 interface UseSongPlayerReturn {
 	playSong: (fromYT?: boolean, ytIndex?: number) => Promise<void>;
 	handleSongClick: (songIndex: number) => void;
-	getIconForCurrentSong: () => ReactElement;
+	getIconForCurrentSong: () => IconProp;
 }
 
 export function useSongPlayer({
@@ -130,34 +133,18 @@ export function useSongPlayer({
 		}
 	};
 
-	const getIconForCurrentSong = (): ReactElement => {
+	const getIconForCurrentSong = (): IconProp => {
 		switch (playerStatus) {
 			case PlayerStatus.PAUSED:
-				return (
-					<div>
-						<i className="fas fa-pause-circle"></i>
-					</div>
-				);
+				return faPauseCircle;
 			case PlayerStatus.ENDED:
-				return (
-					<div>
-						<i className="fas fa-play-circle"></i>
-					</div>
-				);
+				return faPlayCircle;
 			case PlayerStatus.FAILED:
-				return (
-					<p>
-						<i className="fas fa-exclamation-circle"></i>
-					</p>
-				);
+				return faExclamationCircle;
 			case PlayerStatus.LOADING:
 			case PlayerStatus.LOADED:
 			default:
-				return (
-					<span>
-						<i className="fas fa-compact-disc fa-spin"></i>
-					</span>
-				);
+				return faCompactDisc; // TODO: should be spinning
 		}
 	};
 

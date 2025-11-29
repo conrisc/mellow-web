@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Slider } from 'antd';
 import { usePlayer } from 'Contexts/PlayerContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 export function BottomPanel() {
 	const { ytPlayer } = usePlayer();
@@ -60,12 +62,12 @@ export function BottomPanel() {
 			<Row className="control-panel" justify="space-around">
 				<Col>
 					<Button ghost={true} onClick={playVideo}>
-						<i className="fas fa-play"></i>
+						<FontAwesomeIcon icon={faPlay} />
 					</Button>
 				</Col>
 				<Col>
 					<Button ghost={true} onClick={pauseVideo}>
-						<i className="fas fa-pause"></i>
+						<FontAwesomeIcon icon={faPause} />
 					</Button>
 				</Col>
 				<Col className="timer" span={2}>

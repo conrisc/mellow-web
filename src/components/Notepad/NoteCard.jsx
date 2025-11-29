@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Button } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export function NoteCard(props) {
 	const note = props.note;
@@ -28,7 +30,7 @@ export function NoteCard(props) {
 						onClick={handleRemoveClick}
                         size="small"
                         type="text"
-						icon={<i className="fas fa-times"></i>}
+						icon={<FontAwesomeIcon icon={faTimes} />}
                         style={{
                             transition: 'background 0s',
                         }}

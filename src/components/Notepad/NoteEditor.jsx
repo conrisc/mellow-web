@@ -3,6 +3,8 @@ import { throttle } from 'throttle-debounce';
 import { NoteItem } from 'mellov_api';
 import { Input } from 'antd';
 import { getUsersApi } from 'Services/mellowApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const { TextArea } = Input;
 
@@ -54,7 +56,7 @@ export function NoteEditor(props) {
 						color: '#52c41a',
 					}}
 				>
-					<i className="fas fa-check"></i>
+					<FontAwesomeIcon icon={faCheck} />
 				</div>
 			)}
 			<TextArea
