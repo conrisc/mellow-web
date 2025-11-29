@@ -26,7 +26,9 @@ function switchSong({ currentlyPlaying }, action) {
 	switch (action.type) {
 		case 'PLAY_PREVIOUS':
 			console.log('switchSong: Play previous');
-			if (currentlyPlaying > 0) return { currentlyPlaying: currentlyPlaying - 1 };
+			return {
+				currentlyPlaying: currentlyPlaying && currentlyPlaying > 0 ? currentlyPlaying - 1 : null,
+			};
 			break;
 		case 'PLAY_NEXT':
 			console.log('switchSong: Play next');
