@@ -83,6 +83,10 @@ function SongListX(props) {
 		dispatch({ type: 'PLAY_NEXT' });
 	}, []);
 
+	const handlePlayPrevious = useCallback(() => {
+		dispatch({ type: 'PLAY_PREVIOUS' });
+	}, []);
+
 	const { playSong, handleSongClick, getIconForCurrentSong } = useSongPlayer({
 		songs,
 		currentlyPlaying,
@@ -101,17 +105,23 @@ function SongListX(props) {
 				const dataFromServer = JSON.parse(message.data);
 				switch (dataFromServer.type) {
 					case dataTypes.NEXT_SONG:
-						dispatch({ type: 'PLAY_NEXT' });
+						handlePlayNext();
 						pushNotification('Play next song');
 						break;
 					case dataTypes.PREV_SONG:
-						dispatch({ type: 'PLAY_PREVIOUS' });
+						handlePlayPrevious();
 						pushNotification('Play previous song');
 						break;
 				}
 			},
 		};
 		webSocket.addListeners(wsListeners);
+		setMediaSessionHandlers();
+
+		return () => {
+			webSocket.removeListeners(wsListeners);
+			clearMediaSession();
+		}
 	}, []);
 
 	// Refetch songs without a delay
@@ -144,6 +154,7 @@ function SongListX(props) {
 
 		playSong();
 		setUrlBannerHidden(false);
+		updateMediaSessionMetadata();
 	}, [currentlyPlaying]);
 
 	function pushNotification(text: string): void {
@@ -205,6 +216,30 @@ function SongListX(props) {
 		updateSong(updatedSongItem).catch((error) => {
 			console.warn(`Failed to update song's url. Error: ${error?.message}`);
 		});
+	}
+
+	// TODO Create Player proxy and move MediaSession handling there
+	function setMediaSessionHandlers() {
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.setActionHandler('previoustrack', handlePlayPrevious);
+			navigator.mediaSession.setActionHandler('nexttrack', handlePlayNext);
+		}
+	}
+
+	function updateMediaSessionMetadata() {
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.metadata = new MediaMetadata({
+				title: songs[currentlyPlaying]?.title || '-',
+			});
+		}
+	}
+
+	function clearMediaSession() {
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.metadata = null;
+			navigator.mediaSession.setActionHandler('previoustrack', null);
+			navigator.mediaSession.setActionHandler('nexttrack', null);
+		}
 	}
 
 	return (
