@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { PlayerStatus, VideoData } from 'Types/player.types';
 
-export enum PlayerStatus {
-	INITIALIZED,
-	UNSTARTED,
-	FAILED,
-	ENDED,
-	LOADED,
-	PAUSED,
-	LOADING,
+/**
+ * Player status enum matching YouTube IFrame API states
+ */
+enum YtPlayerStatus {
+	UNSTARTED = -1,
+	ENDED = 0,
+	PLAYING = 1,
+	PAUSED = 2,
+	LOADING = 3,
+	// 4? not needed
+	CUED = 5,
 }
 
-export interface VideoData {
-	videoId: string;
-	title: string;
-}
-
-export function usePlayerStatus(ytPlayer) {
+export function useYtPlayerStatus(ytPlayer) {
 	const [status, setStatus] = useState<PlayerStatus | null>(null);
 	const [videoData, setVideoData] = useState<VideoData | null>(null);
 
@@ -31,28 +30,28 @@ export function usePlayerStatus(ytPlayer) {
 				setStatus(PlayerStatus.INITIALIZED);
 			}
 
-			switch(data) {
-				case -1: // UNSTARTED
+			switch (data) {
+				case YtPlayerStatus.UNSTARTED:
 					clearTimeout(treatAsFailed);
 					setStatus(PlayerStatus.UNSTARTED);
 					treatAsFailed = setTimeout(() => {
 						setStatus(PlayerStatus.FAILED);
 					}, 2000);
 					break;
-				case 0:	// ENDED
-					setStatus(PlayerStatus.ENDED)
+				case YtPlayerStatus.ENDED:
+					setStatus(PlayerStatus.ENDED);
 					break;
-				case 1:	// PLAYING
+				case YtPlayerStatus.PLAYING:
 					clearTimeout(treatAsFailed);
 					setStatus(PlayerStatus.LOADED);
 					break;
-				case 2:	// PAUSED
-					setStatus(PlayerStatus.PAUSED)
+				case YtPlayerStatus.PAUSED:
+					setStatus(PlayerStatus.PAUSED);
 					break;
-				case 3:	// LOADING
+				case YtPlayerStatus.LOADING:
 					clearTimeout(treatAsFailed);
-					setStatus(PlayerStatus.LOADING)
-				case 5:	// CUED
+					setStatus(PlayerStatus.LOADING);
+				case YtPlayerStatus.CUED:
 				default:
 			}
 
@@ -63,11 +62,10 @@ export function usePlayerStatus(ytPlayer) {
 
 		return () => {
 			ytPlayer.removeEventListener('onStateChange', stateListener);
-		}
+		};
 	}, [ytPlayer]);
 
-
-	function updateVideoData(playerData?: { video_id: string, title: string }) {
+	function updateVideoData(playerData?: { video_id: string; title: string }) {
 		if (!playerData) setVideoData(null);
 		else if (videoData?.videoId !== playerData.video_id) {
 			setVideoData({

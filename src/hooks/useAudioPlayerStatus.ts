@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { PlayerStatus, VideoData } from './usePlayerStatus';
+import { PlayerStatus } from 'Types/player.types';
+import { VideoData } from 'Types/player.types';
 import { AudioPlayer } from 'Types/player.types';
 
 const AUDIO_ELEMENT_EVENTS = [

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Space, Button } from 'antd';
-import { VideoData } from 'Hooks/usePlayerStatus';
+import { VideoData } from 'Types/player.types';
 
 interface SongListUrlBannerProps {
 	songTitle: string;

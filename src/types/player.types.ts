@@ -1,29 +1,11 @@
 /**
- * Player status enum matching YouTube IFrame API states
- * Extended with custom states for audio player
- */
-export enum PlayerStatus {
-	UNSTARTED = -1,
-	ENDED = 0,
-	LOADED = 1,
-	PAUSED = 2,
-	LOADING = 3,
-	FAILED = -2,
-}
-
-/**
  * Video data returned by players
  */
 export interface VideoData {
 	videoId: string;
 	title: string;
-	author?: string;
-	duration?: number;
 }
 
-/**
- * YouTube Player instance interface
- */
 export interface YTPlayer {
 	loadVideoById: (videoId: string) => void;
 	playVideo: () => void;
@@ -37,25 +19,36 @@ export interface YTPlayer {
 	addEventListener: (event: string, listener: (state: any) => void) => void;
 }
 
-/**
- * Audio Player instance interface
- */
 export interface AudioPlayer {
 	element: HTMLAudioElement;
 	loadAudioByVideoId: (videoId: string) => Promise<void>;
 	getVideoData: () => VideoData | null;
 }
 
-/**
- * Player type discriminator
- */
 export type PlayerType = 'audio' | 'yt';
 
+export enum PlayerStatus {
+	INITIALIZED,
+	UNSTARTED,
+	FAILED,
+	ENDED,
+	LOADED,
+	PAUSED,
+	LOADING
+}
+
 /**
- * Player context state
+ * Unified player interface that wraps both AudioPlayer and YtPlayer
+ * Components use this instead of dealing with player-specific APIs
  */
-export interface PlayerState {
-	ytPlayer: YTPlayer | null;
-	audioPlayer: AudioPlayer | null;
-	playerType: PlayerType;
+export interface UnifiedPlayer {
+	load: (videoId: string) => void | Promise<void>;
+	play: () => void | Promise<void>;
+	pause: () => void;
+	getVideoData: () => VideoData | null;
+	getCurrentTime: () => number;
+	getDuration: () => number;
+	seekTo: (seconds: number) => void;
+	setVolume: (volume: number) => void;
+	getType: () => PlayerType;
 }

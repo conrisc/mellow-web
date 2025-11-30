@@ -10,14 +10,13 @@ import { TagsProvider, useTagsState } from './TagsContext';
 
 import { useScroll } from 'Hooks/useScroll';
 import { useSongs } from 'Hooks/useSongs';
-import { PlayerStatus, usePlayerStatus } from 'Hooks/usePlayerStatus';
+import { PlayerStatus } from 'Types/player.types';
 import { createVideoLink } from 'Utils/yt';
 import { SongItem } from 'mellov_api';
 import { SongFilters } from 'Types/song.types';
-import { usePlayer } from 'Contexts/PlayerContext';
+import { usePlayer, usePlayerStatus } from 'Contexts/PlayerContext';
 
 import './SongList.css';
-import { useAudioPlayerStatus } from 'Hooks/useAudioPlayerStatus';
 import { SongListUrlBanner } from './SongListUrlBanner';
 import { SongListItem } from './SongListItem';
 import { useSongPlayer } from 'Hooks/useSongPlayer';
@@ -56,10 +55,8 @@ function switchSong({ currentlyPlaying }, action) {
 // reload songs only on tag selection change
 
 function SongListX(props) {
-	const { ytPlayer, audioPlayer, playerType, setPlayerType } = usePlayer();
-
-	const { status: playerStatus, videoData } =
-		playerType === 'audio' ? useAudioPlayerStatus(audioPlayer) : usePlayerStatus(ytPlayer);
+	const { player, playerType, setPlayerType } = usePlayer();
+	const { status: playerStatus, videoData } = usePlayerStatus();
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState<SongFilters>({
 		title: '',
@@ -92,9 +89,7 @@ function SongListX(props) {
 	const { playSong, handleSongClick, getIconForCurrentSong } = useSongPlayer({
 		songs,
 		currentlyPlaying,
-		playerType,
-		audioPlayer,
-		ytPlayer,
+		player,
 		playerStatus,
 		getYtItems: props.getYtItems,
 		onPlayNext: handlePlayNext,

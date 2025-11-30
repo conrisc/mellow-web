@@ -1,10 +1,10 @@
-import React, { useCallback, useRef, useEffect, ReactElement } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { debounce } from 'throttle-debounce';
 import { SongItem } from 'mellov_api';
-import { PlayerStatus } from './usePlayerStatus';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PlayerStatus } from 'Types/player.types';
 import { faCompactDisc, faExclamationCircle, faPauseCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { UnifiedPlayer } from 'Types/player.types';
 
 class CancelledActionError extends Error {
 	constructor(message: string = 'Action cancelled') {
@@ -16,9 +16,7 @@ class CancelledActionError extends Error {
 interface UseSongPlayerProps {
 	songs: SongItem[];
 	currentlyPlaying: number | null;
-	playerType: 'audio' | 'yt';
-	audioPlayer: any;
-	ytPlayer: any;
+	player: UnifiedPlayer | null;
 	playerStatus: PlayerStatus;
 	getYtItems: (title: string) => Promise<any[]>;
 	onPlayNext: () => void;
@@ -33,9 +31,7 @@ interface UseSongPlayerReturn {
 export function useSongPlayer({
 	songs,
 	currentlyPlaying,
-	playerType,
-	audioPlayer,
-	ytPlayer,
+	player,
 	playerStatus,
 	getYtItems,
 	onPlayNext,
@@ -43,32 +39,12 @@ export function useSongPlayer({
 	const songLoaderRef = useRef<{ cancel: () => void } | null>(null);
 	const allowedRetries = useRef(0);
 
-	const playerPause = (): void => {
-		if (playerType === 'audio') {
-			audioPlayer.element.pause();
-		} else {
-			ytPlayer.pauseVideo();
-		}
-	};
-
-	const playerPlay = (): void => {
-		if (playerType === 'audio') {
-			audioPlayer.element.play();
-		} else {
-			ytPlayer.playVideo();
-		}
-	};
-
 	const loadSongByVideoIdDebounced = useCallback(
 		debounce(500, (videoId: string, title: string = '') => {
 			console.log('%cPlayer:', 'background-color: yellow', videoId, '|', title);
-			if (playerType === 'audio') {
-				audioPlayer.loadAudioByVideoId(videoId);
-			} else {
-				ytPlayer.loadVideoById(videoId);
-			}
+			player?.load(videoId);
 		}),
-		[audioPlayer, ytPlayer, playerType]
+		[player]
 	);
 
 	const getSongVideoId = async (
@@ -118,18 +94,18 @@ export function useSongPlayer({
 		if (songIndex === currentlyPlaying) {
 			switch (playerStatus) {
 				case PlayerStatus.LOADED:
-					playerPause();
+					player?.pause();
 					break;
 				case PlayerStatus.PAUSED:
 				case PlayerStatus.ENDED:
-					playerPlay();
+					player?.play();
 					break;
 				case PlayerStatus.FAILED:
 					playSong(true);
 					break;
 			}
 		} else {
-			playerPause();
+			player?.pause();
 		}
 	};
 
@@ -163,8 +139,8 @@ export function useSongPlayer({
 				onPlayNext();
 				break;
 			case PlayerStatus.LOADING:
-				if (playerType === 'audio') {
-					audioPlayer.element.play(); // autoplay after loading starts
+				if (player?.getType() === 'audio') {
+					player.play(); // autoplay after loading starts
 				}
 				break;
 		}
