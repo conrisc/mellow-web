@@ -2,11 +2,17 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+        nodejs: 24
     commands:
       - npm install -g yarn
   pre_build:
     commands:
-      - aws codeartifact login --tool npm --repository npm-store --domain conrisc --domain-owner 118101356080
+      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain conrisc --domain-owner 118101356080 --query authorizationToken --output text)
+      - export CODEARTIFACT_REGISTRY=$(aws codeartifact get-repository-endpoint --domain conrisc --domain-owner 118101356080 --repository npm-store --format npm --query repositoryEndpoint --output text | sed 's|https://||')
+      - echo "registry=https://${CODEARTIFACT_REGISTRY}" > .npmrc
+      - echo "//${CODEARTIFACT_REGISTRY}:always-auth=true" >> .npmrc
+      - echo "//${CODEARTIFACT_REGISTRY}:_authToken=${CODEARTIFACT_AUTH_TOKEN}" >> .npmrc
   build:
     commands:
       - echo Build started on `date`
