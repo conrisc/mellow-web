@@ -4,9 +4,16 @@ Web music player and not only
 ## Development
 
 Run development server:  
-`yarn serve:dev`
+`yarn run serve:dev`
 
 It is using webpack-dev-server which has built-in Hot Module Replacement - *It might not work when running server in WSL (windows subsystem for linux)*
+
+## Production Build
+Build production version of the app:
+`yarn run build`
+
+with analyze option:
+`yarn run build:analyze`
 
 ### Using Docker
 
