@@ -5,7 +5,7 @@ phases:
     runtime-versions:
         nodejs: 24
     commands:
-      - npm install -g yarn
+      - npm install -g pnpm@latest
   pre_build:
     commands:
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain conrisc --domain-owner 118101356080 --query authorizationToken --output text)
@@ -16,8 +16,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - yarn install --network-concurrency 1
-      - yarn build
+      - pnpm install --network-concurrency 1
+      - pnpm run build
   post_build:
     commands:
       - echo Build completed on `date`

@@ -21,4 +21,4 @@ It also contains 'Notepad' module for taking notes (separate from music player).
 
 **Build Tools:**
 - Webpack
-- Yarn (package management)
+- pnpm (package management)

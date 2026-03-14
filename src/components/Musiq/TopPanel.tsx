@@ -68,7 +68,7 @@ export function TopPanel() {
 					<Button onClick={playNext} icon={<FontAwesomeIcon icon={faForward} />} />
 				</Col>
 				<Col>
-					<Button type="ghost" onClick={() => setIsDeviceListVisible(true)} icon={<FontAwesomeIcon icon={faServer} />} />
+					<Button type="text" onClick={() => setIsDeviceListVisible(true)} icon={<FontAwesomeIcon icon={faServer} />} />
 				</Col>
 				<Col>
 					<Link to="/">Go back</Link>
