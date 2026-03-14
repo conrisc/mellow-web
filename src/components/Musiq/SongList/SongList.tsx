@@ -56,6 +56,7 @@ function switchSong({ currentlyPlaying }, action) {
 
 function SongListX(props) {
 	const { player, playerType, setPlayerType } = usePlayer();
+	const [showOnlyNonSpotify, setShowOnlyNonSpotify] = useState(false);
 	const { status: playerStatus, videoData } = usePlayerStatus();
 	const { tags } = useTagsState();
 	const [songFilters, setSongFilters] = useState<SongFilters>({
@@ -67,7 +68,8 @@ function SongListX(props) {
 
 	const { songs, getSongs, loadMoreSongs, addSong, updateSong, removeSong } = useSongs(
 		tags,
-		songFilters
+		songFilters,
+		showOnlyNonSpotify
 	);
 	const [isLoadingSongs, setIsLoadingSongs] = useState(true);
 	const [{ currentlyPlaying }, dispatch] = useReducer(switchSong, { currentlyPlaying: null });
@@ -125,7 +127,7 @@ function SongListX(props) {
 	useEffect(() => {
 		clearTimeout(songsReloaderRef.current);
 		reloadSongs();
-	}, [songFilters.limit, songFilters.sort]);
+	}, [songFilters.limit, songFilters.sort, showOnlyNonSpotify]);
 
 	// Refetch songs with a delay (debounced)
 	useEffect(() => {
@@ -255,6 +257,13 @@ function SongListX(props) {
 				)}
 				<div className="songs-toolbar">
 					<div style={{ textAlign: 'right', marginTop: '8px', marginRight: '16px' }}>
+						<Switch
+							style={{ marginRight: '16px' }}
+							checked={showOnlyNonSpotify}
+							onChange={(checked) => setShowOnlyNonSpotify(checked)}
+							checkedChildren="Non-S"
+							unCheckedChildren="All"
+						/>
 						<Switch
 							checked={playerType === 'yt'}
 							onChange={(checked) => setPlayerType(checked ? 'yt' : 'audio')}

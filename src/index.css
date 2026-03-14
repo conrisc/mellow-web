@@ -102,7 +102,7 @@ p {
 .yt-search input,
 .yt-search svg {
 	color: #fff;
-	background: none;
+	background: #424242 !important;
 }
 
 .yt-search input::placeholder {

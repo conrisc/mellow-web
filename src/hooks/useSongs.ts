@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { SongItem } from 'mellov_api';
 import { getUsersApi } from 'Services/mellowApi';
 import { SongFilters, TagElement, SongSortOption } from 'Types/song.types';
+import { MELLOV_API_URL } from 'Constants/environment';
+import { getAccessToken } from '../services/auth.service';
 
 interface FetchResult {
 	fetched: number;
@@ -18,10 +20,49 @@ interface UseSongsReturn {
 
 export function useSongs(
 	tags: TagElement[],
-	songFilters: SongFilters = { skip: 0, limit: 30, title: '', sort: 'none' }
+	songFilters: SongFilters = { skip: 0, limit: 30, title: '', sort: 'none' },
+	getOnlyNonSpotify: boolean
 ): UseSongsReturn {
 	const [songs, setSongs] = useState<SongItem[]>([]);
 	const selectedTagIds = getSelectedTagIds();
+
+	async function rawFetchSongs(
+		opts: {
+			skip: number;
+			limit: number;
+			title: string;
+			tags?: string[];
+			sort: SongSortOption;
+		},
+		callback: (data: SongItem[]) => void
+	) {
+		const token = await getAccessToken();
+		const searchParams = new URLSearchParams();
+		searchParams.append('skip', opts.skip.toString());
+		searchParams.append('limit', opts.limit.toString());
+		searchParams.append('title', opts.title);
+		searchParams.append('sort', opts.sort);
+		for (const tagId of opts.tags || []) {
+			searchParams.append('tags', tagId);
+		}
+		searchParams.append('noSpotify', getOnlyNonSpotify.toString());
+
+		return fetch(`${MELLOV_API_URL}/songs?${searchParams.toString()}`, {
+			headers: {
+				Authorization: token
+			}
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Raw songs', data);
+				callback(data);
+				return { fetched: data.length };
+			})
+			.catch((error) => {
+				console.error(error);
+				return { fetched: 0 };
+			});
+	}
 
 	async function fetchSongs(
 		opts: {
@@ -39,6 +80,7 @@ export function useSongs(
 		return api
 			.searchSongs(opts.skip, opts.limit, opts.title, opts.tags, opts.sort)
 			.then((data) => {
+				console.log('Songs', data);
 				callback(data);
 				return { fetched: data.length };
 			})
@@ -54,7 +96,7 @@ export function useSongs(
 			tags: selectedTagIds,
 		};
 		console.log('Fetching songs...');
-		return fetchSongs(opts, setSongs);
+		return rawFetchSongs(opts, setSongs);
 	}
 
 	function loadMoreSongs(): Promise<FetchResult> {
@@ -64,7 +106,7 @@ export function useSongs(
 			tags: selectedTagIds,
 		};
 		console.log('Fetching more songs...');
-		return fetchSongs(opts, (newSongs) => {
+		return rawFetchSongs(opts, (newSongs) => {
 			setSongs((songs) => [...songs, ...newSongs]);
 		});
 	}

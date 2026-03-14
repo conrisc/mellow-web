@@ -1,4 +1,23 @@
 .song-title {
     font-weight: bold;
     margin: 4px 0;
+
+    &.no-uri {
+        color: red;
+    }
+}
+
+.track-tag {
+    background-color: rgb(88, 207, 59);
+    margin: 6px 0;
+    padding: 2px 8px;
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    width: fit-content;
+
+    &.tag-blue {
+        background-color: #0eafff;
+    }
 }
