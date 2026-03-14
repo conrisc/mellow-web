@@ -64,7 +64,7 @@ interface PlayerProviderProps {
 export function PlayerProvider({ children }: PlayerProviderProps) {
 	const [ytPlayer, setYtPlayer] = useState<YTPlayer | null>(null);
 	const [audioPlayer, setAudioPlayer] = useState<AudioPlayer | null>(null);
-	const [playerType, setPlayerType] = useState<PlayerType>('audio');
+	const [playerType, setPlayerType] = useState<PlayerType>('yt');
 
 	// Create unified player adapter based on current player type
 	const player = useMemo<UnifiedPlayer | null>(() => {
