@@ -127,11 +127,17 @@ export function useSongs(
 	}
 
 	async function updateSong(songItem: SongItem): Promise<void> {
-		const api = await getUsersApi();
-		if (!api) return;
+		console.log('Updating song...', songItem);
 
-		return api
-			.updateSong(songItem.id, songItem)
+		return fetch(`${MELLOV_API_URL}/songs/${songItem.id}`, {
+			method: 'PUT',
+			headers: {
+				Authorization: await getAccessToken(),
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(songItem)
+		})
+			.then((response) => response.json())
 			.then((updatedSongItem) => {
 				console.log('Song successfully updated');
 				setSongs(

@@ -14,6 +14,7 @@ export function EditSongModal(props) {
 
     const [title, setTitle] = useState(songItem.title);
     const [url, setUrl] = useState(songItem.url);
+    const [trackUri, setTrackUri] = useState(songItem.metadata.trackUri);
     const [songTags, setSongTags] = useState(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
 
     function handleUrlChange(event) {
@@ -25,6 +26,16 @@ export function EditSongModal(props) {
             setUrl(url);
 	}
 
+    function handleTrackUriChange(event) {
+        const { value } = event.target;
+
+        const trackUriMatch = value.match(/track\/([a-zA-Z0-9]+)/);
+        if (trackUriMatch && trackUriMatch[1])
+            setTrackUri(`spotify:track:${trackUriMatch[1]}`);
+        else
+            setTrackUri(value);
+    }
+
     function updateSong() {
         if (title.trim() === '') {
             console.warn('Title does not match criteria!');
@@ -33,18 +44,23 @@ export function EditSongModal(props) {
         const songTagsIds = songTags.map(tagName => tagsNameToIdMap[tagName])
             .filter(tagId => typeof tagId === 'string');
 
-        const updatedSongItem = new SongItem();
-        updatedSongItem.id = songItem.id;
-        updatedSongItem.title = title.trim();
-        updatedSongItem.url = url.trim();
-        updatedSongItem.dateAdded = songItem.dateAdded;
-        updatedSongItem.tags = songTagsIds;
-
+        const updatedSongItem = {
+            ...songItem,
+            title: title.trim(),
+            url: url.trim(),
+            tags: songTagsIds,
+            metadata: {
+                ...songItem.metadata,
+                trackUri: trackUri,
+                manuallyMatchedAt: new Date().toISOString()
+            }
+        };
 
         props.updateSong(updatedSongItem)
             .catch(() => {
 				setTitle(songItem.title);
 				setUrl(songItem.url);
+                setTrackUri(songItem.metadata.trackUri);
 				setSongTags(songItem.tags.map(tagId => tagsIdToNameMap[tagId]));
 			});
 
@@ -72,6 +88,13 @@ export function EditSongModal(props) {
                 placeholder="Song url"
                 value={url}
                 onChange={handleUrlChange}
+            />
+            <Input
+                style={{ margin: 8 }}
+                prefix={<FontAwesomeIcon icon={faMusic} />}
+                placeholder="Spotify track uri"
+                value={trackUri}
+                onChange={handleTrackUriChange}
             />
             <Select
                 style={{ width: '100%', margin: 8 }}
