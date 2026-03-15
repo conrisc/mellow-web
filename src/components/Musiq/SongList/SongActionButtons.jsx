@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Dropdown, Menu, Modal, Space } from 'antd';
+import { Button, Dropdown, Modal, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV, faExclamationCircle, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEllipsisV, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 export function SongActionButtons(props) {
     const { songItem, removeSong } = props;
@@ -66,7 +66,9 @@ export function SongActionButtons(props) {
         {
             key: '3',
             label: (
-                <div onClick={props.editSong}>Edit</div>
+                <a onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo} title="Play song on other devices">
+                    Play remote
+                </a>
             ),
         },
         {
@@ -85,10 +87,8 @@ export function SongActionButtons(props) {
 
     return (
         <Space onClick={(e) => e.stopPropagation()}>
-            <Button
-                onClick={props.videoId ? () => props.loadVideo(props.videoId) : findAndLoadVideo}
-                title="Play song on other devices">
-                    <FontAwesomeIcon icon={faTv} />
+            <Button onClick={props.editSong} title="Edit">
+                <FontAwesomeIcon icon={faEdit} />
             </Button>
             <Dropdown menu={{ items: menuItems }} placement="bottom" arrow trigger={["click"]}>
                 <Button icon={<FontAwesomeIcon icon={faEllipsisV} />}>
